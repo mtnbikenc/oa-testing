@@ -1,0 +1,23 @@
+- name: RHEL Subscription Playbook
+  hosts: OSEv3
+  gather_facts: no
+  max_fail_percentage: 1
+
+  vars:
+    ose_version: "{{ openshift_release[1:] }}"
+
+  tasks:
+  # - name: RedHat subscriptions
+  #   command: subscription-manager register --username={{ rhn_user }} --password={{ rhn_pass }}
+
+  # - name: Attach to OpenShift Pool
+  #   command: subscription-manager subscribe --pool {{ rhn_pool }}
+
+  - name: Disable all repositories
+    command: subscription-manager repos --disable="*"
+
+  - name: Enable RHEL repositories
+    command: subscription-manager repos \
+                 --enable="rhel-7-server-rpms" \
+                 --enable="rhel-7-server-extras-rpms" \
+                 --enable="rhel-7-server-ose-{{ ose_version }}-rpms"

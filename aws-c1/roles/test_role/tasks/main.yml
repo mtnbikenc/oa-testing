@@ -1,0 +1,9 @@
+---
+- debug:
+    msg: "This is in the role"
+- debug:
+    msg: "This is in the role"
+- debug:
+    msg: "This is in the role"
+- debug:
+    msg: "This is in the role"

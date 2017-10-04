@@ -1,0 +1,87 @@
+
+
+
+grep -ri --include=\*.{yml,yaml} -E 'openshift\.common\.(client|admin)_binary' | wc -l
+grep -ric --include=\*.{yml,yaml} -E 'openshift\.common\.(client|admin)_binary' | grep -v -E ':0$'
+for ROLE in $(ls roles); do echo roles/${ROLE}: $(grep -ri --include=\*.{yml,yaml} -E 'openshift\.common\.(client|admin)_binary' ./roles/${ROLE} | wc -l) | grep -v -E ' 0$'; done
+for PLAYBOOK in $(ls playbooks); do echo playbooks/${PLAYBOOK}: $(grep -ri --include=\*.{yml,yaml} -E 'openshift\.common\.(client|admin)_binary' ./playbooks/${PLAYBOOK} | wc -l) | grep -v -E ' 0$'; done
+
+for DIR in $(find -type d -name filter_plugins); do echo ${DIR}; ls ${DIR}; done
+
+
+roles/calico_master: 1
+roles/cockpit-ui: 1
+roles/nuage_master: 2
+roles/openshift_ca: 1
+roles/openshift_examples: 8
+roles/openshift_hosted_logging: 30
+roles/openshift_hosted_metrics: 14
+roles/openshift_hosted_templates: 1
+roles/openshift_logging: 32
+roles/openshift_manageiq: 5
+roles/openshift_master: 5
+roles/openshift_master_certificates: 2
+roles/openshift_metrics: 19
+roles/openshift_node_certificates: 2
+roles/openshift_persistent_volumes: 2
+
+
+git describe
+git show -s --format=%ci
+grep -ri --include=\*.{yml,yaml} -E 'openshift\.common\.(client|admin)_binary' | wc -l
+
+openshift-ansible-3.5.3-1-75-g1105561
+2017-02-07 10:27:20 -0500
+226
+
+openshift-ansible-3.6.23-1-8-g6591b6f
+2017-04-13 13:47:27 -0500
+157
+
+grep -ril --include=\*.{yml,yaml} -E 'initialize_groups\.yml'
+
+for PLAYBOOK in $(PLAYBOOKS); do ansible-playbook -i localhost, --syntax-check ${PLAYBOOK}; done
+
+
+playbooks/byo/openshift-cluster/redeploy-registry-certificates.yml
+playbooks/byo/openshift-cluster/openshift-logging.yml
+playbooks/byo/openshift-cluster/redeploy-certificates.yml
+playbooks/byo/openshift-cluster/enable_dnsmasq.yml
+playbooks/byo/openshift-cluster/redeploy-master-certificates.yml
+playbooks/byo/openshift-cluster/redeploy-router-certificates.yml
+playbooks/byo/openshift-cluster/redeploy-etcd-certificates.yml
+playbooks/byo/openshift-cluster/config.yml
+playbooks/byo/openshift-cluster/upgrades/docker/upgrade.yml
+playbooks/byo/openshift-cluster/upgrades/v3_6/upgrade_nodes.yml
+playbooks/byo/openshift-cluster/upgrades/v3_6/upgrade.yml
+playbooks/byo/openshift-cluster/upgrades/v3_6/upgrade_control_plane.yml
+playbooks/byo/openshift-cluster/upgrades/v3_3/upgrade_nodes.yml
+playbooks/byo/openshift-cluster/upgrades/v3_3/upgrade.yml
+playbooks/byo/openshift-cluster/upgrades/v3_3/upgrade_control_plane.yml
+playbooks/byo/openshift-cluster/upgrades/v3_5/upgrade_nodes.yml
+playbooks/byo/openshift-cluster/upgrades/v3_5/upgrade.yml
+playbooks/byo/openshift-cluster/upgrades/v3_5/upgrade_control_plane.yml
+playbooks/byo/openshift-cluster/upgrades/v3_4/upgrade_nodes.yml
+playbooks/byo/openshift-cluster/upgrades/v3_4/upgrade.yml
+playbooks/byo/openshift-cluster/upgrades/v3_4/upgrade_control_plane.yml
+playbooks/byo/openshift-cluster/upgrades/upgrade_etcd.yml
+playbooks/byo/openshift-cluster/redeploy-openshift-ca.yml
+playbooks/byo/openshift-cluster/openshift-metrics.yml
+playbooks/byo/openshift-cluster/redeploy-node-certificates.yml
+playbooks/byo/openshift-node/scaleup.yml
+playbooks/byo/openshift-node/network_manager.yml
+playbooks/byo/openshift-node/restart.yml
+playbooks/byo/openshift-master/scaleup.yml
+playbooks/byo/openshift-master/restart.yml
+playbooks/byo/openshift_facts.yml
+playbooks/byo/rhel_subscribe.yml
+playbooks/byo/openshift-etcd/restart.yml
+
+
+
+
+Host group usage in common:
+grep -ri --include=\*.{yml,yaml} -E '  hosts:' ./playbooks/common --no-filename | sort | uniq -c
+
+Host group usage in byo:
+grep -ri --include=\*.{yml,yaml} -E ' hosts:' ./playbooks/byo --no-filename | sort | uniq -c

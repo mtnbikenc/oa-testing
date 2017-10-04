@@ -1,0 +1,88 @@
+---
+- name: Prep Playbook
+  hosts: all
+  gather_facts: no
+  any_errors_fatal: true
+
+  handlers:
+  - import_tasks: handlers/main.yml
+
+  tasks:
+  - name: Wait for hosts to come online
+    local_action:
+      module: wait_for
+      host: "{{ inventory_hostname }}"
+      port: 22
+      timeout: 30
+      search_regex: OpenSSH
+    register: wait_for_result
+    until: wait_for_result.msg is not defined
+    retries: 10
+
+  - name: remove redhat-rhui repo files
+    file:
+      path: /etc/yum.repos.d/{{ item }}
+      state: absent
+    with_items:
+      - redhat-rhui-client-config.repo
+      - redhat-rhui.repo
+
+  - name: disable local origin repo
+    ini_file:
+      path: /etc/yum.repos.d/{{ item }}.repo
+      section: "{{ item }}"
+      option: enabled
+      value: 0
+    with_items:
+      - origin-local-release
+
+  - name: Remove leading 'v' from openshift_release
+    set_fact:
+      openshift_release: "{{ openshift_release[1:] }}"
+    when:
+      - openshift_release is defined
+      - openshift_release[0] == 'v'
+
+  - name: Convert openshift_release to a string
+    set_fact:
+      openshift_release: "{{ openshift_release | string }}"
+    when:
+      - openshift_release is defined
+
+  - name: Create rhel-7-server-ose-3.8-rpms.repo
+    copy:
+      src: "{{ item }}"
+      dest: /etc/yum.repos.d/{{ item }}
+      force: no
+    with_items:
+      - rhel-7-server-ose-3.8-rpms.repo
+
+  - name: disable rhel-7-server-ose-3.X-rpms repo
+    ini_file:
+      path: /etc/yum.repos.d/{{ item }}.repo
+      section: "{{ item }}"
+      option: enabled
+      value: 0
+    when: openshift_release not in item
+    with_items:
+      - rhel-7-server-ose-3.1-rpms
+      - rhel-7-server-ose-3.2-rpms
+      - rhel-7-server-ose-3.3-rpms
+      - rhel-7-server-ose-3.4-rpms
+      - rhel-7-server-ose-3.5-rpms
+      - rhel-7-server-ose-3.6-rpms
+      - rhel-7-server-ose-3.7-rpms
+      - rhel-7-server-ose-3.8-rpms
+
+  - name: enable rhel-7-server-ose-3.X-rpms repo
+    ini_file:
+      path: /etc/yum.repos.d/rhel-7-server-ose-{{ openshift_release }}-rpms.repo
+      section: rhel-7-server-ose-{{ openshift_release }}-rpms
+      option: enabled
+      value: 1
+
+  - name: Validate oreg_auth_password (~/oreg_auth_password.txt)
+    command: oc login https://api.reg-aws.openshift.com --token={{ oreg_auth_password }}
+    delegate_to: localhost
+    run_once: true
+    changed_when: false

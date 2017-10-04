@@ -1,0 +1,84 @@
+- name: Test Playbook
+  hosts: nodes
+  gather_facts: no
+  vars:
+    # openshift_disable_swap: false
+
+  tasks:
+    # - name: Debug openshift_disable_swap
+    #   debug:
+    #     msg: "{{ openshift_disable_swap | default(true) }}"
+    #
+    # - name: Debug openshift_disable_swap with when
+    #   debug:
+    #     msg: "{{ openshift_disable_swap | default(true) }}"
+    #   when:
+    #     - true
+    #     - openshift_disable_swap | bool | default(true)
+
+    - name: Check for swap usage
+      command: grep swap /etc/fstab
+      # command: swapon --summary
+      changed_when: false
+      failed_when: false
+      register: swap_result
+
+      # Disable swap block
+    - block:
+
+        - name: Debug swap_result.stdout_lines
+          debug:
+            msg: "{{ swap_result.stdout_lines | length > 0 }}"
+
+        # - name: Disable swap
+        #   command: swapoff --all
+        #
+        # - name: Remove swap entries from /etc/fstab
+        #   replace:
+        #     dest: /etc/fstab
+        #     regexp: '(^[^#].*swap.*)'
+        #     replace: '# \1'
+        #     backup: yes
+        #
+        # - name: Add notice about disabling swap
+        #   lineinfile:
+        #     dest: /etc/fstab
+        #     line: '# OpenShift-Ansible Installer disabled swap per overcommit guidelines'
+        #     state: present
+
+      when:
+        - swap_result.stdout_lines | length > 0
+        - openshift_disable_swap | default(true) | bool
+        # - false | default(true)
+      # End Disable swap block
+
+
+# - name: Test Playbook
+#   hosts: localhost
+#   connection: local
+#   gather_facts: no
+#
+#   vars:
+#     # identity_providers: "{{ openshift_master_identity_providers | default(None) }}"
+#     openshift:
+#       common:
+#         version: 3.5
+#         deployment_type: openshift-enterprise
+#         version_gte_3_3_or_1_3: true
+#       master:
+#         identity_providers: "{{ openshift_master_identity_providers }}"
+#
+#   tasks:
+#     - debug:
+#         var: openshift.master.identity_providers
+#
+#     - set_fact:
+#         translated_identity_providers: "{{ openshift.master.identity_providers | translate_idps('v1', '3.5', 'openshift-enterprise') }}"
+#
+#     - debug:
+#         var: translated_identity_providers
+#
+#     - name: Create master config
+#       template:
+#         dest: /home/rteague/git/clusters/local-c1/master-config.yaml
+#         src: master.yaml.v1.j2

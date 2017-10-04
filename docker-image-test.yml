@@ -1,0 +1,30 @@
+---
+
+# This could make the request based on the image name .... ose v origin
+
+# For access
+- hosts: 127.0.0.1
+  gather_facts: no
+  tasks:
+     - command: curl -L https://registry.access.redhat.com/v1/repositories/openshift3/ose/tags
+       register: result
+
+     - set_fact:
+        latest: "{{ (result.stdout | from_json).keys() | list | sort | last | regex_replace('-.*', '') }}"
+
+     - debug:
+         var: latest
+
+
+# UNTESTED: For dockerhub
+- hosts: 127.0.0.1
+  gather_facts: no
+  tasks:
+     - command: curl https://registry.hub.docker.com/v1/repositories/openshift/origin/tags
+       register: result
+
+     - set_fact:
+        latest: "{{ (result.stdout | from_json) | oo_select_keys_from_list('name') | list | sort | last | regex_replace('-.*', '') }}"
+
+     - debug:
+         var: latest

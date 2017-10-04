@@ -1,0 +1,24 @@
+http://url.corp.redhat.com/ocp-errata
+
+openshift_additional_repos=[{'id': 'ose-devel', 'name': 'ose-devel', 'baseurl': 'http://download-node-02.eng.bos.redhat.com/rcm-guest/puddles/RHAOS/AtomicOpenShift/3.6/latest/x86_64/os/', 'enabled': 1, 'gpgcheck': 0}]
+
+# Find use of variables within Ansible handlers
+grep -Poh "(?<={{)[^}]+(?=}})" $( find * -wholename "*handlers/*" ) | sort | uniq
+
+oc new-project test
+oc new-app centos/ruby-22-centos7~https://github.com/openshift/ruby-ex.git
+oc logs -f bc/ruby-ex
+oc get all
+
+# Delete/Refresh local tags
+git tag -d $(git tag) && git fetch upstream --tags
+
+# Find symlinks in the repo
+find ./playbooks \
+ -type l -name '*library*' -o \
+ -type l -name '*lookup_plugins*' -o \
+ -type l -name '*filter_plugins*' -o \
+ -type l -name '*action_plugins*'
+
+ -type l -name '*roles*' -o \
+

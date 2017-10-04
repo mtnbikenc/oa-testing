@@ -1,0 +1,5 @@
+ansible/
+ansible.log
+aws.dat
+hosts
+openshift-ansible/

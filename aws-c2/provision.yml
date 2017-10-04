@@ -1,0 +1,44 @@
+---
+
+- name: Provision AWS instances
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    aws_region: us-east-1
+  tasks:
+    - name: Find the most recently created AMI
+      ec2_ami_find:
+        region: "{{ aws_region }}"
+        sort: creationDate
+        sort_order: descending
+        ami_tags:
+          operating_system: 'rhel'
+          image_stage: 'build'
+          ready: 'yes'
+        no_result_action: fail
+      register: find_ami
+
+    - name: Set the openshift_aws_ami
+      set_fact:
+        aws_ami: "{{ find_ami.results[0].ami_id }}"
+      when:
+      - "'results' in find_ami"
+      - find_ami.results | length > 0
+
+    - debug:
+        var: aws_ami
+
+    - name: Create AWS Instances
+      ec2:
+        region: "{{ aws_region }}"
+        key_name: "libra"
+        instance_type: "t2.medium"
+        group_id:
+          - sg-7e73221a  # default
+          - sg-e1760186  # public-http
+        vpc_subnet_id: "subnet-cf57c596"  # devenv-subnet-1
+        image: "{{ aws_ami }}"
+        wait: yes
+        instance_tags:
+          Name: "rteague-test"

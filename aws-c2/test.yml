@@ -1,0 +1,76 @@
+- name: Test Playbook
+  hosts: masters
+  vars:
+    openshift:
+      common:
+        service_type: atomic-openshift
+
+  tasks:
+    - name: Install the base package for versioning
+      package:
+        name: "{{ openshift.common.service_type }}{{ openshift_pkg_version | default('') | oo_image_tag_to_rpm_version(include_dash=True) }}"
+#        name: "{{ openshift.common.service_type }}{{ openshift_pkg_version | default('') | oo_image_tag_to_rpm_version(include_dash=True) }}"
+        state: present
+      when:
+      - not is_containerized | bool
+      - version_install_base_package | bool
+
+
+  #   - name: Include some task file
+  #     include: "{{ some_file }}.yml"
+  #     when: some_file != "noop"
+
+
+    # - name: Check for swap usage
+    #   command: grep "^[^#].*swap" /home/rteague/git/clusters/aws-c2/fstab
+    #   # grep: match any lines which don't begin with '#' and contain 'swap'
+    #   # command: swapon --summary
+    #   # Alternate option, however if swap entries are in fstab, swap will be
+    #   # enabled at boot. Grepping fstab should catch a condition when swap was
+    #   # disabled, but the fstab entries were not removed.
+    #   changed_when: false
+    #   failed_when: false
+    #   register: swap_result
+    #
+    #   # Disable Swap Block
+    # - block:
+    #
+    #   # - name: Disable swap
+    #   #   command: swapoff --all
+    #
+    #   - name: Remove swap entries from /etc/fstab
+    #     replace:
+    #       dest: /home/rteague/git/clusters/aws-c2/fstab
+    #       regexp: '(^[^#].*swap.*)'
+    #       replace: '# \1'
+    #       backup: yes
+    #
+    #   - name: Add notice about disabling swap
+    #     lineinfile:
+    #       dest: /home/rteague/git/clusters/aws-c2/fstab
+    #       line: '# OpenShift-Ansible Installer disabled swap per overcommit guidelines'
+    #       state: present
+    #
+    #   when:
+    #     - swap_result.stdout_lines | length > 0
+    #     - openshift_disable_swap | default(true)
+    #   # End Disable Swap Block
+
+  # tasks:
+  #
+  #   # - local_action:
+  #   #     module: command
+  #   #     args: echo hello
+  #   #   register: command_out
+  #
+  #   - debug:
+  #       var: command_out
+  #     run_once: False
+
+    # - debug:
+    #     var: this_is_set.certfile
+    # - debug:
+    #     msg: "{{ this_is_set | default(none) is not none }}"
+    # - name: Foo Module
+    #   foo_module:
+    #     foo_var: "Foo"

@@ -1,0 +1,65 @@
+---
+ansible_user: ec2-user
+ansible_become: yes
+openshift_deployment_type: openshift-enterprise
+openshift_release: v3.9
+#openshift_image_tag: v3.7.0-0.189.0
+#openshift_pkg_version: -3.9.0
+#openshift_pkg_version: -3.5.5.26
+#containerized: true
+#os_firewall_use_firewalld: false
+
+#openshift_use_flannel: true
+#openshift_use_openshift_sdn: false
+
+openshift_web_console_install: false
+openshift_web_console_prefix: registry.reg-aws.openshift.com:443/openshift3/
+# need to figure out the correct prefix above
+
+#openshift_disable_check:
+#  - disk_availability
+#  - memory_availability
+#  - docker_storage
+#  - docker_image_availability
+openshift_check_min_host_disk_gb: 10
+openshift_check_min_host_memory_gb: 3
+
+osm_cluster_network_cidr: "10.1.0.0/16"
+openshift_portal_net: "172.30.0.0/16"
+osm_host_subnet_length: 9
+
+openshift_docker_additional_registries:
+  - registry.reg-aws.openshift.com
+
+openshift_cockpit_deployer_prefix: registry.reg-aws.openshift.com:443/openshift3/
+
+oreg_url: registry.reg-aws.openshift.com:443/openshift3/ose-${component}:${version}
+oreg_auth_user: "{{ ansible_user_id }}"
+# Get your token from the 'oc login' line at
+# https://console.reg-aws.openshift.com/console/command-line
+# Put your token in the file referenced below
+oreg_auth_password: "{{ lookup('file', '~/oreg_auth_password.txt') }}"
+
+openshift_logging_install_logging: false
+openshift_logging_elasticsearch_cpu_request: 200m
+openshift_logging_elasticsearch_cpu_limit: 200m
+openshift_logging_elasticsearch_memory_limit: 1Gi
+
+openshift_enable_service_catalog: false
+template_service_broker_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-
+
+#openshift_management_install_management: false
+#openshift_management_install_beta: true
+#openshift_management_app_template: cfme-template
+#openshift_management_storage_class: cloudprovider
+#
+#openshift_cloudprovider_kind: aws
+#openshift_clusterid: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
+##openshift_clusterid: rteague-c1
+#openshift_cloudprovider_aws_access_key: "{{ lookup('ini', 'aws_access_key_id section=default file=~/.aws/credentials') }}"
+#openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key section=default file=~/.aws/credentials') }}"
+#
+#openshift_management_template_parameters:
+#  APPLICATION_MEM_REQ: '3000Mi'
+#  POSTGRESQL_MEM_REQ: '1Gi'
+#  ANSIBLE_MEM_REQ: '512Mi'
