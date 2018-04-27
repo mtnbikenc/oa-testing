@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-set -ex
+set -euxo pipefail
 
-source ansible/hacking/env-setup
+SCRIPT_TYPE=$(basename -s .sh "$0")
+LOG_DATE=$(date "+%FT%H.%M.%S")
 
-source build_options.sh
-
-../scripts/prereq.sh
+unbuffer ../scripts/prereq.sh |& tee logs/${LOG_DATE}-${SCRIPT_TYPE}.log

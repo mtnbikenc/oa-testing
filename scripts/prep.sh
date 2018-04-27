@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
-set -ex
+set -euxo pipefail
 
-PLAY_TYPE=$(basename -s .sh "$0")
-LOG_DATE=$(date "+%FT%H.%M.%S")
-export ANSIBLE_LOG_PATH=${LOG_DATE}-${PLAY_TYPE}-ansible.log
+source build_options.sh
 
-echo "### Running Host Prep ###"
 ansible-playbook -i inventory/hosts ../playbooks/prep.yml -vv

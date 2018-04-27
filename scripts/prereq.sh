@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-set -ex
+set -euxo pipefail
 
-PLAY_TYPE=$(basename -s .sh "$0")
-LOG_DATE=$(date "+%FT%H.%M.%S")
-export ANSIBLE_LOG_PATH=${LOG_DATE}-${PLAY_TYPE}-ansible.log
+source ansible/hacking/env-setup
+
+source build_options.sh
 
 playbook_base='openshift-ansible/playbooks/'
 

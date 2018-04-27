@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-set -ex
+set -euxo pipefail
 
-source build_options.sh
+SCRIPT_TYPE=$(basename -s .sh "$0")
+LOG_DATE=$(date "+%FT%H.%M.%S")
 
-../scripts/clone-ansible.sh
+unbuffer ../scripts/clone-ansible.sh |& tee logs/${LOG_DATE}-${SCRIPT_TYPE}.log

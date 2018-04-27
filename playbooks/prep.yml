@@ -1,69 +1,73 @@
 ---
 - name: Prep Playbook
   hosts: all
-  gather_facts: no
+  gather_facts: false
   any_errors_fatal: true
 
   handlers:
   - import_tasks: handlers/main.yml
 
-  tasks:
-  - name: Wait for hosts to come online
-    local_action:
-      module: wait_for
-      host: "{{ inventory_hostname }}"
-      port: 22
-      timeout: 30
-      search_regex: OpenSSH
-    register: wait_for_result
-    until: wait_for_result.msg is not defined
-    retries: 10
+  vars:
+    openshift_service_type_dict:
+      origin: origin
+      openshift-enterprise: atomic-openshift
+    openshift_service_type: "{{ openshift_service_type_dict[openshift_deployment_type] }}"
+    latest_version: '3.10'
+    build_version: "{{ lookup('env', 'OPT_BUILD_VERSION') | default('latest', true) }}"
 
-  - name: remove redhat-rhui repo files
+  tasks:
+  - name: Set prep_version using openshift_release if defined
+    set_fact:
+      prep_version: "{{ openshift_release | regex_replace('^.(\\d+\\.\\d+).*', '\\1') }}"
+    when:
+      - openshift_release is defined
+
+  - name: Set prep_version using openshift_pkg_version if defined
+    set_fact:
+      prep_version: "{{ openshift_pkg_version | regex_replace('^.(\\d+\\.\\d+).*', '\\1') }}"
+    when:
+      - prep_version is not defined
+      - openshift_pkg_version is defined
+
+  - name: Set prep_version using openshift_image_tag if defined
+    set_fact:
+      prep_version: "{{ (openshift_image_tag | regex_replace('^.(\\d+\\.\\d+).*', '\\1')) if openshift_image_tag != 'latest' else omit }}"
+    when:
+      - prep_version is not defined
+      - openshift_image_tag is defined
+
+  - name: Set prep_version to latest if no version provided
+    set_fact:
+      prep_version: "{{ latest_version }}"
+    when:
+      - prep_version is not defined
+
+  - include_tasks: tasks/wait_for_hosts.yml
+
+  - name: remove various repo files
     file:
       path: /etc/yum.repos.d/{{ item }}
       state: absent
     with_items:
-      - redhat-rhui-client-config.repo
+      - centos-paas-sig-openshift-origin13-rpms.repo
+      - centos-paas-sig-openshift-origin14-rpms.repo
+      - centos-paas-sig-openshift-origin15-rpms.repo
+      - centos-paas-sig-openshift-origin36-rpms.repo
+      - centos-paas-sig-openshift-origin37-rpms.repo
+      - charlie.repo
+      - openshift-ansible-local-release.repo
+      - openshift-rhel7-dependencies.repo
+#      - origin-local-release.repo
+      - oso-rhui-rhel-server-rhscl.repo
+      - redhat.repo
       - redhat-rhui.repo
+      - redhat-rhui-client-config.repo
 
-  - name: disable local origin repo
-    ini_file:
+  - name: remove rhel-7-server-ose-3.X-rpms repo files
+    file:
       path: /etc/yum.repos.d/{{ item }}.repo
-      section: "{{ item }}"
-      option: enabled
-      value: 0
-    with_items:
-      - origin-local-release
-
-  - name: Remove leading 'v' from openshift_release
-    set_fact:
-      openshift_release: "{{ openshift_release[1:] }}"
-    when:
-      - openshift_release is defined
-      - openshift_release[0] == 'v'
-
-  - name: Convert openshift_release to a string
-    set_fact:
-      openshift_release: "{{ openshift_release | string }}"
-    when:
-      - openshift_release is defined
-
-  - name: Create rhel-7-server-ose-3.8-rpms.repo
-    copy:
-      src: "{{ item }}"
-      dest: /etc/yum.repos.d/{{ item }}
-      force: no
-    with_items:
-      - rhel-7-server-ose-3.8-rpms.repo
-
-  - name: disable rhel-7-server-ose-3.X-rpms repo
-    ini_file:
-      path: /etc/yum.repos.d/{{ item }}.repo
-      section: "{{ item }}"
-      option: enabled
-      value: 0
-    when: openshift_release not in item
+      state: absent
+    when: prep_version not in item
     with_items:
       - rhel-7-server-ose-3.1-rpms
       - rhel-7-server-ose-3.2-rpms
@@ -73,16 +77,51 @@
       - rhel-7-server-ose-3.6-rpms
       - rhel-7-server-ose-3.7-rpms
       - rhel-7-server-ose-3.8-rpms
+      - rhel-7-server-ose-3.9-rpms
+      - rhel-7-server-ose-3.10-rpms
 
-  - name: enable rhel-7-server-ose-3.X-rpms repo
-    ini_file:
-      path: /etc/yum.repos.d/rhel-7-server-ose-{{ openshift_release }}-rpms.repo
-      section: rhel-7-server-ose-{{ openshift_release }}-rpms
-      option: enabled
-      value: 1
+  - name: Create rhel-7-server-ose-X.X-rpms repo file
+    template:
+      src: rhel-7-server-ose-X.X-rpms.repo.j2
+      dest: /etc/yum.repos.d/rhel-7-server-ose-{{ target_version }}-rpms.repo
+    vars:
+      target_version: "{{ prep_version }}"
+    notify: refresh cache
 
-  - name: Validate oreg_auth_password (~/oreg_auth_password.txt)
+  - name: Create origin-repo
+    get_url:
+      url: https://storage.googleapis.com/origin-ci-test/releases/openshift/origin/master/origin.repo
+      dest: /etc/yum.repos.d/origin-repo.repo
+
+  # If this is a 3.7 to 3.9 upgrade, enable the 3.8 repo
+  - name: Create rhel-7-server-ose-3.8-rpms repo file
+    template:
+      src: rhel-7-server-ose-X.X-rpms.repo.j2
+      dest: /etc/yum.repos.d/rhel-7-server-ose-{{ target_version }}-rpms.repo
+    vars:
+      target_version: '3.8'
+      build_version: 'latest'
+    notify: refresh cache
+    when:
+      - prep_version == '3.9'
+      - lookup('env', 'OPT_OA_UPGRADE') | default(false) | bool
+
+  # The token expires every 30 days so make sure it still works
+  - name: Validate oreg_auth_password (~/openshift_creds.txt)
     command: oc login https://api.reg-aws.openshift.com --token={{ oreg_auth_password }}
     delegate_to: localhost
     run_once: true
     changed_when: false
+
+  - meta: flush_handlers
+
+  - name: Get available {{ openshift_service_type }} version(s)
+    repoquery:
+      name: "{{ openshift_service_type }}"
+      ignore_excluders: true
+      show_duplicates: true
+    register: repoquery_results
+
+  - name: Display avilable {{ openshift_service_type }} RPM versions
+    debug:
+      var: repoquery_results.results.versions.available_versions_full

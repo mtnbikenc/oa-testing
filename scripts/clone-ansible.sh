@@ -1,25 +1,26 @@
 #!/usr/bin/env bash
-set -ex
+set -euxo pipefail
+
+source build_options.sh
 
 echo "### Updating git clone of Ansible ###"
-unset GIT_DIR
-unset GIT_WORK_TREE
 if [ ! -d ansible ]; then
     git clone https://github.com/ansible/ansible.git
 else
-    export GIT_DIR=${PWD}/ansible/.git
-    export GIT_WORK_TREE=${PWD}/ansible
+    cd ansible
     git reset --hard
     git clean -fdx
     git checkout devel
     git pull --rebase
+    cd ..
 fi
-export GIT_DIR=${PWD}/ansible/.git
-export GIT_WORK_TREE=${PWD}/ansible
 
 # Checkout a tag
 if [ -v OPT_ANSIBLE_TAG ]; then
+    cd ansible
     git checkout ${OPT_ANSIBLE_TAG}
+    git submodule update --init --recursive
+    cd ..
 fi
 
 # Checkout a pull request and rebase it to devel

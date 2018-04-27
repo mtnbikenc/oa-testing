@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-set -x
+set -euxo pipefail
 
-../../aos-ansible/bin/aws-launcher terminate
-
-if [ -f inventory/hosts ]; then
-    rm inventory/hosts
+if [ -f inventory/aws.dat ]; then
+    pushd inventory
+    ../../../aos-ansible/bin/aws-launcher terminate
+    popd
 fi
 
-rm -f *ansible.log
+rm -f ansible.log
+rm -f logs/*.log
