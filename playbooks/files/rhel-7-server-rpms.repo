@@ -1,0 +1,43 @@
+[rhel-7-server-releases]
+name = Red Hat Enterprise Linux $majorrelease - Releases
+baseurl = https://mirror.openshift.com/libra/rhui-rhel-server-$majorrelease-releases/
+failovermethod = priority
+gpgcheck = 0
+gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta https://mirror.openshift.com/libra/keys/RPM-GPG-KEY-redhat-openshifthosted
+sslclientcert = /var/lib/yum/client-cert.pem
+sslclientkey = /var/lib/yum/client-key.pem
+sslverify = 0
+enabled = 1
+
+[rhel-7-server-releases-optional]
+name = Red Hat Enterprise Linux $majorrelease - Releases Optional
+baseurl = https://mirror.openshift.com/libra/rhui-rhel-server-$majorrelease-releases-optional/
+failovermethod = priority
+gpgcheck = 0
+gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta https://mirror.openshift.com/libra/keys/RPM-GPG-KEY-redhat-openshifthosted
+sslclientcert = /var/lib/yum/client-cert.pem
+sslclientkey = /var/lib/yum/client-key.pem
+sslverify = 0
+enabled = 1
+
+[rhel-7-server-extras]
+name = Red Hat Enterprise Linux $majorrelease - Extras
+baseurl = https://mirror.openshift.com/libra/rhui-rhel-server-$majorrelease-extras/
+failovermethod = priority
+gpgcheck = 0
+gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta https://mirror.openshift.com/libra/keys/RPM-GPG-KEY-redhat-openshifthosted
+sslclientcert = /var/lib/yum/client-cert.pem
+sslclientkey = /var/lib/yum/client-key.pem
+sslverify = 0
+enabled = 1
+
+[rhel-7-server-fast-datapath-rpms]
+name = Red Hat Enterprise Linux $majorrelease - Fast Datapath RPMs
+baseurl = https://mirror.openshift.com/enterprise/rhel/rhel-7-fast-datapath-rpms/
+failovermethod = priority
+gpgcheck = 0
+gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta https://mirror.openshift.com/libra/keys/RPM-GPG-KEY-redhat-openshifthosted
+sslclientcert = /var/lib/yum/client-cert.pem
+sslclientkey = /var/lib/yum/client-key.pem
+sslverify = 0
+enabled = 1
