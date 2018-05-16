@@ -5,6 +5,8 @@ source ansible/hacking/env-setup
 
 source build_options.sh
 
+ansible --version
+
 playbook_base='openshift-ansible/playbooks/'
 
 echo "### Running OpenShift-Ansible Prerequisites"
