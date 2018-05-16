@@ -1,8 +1,8 @@
 ---
 ansible_user: ec2-user
 ansible_become: yes
-#openshift_deployment_type: openshift-enterprise
-openshift_deployment_type: origin
+openshift_deployment_type: openshift-enterprise
+#openshift_deployment_type: origin
 
 #openshift_release: v3.7
 #openshift_image_tag: v3.7.29-1
@@ -17,7 +17,6 @@ openshift_deployment_type: origin
 #openshift_pkg_version: -3.9.0-0.42.0.git.0.e604ce5.el7
 
 openshift_release: v3.10
-#openshift_node_bootstrap: false
 
 #openshift_use_system_containers: true
 #system_images_registry: registry.reg-aws.openshift.com:443
@@ -82,10 +81,10 @@ template_service_broker_prefix: registry.reg-aws.openshift.com:443/openshift3/os
 #openshift_management_app_template: cfme-template
 #openshift_management_storage_class: cloudprovider
 #
-#openshift_cloudprovider_kind: aws
-#openshift_clusterid: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
-#openshift_cloudprovider_aws_access_key: "{{ lookup('ini', 'aws_access_key_id section=default file=~/.aws/credentials') }}"
-#openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key section=default file=~/.aws/credentials') }}"
+openshift_cloudprovider_kind: aws
+openshift_clusterid: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
+openshift_cloudprovider_aws_access_key: "{{ lookup('ini', 'aws_access_key_id section=default file=~/.aws/credentials') }}"
+openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key section=default file=~/.aws/credentials') }}"
 #
 #openshift_management_template_parameters:
 #  APPLICATION_MEM_REQ: '3000Mi'
