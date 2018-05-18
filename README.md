@@ -12,6 +12,7 @@ Basic tasks performed:
 * Prepare the AWS instances with proper repo files
 * Run the OpenShift-Ansible prerequisites.yml playbook
 * Run the OpenShift-Ansible deploy-cluster.yml playbook
+* Stop AWS instance and flag for termination, clean up logs
 
 ## Prerequisites
 
@@ -26,3 +27,21 @@ Basic tasks performed:
 * Update options in build_options.sh as needed
 * Update options in inventory/group_vars/OSEv3.yml
 * ./build.sh
+
+## Terminating A Cluster
+
+When you are done with a cluster you can run a command to terminate the AWS
+instances and clean up logs.
+
+```bash
+$ ./terminate.sh
+```
+
+## Resetting build options and scripts
+
+If you want to revert all your changes to build options and inventory settings,
+you can run a command to revert back to defaults.
+
+```bash
+$ ./reset.sh
+```

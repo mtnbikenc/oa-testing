@@ -21,9 +21,6 @@ openshift_release: v3.10
 #openshift_use_system_containers: true
 #system_images_registry: registry.reg-aws.openshift.com:443
 
-#openshift_use_flannel: true
-#openshift_use_openshift_sdn: false
-
 #openshift_disable_check:
 #  - disk_availability
 #  - memory_availability
@@ -32,14 +29,10 @@ openshift_release: v3.10
 openshift_check_min_host_disk_gb: 10
 openshift_check_min_host_memory_gb: 3
 
-osm_cluster_network_cidr: "10.128.0.0/14"
 openshift_portal_net: "172.30.0.0/16"
-osm_host_subnet_length: 9
 
 openshift_docker_additional_registries:
   - registry.reg-aws.openshift.com:443
-
-openshift_cockpit_deployer_prefix: registry.reg-aws.openshift.com:443/openshift3/
 
 oreg_url: registry.reg-aws.openshift.com:443/openshift3/ose-${component}:${version}
 oreg_auth_user: "{{ ansible_user_id }}"
@@ -49,6 +42,13 @@ oreg_auth_user: "{{ ansible_user_id }}"
 oreg_auth_password: "{{ lookup('ini', 'oreg_auth_password section=default file=~/openshift-creds.txt') }}"
 oreg_auth_credentials_replace: true
 
+### openshift-master additional_config.yml
+#openshift_install_examples: false  # default(true)
+#openshift_use_manageiq: false  # default(true)
+#osm_use_cockpit: false  # default(true)
+openshift_cockpit_deployer_prefix: registry.reg-aws.openshift.com:443/openshift3/
+#openshift_use_flannel: true  # default(false)
+#openshift_use_openshift_sdn: false  # default(true)
 
 ### Components
 ## OpenShift Web Console
@@ -81,10 +81,10 @@ template_service_broker_prefix: registry.reg-aws.openshift.com:443/openshift3/os
 #openshift_management_app_template: cfme-template
 #openshift_management_storage_class: cloudprovider
 #
-openshift_cloudprovider_kind: aws
-openshift_clusterid: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
-openshift_cloudprovider_aws_access_key: "{{ lookup('ini', 'aws_access_key_id section=default file=~/.aws/credentials') }}"
-openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key section=default file=~/.aws/credentials') }}"
+#openshift_cloudprovider_kind: aws
+#openshift_clusterid: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
+#openshift_cloudprovider_aws_access_key: "{{ lookup('ini', 'aws_access_key_id section=default file=~/.aws/credentials') }}"
+#openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key section=default file=~/.aws/credentials') }}"
 #
 #openshift_management_template_parameters:
 #  APPLICATION_MEM_REQ: '3000Mi'

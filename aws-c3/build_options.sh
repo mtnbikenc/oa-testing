@@ -16,7 +16,7 @@ export OPT_INSTANCE_TYPE=t2.medium
 ##################################################
 #export OPT_ANSIBLE_PRNUM=XXXXX
 export OPT_ANSIBLE_TAG=v2.4.4.0-1
-#export OPT_ANSIBLE_TAG=v2.5.2
+#export OPT_ANSIBLE_TAG=v2.5.3
 #export OPT_ANSIBLE_TAG=<commit_hash>
 
 ##################################################
