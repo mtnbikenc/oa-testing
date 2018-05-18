@@ -18,6 +18,7 @@ else
     git clean -fdx
     git checkout master
     git pull --rebase
+    git fetch --tags --prune
     git branch | grep -v "master" | xargs git branch -D || true
 fi
 export GIT_DIR=${PWD}/openshift-ansible/.git

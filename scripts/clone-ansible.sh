@@ -18,6 +18,7 @@ else
     git clean -fdx
     git checkout devel
     git pull --rebase
+    git fetch --tags --prune
     git branch | grep -v "devel" | xargs git branch -D || true
 fi
 export GIT_DIR=${PWD}/ansible/.git
