@@ -29,5 +29,6 @@ export OPT_ANSIBLE_TAG=v2.4.4.0-1
 ##################################################
 # Prep
 ##################################################
-#export OPT_OA_UPGRADE=True
-#export OPT_BUILD_VERSION=v3.7.22-1_2018-01-08.4
+#export OPT_PREP_UPGRADE=True
+#export OPT_PREP_BUILD_VERSION=v3.7.22-1_2018-01-08.4
+#export OPT_PREP_USE_RHN=True

@@ -13,7 +13,7 @@
       openshift-enterprise: atomic-openshift
     openshift_service_type: "{{ openshift_service_type_dict[openshift_deployment_type] }}"
     latest_version: '3.10'
-    build_version: "{{ lookup('env', 'OPT_BUILD_VERSION') | default('latest', true) }}"
+    build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
 
   tasks:
   - name: Set prep_version using openshift_release if defined
@@ -44,72 +44,21 @@
 
   - include_tasks: tasks/wait_for_hosts.yml
 
-  - name: Remove various repo files
-    file:
-      path: /etc/yum.repos.d/{{ item }}
-      state: absent
-    with_items:
-      - charlie.repo
-      - openshift-ansible-local-release.repo
-      - origin-local-release.repo
-      - oso-rhui-rhel-server-extras.repo
-      - oso-rhui-rhel-server-releases-optional.repo
-      - oso-rhui-rhel-server-releases.repo
-      - oso-rhui-rhel-server-rhscl.repo
-      - redhat.repo
-      - redhat-rhui.repo
-      - redhat-rhui-client-config.repo
-      - rhui-load-balancers.conf
+  - name: Make tmp repo directory
+    tempfile:
+      state: directory
+    register: repo_temp
 
-  - name: Remove rhel-7-server-ose-3.X-rpms repo files
-    file:
-      path: /etc/yum.repos.d/{{ item }}.repo
-      state: absent
-    when: prep_version not in item
-    with_items:
-      - rhel-7-server-ose-3.1-rpms
-      - rhel-7-server-ose-3.6-rpms
-      - rhel-7-server-ose-3.7-rpms
-      - rhel-7-server-ose-3.8-rpms
-      - rhel-7-server-ose-3.9-rpms
-      - rhel-7-server-ose-3.10-rpms
-      - rhel-7-server-ose-3.11-rpms
-      - rhel-7-server-ose-3.12-rpms
+  - name: Move all the repo files to tmp
+    shell: mv /etc/yum.repos.d/*.repo {{ repo_temp.path }}
 
-  - name: Create rhel-7-server-ose-X.X-rpms repo file
-    template:
-      src: rhel-7-server-ose-X.X-rpms.repo.j2
-      dest: /etc/yum.repos.d/rhel-7-server-ose-{{ target_version }}-rpms.repo
-    vars:
-      target_version: "{{ prep_version }}"
-    notify: refresh cache
-    when: openshift_service_type == 'atomic-openshift'
+  - name: Create OCP devel repos
+    include_tasks: tasks/devel_repos.yml
+    when: not (lookup('env', 'OPT_PREP_USE_RHN') | default(false) | bool)
 
-  - name: Create origin-repo repo file
-    get_url:
-      url: https://storage.googleapis.com/origin-ci-test/releases/openshift/origin/master/origin.repo
-      dest: /etc/yum.repos.d/origin-repo.repo
-    notify: refresh cache
-    when: openshift_service_type == 'origin'
-
-  # If this is a 3.7 to 3.9 upgrade, enable the 3.8 repo
-  - name: Create rhel-7-server-ose-3.8-rpms repo file
-    template:
-      src: rhel-7-server-ose-X.X-rpms.repo.j2
-      dest: /etc/yum.repos.d/rhel-7-server-ose-{{ target_version }}-rpms.repo
-    vars:
-      target_version: '3.8'
-      build_version: 'latest'
-    notify: refresh cache
-    when:
-      - prep_version == '3.9'
-      - lookup('env', 'OPT_OA_UPGRADE') | default(false) | bool
-
-  - name: Create rhel-7-server-rpms repo file
-    copy:
-      src: rhel-7-server-rpms.repo
-      dest: /etc/yum.repos.d/
-    notify: refresh cache
+  - name: Subscribe and enable OCP release repos
+    include_tasks: tasks/rhn_repos.yml
+    when: lookup('env', 'OPT_PREP_USE_RHN') | default(false) | bool
 
   # The token expires every 30 days so make sure it still works
   - name: Validate oreg_auth_password (~/openshift_creds.txt)
@@ -117,16 +66,17 @@
     delegate_to: localhost
     run_once: true
     changed_when: false
+    when: oreg_auth_password is defined
 
   - meta: flush_handlers
 
-  - name: Get available {{ openshift_service_type }} version(s)
+  - name: Get available RPM version(s)
     repoquery:
       name: "{{ openshift_service_type }}"
       ignore_excluders: true
       show_duplicates: true
     register: repoquery_results
 
-  - name: Display avilable {{ openshift_service_type }} RPM versions
+  - name: Display available RPM versions
     debug:
       var: repoquery_results.results.versions.available_versions_full

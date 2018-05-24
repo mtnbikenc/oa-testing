@@ -7,6 +7,8 @@ source build_options.sh
 
 ansible --version
 
+ansible-inventory -i inventory/hosts --list --yaml
+
 playbook_base='openshift-ansible/playbooks/'
 
 echo "### Running OpenShift-Ansible Deploy ###"

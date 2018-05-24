@@ -1,0 +1,35 @@
+---
+
+- name: Check subscription status
+  command: "subscription-manager version"
+  register: rh_subscribed
+  changed_when: False
+
+- name: Register host
+  redhat_subscription:
+    username: "{{ rhn_user }}"
+    password: "{{ rhn_pass }}"
+  register: rh_subscription
+  until: rh_subscription is succeeded
+  when:
+    - "'not registered' in rh_subscribed.stdout"
+
+- name: Determine if OpenShift Pool Already Attached
+  command: "subscription-manager list --consumed --pool-only"
+  register: openshift_pool_attached
+  changed_when: False
+  ignore_errors: yes
+
+- name: Attach to OpenShift Pool
+  command: subscription-manager subscribe --pool {{ rhn_pool }}
+  when: rhn_pool not in openshift_pool_attached.stdout
+
+- name: Disable all repositories
+  command: subscription-manager repos --disable="*"
+
+- name: Enable RHEL repositories
+  command: subscription-manager repos \
+               --enable="rhel-7-server-rpms" \
+               --enable="rhel-7-server-extras-rpms" \
+               --enable="rhel-7-fast-datapath-rpms" \
+               --enable="rhel-7-server-ose-{{ prep_version }}-rpms"

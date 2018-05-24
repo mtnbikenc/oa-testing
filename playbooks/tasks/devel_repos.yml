@@ -1,0 +1,36 @@
+---
+
+- name: Create rhel-7-server-ose-X.X-devel-rpms repo file
+  template:
+    src: rhel-7-server-ose-X.X-devel-rpms.repo.j2
+    dest: /etc/yum.repos.d/rhel-7-server-ose-{{ target_version }}-devel-rpms.repo
+  vars:
+    target_version: "{{ prep_version }}"
+  notify: refresh cache
+  when: openshift_service_type == 'atomic-openshift'
+
+- name: Create origin-repo repo file
+  get_url:
+    url: https://storage.googleapis.com/origin-ci-test/releases/openshift/origin/master/origin.repo
+    dest: /etc/yum.repos.d/origin-repo.repo
+  notify: refresh cache
+  when: openshift_service_type == 'origin'
+
+# If this is a 3.7 to 3.9 upgrade, enable the 3.8 repo
+- name: Create rhel-7-server-ose-3.8-rpms repo file
+  template:
+    src: rhel-7-server-ose-X.X-rpms.repo.j2
+    dest: /etc/yum.repos.d/rhel-7-server-ose-{{ target_version }}-rpms.repo
+  vars:
+    target_version: '3.8'
+    build_version: 'latest'
+  notify: refresh cache
+  when:
+    - prep_version == '3.9'
+    - lookup('env', 'OPT_PREP_UPGRADE') | default(false) | bool
+
+- name: Create rhel-7-server-rpms repo file
+  copy:
+    src: rhel-7-server-rpms.repo
+    dest: /etc/yum.repos.d/
+  notify: refresh cache

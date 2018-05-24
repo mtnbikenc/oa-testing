@@ -18,9 +18,6 @@ openshift_deployment_type: openshift-enterprise
 
 openshift_release: v3.10
 
-#openshift_use_system_containers: true
-#system_images_registry: registry.reg-aws.openshift.com:443
-
 #openshift_disable_check:
 #  - disk_availability
 #  - memory_availability
@@ -42,6 +39,10 @@ oreg_auth_user: "{{ ansible_user_id }}"
 oreg_auth_password: "{{ lookup('ini', 'oreg_auth_password section=default file=~/openshift-creds.txt') }}"
 oreg_auth_credentials_replace: true
 
+rhn_user: "{{ lookup('ini', 'rhn_user section=default file=~/openshift-creds.txt') }}"
+rhn_pass: "{{ lookup('ini', 'rhn_pass section=default file=~/openshift-creds.txt') }}"
+rhn_pool: "{{ lookup('ini', 'rhn_pool section=default file=~/openshift-creds.txt') }}"
+
 ### openshift-master additional_config.yml
 #openshift_install_examples: false  # default(true)
 #openshift_use_manageiq: false  # default(true)
@@ -53,7 +54,6 @@ openshift_cockpit_deployer_prefix: registry.reg-aws.openshift.com:443/openshift3
 ### Components
 ## OpenShift Web Console
 #openshift_web_console_install: false  # default(true)
-openshift_web_console_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-
 
 ## OpenShift Metrics
 #openshift_metrics_install_metrics: true  # default(false)
@@ -72,8 +72,6 @@ openshift_web_console_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-
 
 ## OpenShift Service Catalog
 #openshift_enable_service_catalog: false  # default(true)
-openshift_service_catalog_image_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-
-template_service_broker_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-
 
 ## OpenShift Management
 #openshift_management_install_management: true  # default(false)
@@ -92,6 +90,3 @@ template_service_broker_prefix: registry.reg-aws.openshift.com:443/openshift3/os
 #  POSTGRESQL_MEM_REQ: '1Gi'
 #  ANSIBLE_MEM_REQ: '512Mi'
 #  DATABASE_VOLUME_CAPACITY: '2Gi'
-
-## Ansible Service Broker
-ansible_service_broker_image_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-
