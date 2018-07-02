@@ -6,8 +6,8 @@ export OPT_CLUSTER_ID=${CURRENT_USER}-${PWD#*-}
 ##################################################
 # Launcher
 ##################################################
-export OPT_MASTER_COUNT=1
-export OPT_NODE_COUNT=1
+export OPT_MASTER_COUNT=3
+export OPT_NODE_COUNT=2
 export OPT_INSTANCE_TYPE=t2.medium
 #export OPT_INSTANCE_TYPE=c5.large
 
@@ -16,14 +16,14 @@ export OPT_INSTANCE_TYPE=t2.medium
 ##################################################
 #export OPT_ANSIBLE_PRNUM=XXXXX
 export OPT_ANSIBLE_TAG=v2.4.4.0-1
-#export OPT_ANSIBLE_TAG=v2.5.3
+#export OPT_ANSIBLE_TAG=v2.6.0
 #export OPT_ANSIBLE_TAG=<commit_hash>
 
 ##################################################
 # Clone OpenShift-Ansible
 ##################################################
 #export OPT_OA_PRNUM=XXXX
-#export OPT_OA_TAG=release-3.9
+#export OPT_OA_TAG=release-3.10
 #export OPT_OA_TAG=openshift-ansible-3.9.0-0.36.0
 
 ##################################################

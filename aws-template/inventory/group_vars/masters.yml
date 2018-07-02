@@ -1,4 +1,7 @@
 ---
+# 3.9
 openshift_node_labels:
-  region: infra  # 3.9
-  node-role.kubernetes.io/infra: 'true'  # 3.10
+  region: infra
+
+# 3.10
+openshift_node_group_name: "node-config-master-infra"
