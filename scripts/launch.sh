@@ -8,7 +8,7 @@ pushd inventory
 if [ ! -f aws.dat ]; then
     ../../../aos-ansible/bin/aws-launcher launch \
         -m ${OPT_MASTER_COUNT} \
-        -n ${OPT_NODE_COUNT} \
+        -n ${OPT_COMPUTE_COUNT} \
         -u ${OPT_CLUSTER_ID} \
         --instance-type=${OPT_INSTANCE_TYPE}
 else

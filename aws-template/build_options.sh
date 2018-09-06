@@ -7,7 +7,7 @@ export OPT_CLUSTER_ID=${CURRENT_USER}-${PWD#*-}
 # Launcher
 ##################################################
 export OPT_MASTER_COUNT=3
-export OPT_NODE_COUNT=2
+export OPT_COMPUTE_COUNT=2
 export OPT_INSTANCE_TYPE=t2.medium
 #export OPT_INSTANCE_TYPE=c5.large
 

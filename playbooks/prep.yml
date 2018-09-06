@@ -54,15 +54,15 @@
 
 # Uninstall and clean up docker installation because we don't use these images
 # Copying/Moving images during container_runtime role (for crio) takes a long
-  - name: Uninstall docker
-    package:
-      name: docker
-      state: absent
-
-  - name: Remove /var/lib/docker
-    file:
-      path: /var/lib/docker
-      state: absent
+#  - name: Uninstall docker
+#    package:
+#      name: docker
+#      state: absent
+#
+#  - name: Remove /var/lib/docker
+#    file:
+#      path: /var/lib/docker
+#      state: absent
 
   - name: Make tmp repo directory
     tempfile:
