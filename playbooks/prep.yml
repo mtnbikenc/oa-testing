@@ -16,6 +16,14 @@
     build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
 
   tasks:
+  # The token expires every 30 days so make sure it still works
+  - name: Validate oreg_auth_password (~/openshift_creds.txt)
+    command: oc login https://api.reg-aws.openshift.com --token={{ oreg_auth_password }}
+    delegate_to: localhost
+    run_once: true
+    changed_when: false
+    when: oreg_auth_password is defined
+
   - name: Set prep_version using openshift_release if defined
     set_fact:
       prep_version: "{{ openshift_release | regex_replace('^.(\\d+\\.\\d+).*', '\\1') }}"
@@ -44,6 +52,18 @@
 
   - include_tasks: tasks/wait_for_hosts.yml
 
+# Uninstall and clean up docker installation because we don't use these images
+# Copying/Moving images during container_runtime role (for crio) takes a long
+  - name: Uninstall docker
+    package:
+      name: docker
+      state: absent
+
+  - name: Remove /var/lib/docker
+    file:
+      path: /var/lib/docker
+      state: absent
+
   - name: Make tmp repo directory
     tempfile:
       state: directory
@@ -59,14 +79,6 @@
   - name: Subscribe and enable OCP release repos
     include_tasks: tasks/rhn_repos.yml
     when: lookup('env', 'OPT_PREP_USE_RHN') | default(false) | bool
-
-  # The token expires every 30 days so make sure it still works
-  - name: Validate oreg_auth_password (~/openshift_creds.txt)
-    command: oc login https://api.reg-aws.openshift.com --token={{ oreg_auth_password }}
-    delegate_to: localhost
-    run_once: true
-    changed_when: false
-    when: oreg_auth_password is defined
 
   - meta: flush_handlers
 

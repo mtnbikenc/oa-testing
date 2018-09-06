@@ -13,19 +13,15 @@ openshift_deployment_type: openshift-enterprise
 #openshift_pkg_version: -3.8.32-1.git.0.705c2a9.el7
 
 #openshift_release: "3.9"
-#openshift_image_tag: v3.9.0-0.42.0.0
-#openshift_pkg_version: -3.9.0-0.42.0.git.0.e604ce5.el7
+#openshift_image_tag: v3.9.31
+#openshift_pkg_version: -3.9.31
 
-openshift_release: "3.10"
+#openshift_release: "3.10"
+#openshift_image_tag: "v3.10.18"
+#openshift_image_tag: "v3.10.24"
+#openshift_console_install: false
 
-openshift_node_groups:
-- name: node-config-master-infra
-  labels:
-  - 'node-role.kubernetes.io/master=true'
-  - 'node-role.kubernetes.io/infra=true'
-- name: node-config-compute
-  labels:
-  - 'node-role.kubernetes.io/compute=true'
+openshift_release: "3.11"
 
 #openshift_disable_check:
 #  - package_version
@@ -61,9 +57,17 @@ rhn_pool: "{{ lookup('ini', 'rhn_pool section=default file=~/openshift-creds.txt
 #openshift_install_examples: false  # default(true)
 #openshift_use_manageiq: false  # default(true)
 #osm_use_cockpit: false  # default(true)
-openshift_cockpit_deployer_prefix: registry.reg-aws.openshift.com:443/openshift3/
+openshift_cockpit_deployer_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.9
 #openshift_use_flannel: true  # default(false)
 #openshift_use_openshift_sdn: false  # default(true)
+
+## OpenShift Cloud Provider Settings
+# This is needed for the proper install of Ansible Service Broker
+# Used by OpenShift Service Catalog and OpenShift Management
+openshift_cloudprovider_kind: aws
+openshift_clusterid: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
+openshift_cloudprovider_aws_access_key: "{{ lookup('ini', 'aws_access_key_id section=default file=~/.aws/credentials') }}"
+openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key section=default file=~/.aws/credentials') }}"
 
 ### Components
 ## OpenShift Web Console
@@ -103,11 +107,3 @@ openshift_cockpit_deployer_prefix: registry.reg-aws.openshift.com:443/openshift3
 #  POSTGRESQL_MEM_REQ: '1Gi'
 #  ANSIBLE_MEM_REQ: '512Mi'
 #  DATABASE_VOLUME_CAPACITY: '2Gi'
-
-## OpenShift Cloud Provider Settings
-# This is needed for the proper install of Ansible Service Broker
-# Used by OpenShift Service Catalog and OpenShift Management
-openshift_cloudprovider_kind: aws
-openshift_clusterid: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
-openshift_cloudprovider_aws_access_key: "{{ lookup('ini', 'aws_access_key_id section=default file=~/.aws/credentials') }}"
-openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key section=default file=~/.aws/credentials') }}"

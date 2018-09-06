@@ -15,8 +15,8 @@ export OPT_INSTANCE_TYPE=t2.medium
 # Clone Ansible
 ##################################################
 #export OPT_ANSIBLE_PRNUM=XXXXX
-export OPT_ANSIBLE_TAG=v2.4.4.0-1
-#export OPT_ANSIBLE_TAG=v2.6.0
+#export OPT_ANSIBLE_TAG=v2.4.4.0-1
+export OPT_ANSIBLE_TAG=v2.6.2
 #export OPT_ANSIBLE_TAG=<commit_hash>
 
 ##################################################
@@ -24,11 +24,11 @@ export OPT_ANSIBLE_TAG=v2.4.4.0-1
 ##################################################
 #export OPT_OA_PRNUM=XXXX
 #export OPT_OA_TAG=release-3.10
-#export OPT_OA_TAG=openshift-ansible-3.9.0-0.36.0
+#export OPT_OA_TAG=openshift-ansible-3.9.31-1
 
 ##################################################
 # Prep
 ##################################################
 #export OPT_PREP_UPGRADE=True
-#export OPT_PREP_BUILD_VERSION=v3.7.22-1_2018-01-08.4
+#export OPT_PREP_BUILD_VERSION=v3.9.31-1_2018-06-12.1
 #export OPT_PREP_USE_RHN=True

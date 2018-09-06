@@ -18,4 +18,4 @@ else
     playbook="${playbook_base}byo/config.yml"
 fi
 
-time ansible-playbook -i inventory/hosts ${playbook} -vv
+time ansible-playbook -i inventory/hosts ${playbook} -vvv

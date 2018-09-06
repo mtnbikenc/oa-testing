@@ -1,7 +1,13 @@
 ---
 # 3.9
-openshift_node_labels:
-  region: infra
+#openshift_node_labels:
+#  region: infra
+#  runtime: cri-o
 
 # 3.10
 openshift_node_group_name: "node-config-master-infra"
+
+#openshift_node_group_name: "node-config-master-infra-crio"
+#openshift_use_crio: true
+#openshift_use_crio_only: true
+#openshift_crio_enable_docker_gc: true

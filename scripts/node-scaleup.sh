@@ -9,4 +9,4 @@ ansible --version
 
 ansible-inventory -i inventory/hosts --list --yaml
 
-time ansible-playbook -i inventory/hosts openshift-ansible/playbooks/openshift-node/scaleup.yml -vv
+time ansible-playbook -i inventory/hosts openshift-ansible/playbooks/openshift-node/scaleup.yml -vvv
