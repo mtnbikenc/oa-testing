@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 CURRENT_USER=$(whoami)
-export OPT_CLUSTER_ID=${CURRENT_USER}-${PWD#*-}
+export OPT_CLUSTER_ID=${CURRENT_USER}-${PWD##*-}
 
 ##################################################
 # Launcher
