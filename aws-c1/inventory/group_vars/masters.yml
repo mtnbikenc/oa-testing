@@ -1,10 +1,11 @@
 ---
-# 3.9
+# <= 3.9
 #openshift_node_labels:
 #  region: infra
-#  runtime: cri-o
+##  runtime: cri-o
+#openshift_schedulable: true
 
-# 3.10
+# >= 3.10
 openshift_node_group_name: "node-config-master-infra"
 
 #openshift_node_group_name: "node-config-master-infra-crio"

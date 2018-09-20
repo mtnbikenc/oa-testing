@@ -23,7 +23,7 @@ export OPT_ANSIBLE_TAG=v2.6.2
 # Clone OpenShift-Ansible
 ##################################################
 #export OPT_OA_PRNUM=XXXX
-#export OPT_OA_TAG=release-3.10
+#export OPT_OA_TAG=release-3.11
 #export OPT_OA_TAG=openshift-ansible-3.9.31-1
 
 ##################################################
