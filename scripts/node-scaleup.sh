@@ -9,4 +9,13 @@ ansible --version
 
 ansible-inventory -i inventory/hosts --list --yaml
 
-time ansible-playbook -i inventory/hosts openshift-ansible/playbooks/openshift-node/scaleup.yml -vvv
+playbook_base='openshift-ansible/playbooks'
+
+echo "### Running OpenShift-Ansible Node Scaleup ###"
+if [[ -s "${playbook_base}/openshift-node/scaleup.yml" ]]; then
+    playbook="${playbook_base}/openshift-node/scaleup.yml"
+else
+    playbook="${playbook_base}/byo/openshift-node/scaleup.yml"
+fi
+
+time ansible-playbook -i inventory/hosts ${playbook} -vvv
