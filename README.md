@@ -16,8 +16,10 @@ Basic tasks performed:
 
 ## Prerequisites
 
-* aos-launcher cloned parallel to this repo
-* ~/.awscreds created (used by aos-launcher)
+* aos-ansible cloned parallel to this repo https://github.com/openshift/aos-ansible
+  * Provides aws-launcher
+* ~/.awscreds created (used by aws-launcher) https://github.com/openshift/vagrant-openshift#awsec2
+* ~/.aws/credentials file (Configuring AWS CLI https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html)
 * Packages: unbuffer, tee
 * ???
 
