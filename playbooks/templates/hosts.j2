@@ -1,0 +1,41 @@
+[OSEv3:children]
+masters
+nodes
+etcd
+new_masters
+new_nodes
+lb
+
+[masters]
+{% for host in master_list %}
+{{ host }}
+{% endfor %}
+
+[compute]
+{% for host in compute_list %}
+{{ host }}
+{% endfor %}
+
+[nodes:children]
+masters
+compute
+
+[etcd:children]
+masters
+
+[lb]
+{{ lb_host }}
+
+# Scale-up Groups
+[new_etcd]
+
+[new_masters:children]
+#scaleup_masters
+
+[new_nodes:children]
+#scaleup_masters
+#scaleup_compute
+
+[scaleup_masters]
+
+[scaleup_compute]

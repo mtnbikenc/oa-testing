@@ -6,19 +6,16 @@ This repo will automate the process of building complex OpenShift clusters for
 reproducing bugs and testing pull requests.
 
 Basic tasks performed:
-* Launch AWS instances using aos-launcher
+* Launch AWS instances
 * Clone and checkout a configurable version of Ansible for running playbooks
 * Clone and checkout a specific branch/tag/PR of OpenShift-Ansible
 * Prepare the AWS instances with proper repo files
 * Run the OpenShift-Ansible prerequisites.yml playbook
 * Run the OpenShift-Ansible deploy-cluster.yml playbook
-* Stop AWS instance and flag for termination, clean up logs
+* Stop AWS instances and flag for termination, clean up logs
 
 ## Prerequisites
 
-* aos-ansible cloned parallel to this repo https://github.com/openshift/aos-ansible
-  * Provides aws-launcher
-* ~/.awscreds created (used by aws-launcher) https://github.com/openshift/vagrant-openshift#awsec2
 * ~/.aws/credentials file (Configuring AWS CLI https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html)
 * Packages: unbuffer, tee
 * ???

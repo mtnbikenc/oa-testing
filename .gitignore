@@ -1,5 +1,6 @@
 ansible/
 *.log
 aws.dat
+aws.json
 hosts
 openshift-ansible/

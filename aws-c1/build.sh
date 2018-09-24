@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-./launch.sh
+./provision.sh
 ./clone-ansible.sh
 ./clone-openshift-ansible.sh
 ./prep.sh

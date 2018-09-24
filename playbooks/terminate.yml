@@ -1,0 +1,53 @@
+---
+
+- name: Terminate AWS instances
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    aws_region: us-east-1
+    cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
+    cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
+    aws_instance_file: "{{ cluster_dir }}/inventory/aws.json"
+
+  tasks:
+  - name: Check for AWS Instance File
+    stat:
+      path: "{{ aws_instance_file }}"
+    register: aws_instance_file_result
+
+  - when: not aws_instance_file_result.stat.exists
+    block:
+    - name: Missing AWS Instance File
+      debug:
+        msg: "Missing AWS Instance File: {{ aws_instance_file }}"
+    - meta: end_play
+
+  - name: Load AWS Instance File
+    set_fact:
+      aws_instances: "{{ lookup('file', aws_instance_file) | from_json }}"
+
+  - name: Stop AWS Instances
+    ec2:
+      region: "{{ aws_region }}"
+      instance_ids: "{{ aws_instances.instance_ids }}"
+      state: stopped
+
+  - name: Rename AWS Instances
+    ec2_tag:
+      region: "{{ aws_region }}"
+      resource: "{{ item }}"
+      tags:
+        Name: "{{ cluster_id }}-terminate"
+    with_items: "{{ aws_instances.instance_ids }}"
+
+  - name: Remove AWS Instance File
+    file:
+      path: "{{ aws_instance_file }}"
+      state: absent
+
+  - name: Remove Ansible Inventory File
+    file:
+      path: "{{ cluster_dir }}/inventory/hosts"
+      state: absent

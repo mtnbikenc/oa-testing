@@ -1,0 +1,93 @@
+---
+
+- name: Provision AWS instances
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    aws_region: us-east-1
+    cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
+    cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
+    aws_instance_file: "{{ cluster_dir }}/inventory/aws.json"
+    aws_instance_type: "{{ lookup('env', 'OPT_INSTANCE_TYPE') | default('t2.medium') }}"
+    master_count: "{{ lookup('env', 'OPT_MASTER_COUNT') | default(1)}}"
+    compute_count: "{{ lookup('env', 'OPT_COMPUTE_COUNT') | default(0)}}"
+    lb_count: "{{ ( 1 if master_count | int > 1 else 0 )}}"
+    cluster_count: "{{ master_count | int + compute_count | int + lb_count | int }}"
+    master_list: []
+    compute_list: []
+    lb_host: ''
+
+  tasks:
+  - name: Check for AWS Instance File
+    stat:
+      path: "{{ aws_instance_file }}"
+    register: aws_instance_file_result
+
+  - when: aws_instance_file_result.stat.exists
+    block:
+    - name: Existing AWS Instance File
+      debug:
+        msg: "Skipping provision, existing AWS Instance file found."
+    - meta: end_play
+
+  - name: Find the most recently created AMI
+    ec2_ami_facts:
+      region: "{{ aws_region }}"
+      filters:
+        "tag:operating_system": "rhel"
+        "tag:image_stage": "build"
+        "tag:ready": "yes"
+    register: ec2_ami_facts_results
+
+  - name: Print AMIs
+    debug:
+      var: ec2_ami_facts_results
+
+  - name: Set the openshift_aws_ami
+    set_fact:
+      aws_ami: "{{ ec2_ami_facts_results.images[-1].image_id }}"
+
+  - name: Create AWS Instances
+    ec2:
+      region: "{{ aws_region }}"
+      key_name: "libra"
+      instance_type: "{{ aws_instance_type }}"
+      count: "{{ cluster_count }}"
+      group_id:
+        - sg-7e73221a  # default
+        - sg-e1760186  # public-http
+      vpc_subnet_id: "subnet-cf57c596"  # devenv-subnet-1
+      image: "{{ aws_ami }}"
+      wait: yes
+      instance_tags:
+        Name: "{{ cluster_id }}"
+    register: aws_instances
+
+  - name: Save created AWS Instances
+    copy:
+      dest: "{{ aws_instance_file }}"
+      content: "{{ aws_instances | to_nice_json }}"
+
+  - name: Create list of masters
+    set_fact:
+      master_list: "{{ master_list + [ item.public_dns_name ] }}"
+    with_items:
+    - "{{ aws_instances.instances[:master_count|int] }}"
+
+  - name: Create list of compute
+    set_fact:
+      compute_list: "{{ compute_list + [ item.public_dns_name ] }}"
+    with_items:
+    - "{{ aws_instances.instances[master_count|int:master_count|int+compute_count|int] }}"
+
+  - name: Create lb_host
+    set_fact:
+      lb_host: "{{ aws_instances.instances[-1].public_dns_name }}"
+    when: master_count | int > 1
+
+  - name: Create Ansible Inventory File
+    template:
+      src: hosts.j2
+      dest: "{{ cluster_dir }}/inventory/hosts"

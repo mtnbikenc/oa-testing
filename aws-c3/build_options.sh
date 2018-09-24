@@ -4,8 +4,9 @@ CURRENT_USER=$(whoami)
 export OPT_CLUSTER_ID=${CURRENT_USER}-${PWD##*-}
 
 ##################################################
-# Launcher
+# Provision/Terminate
 ##################################################
+export OPT_CLUSTER_DIR=${PWD}
 export OPT_MASTER_COUNT=3
 export OPT_COMPUTE_COUNT=2
 export OPT_INSTANCE_TYPE=t2.medium

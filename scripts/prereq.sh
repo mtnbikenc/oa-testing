@@ -13,5 +13,5 @@ playbook_base='openshift-ansible/playbooks/'
 
 echo "### Running OpenShift-Ansible Prerequisites"
 if [[ -s "${playbook_base}/prerequisites.yml" ]]; then
-    ansible-playbook -i inventory/hosts ${playbook_base}/prerequisites.yml -vvv
+    time ansible-playbook -i inventory/hosts ${playbook_base}/prerequisites.yml -vvv
 fi

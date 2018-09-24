@@ -3,4 +3,4 @@ set -euxo pipefail
 
 source build_options.sh
 
-ansible-playbook -i inventory/hosts ../playbooks/prep.yml -vv
+time ansible-playbook -i inventory/hosts ../playbooks/prep.yml -vv
