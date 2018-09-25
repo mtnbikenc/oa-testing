@@ -61,7 +61,7 @@
       vpc_subnet_id: "subnet-cf57c596"  # devenv-subnet-1
       image: "{{ aws_ami }}"
       wait: yes
-      instance_tags: "{{ {'kubernetes.io/cluster/' ~ cluster_id: cluster_id, 'Name': cluster_id} }}"
+      instance_tags: "{{ {'kubernetes.io/cluster/' ~ cluster_id: 'owned', 'Name': cluster_id} }}"
 
     register: aws_instances
 
