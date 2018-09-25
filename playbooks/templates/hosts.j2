@@ -8,12 +8,12 @@ lb
 
 [masters]
 {% for host in master_list %}
-{{ host }}
+{{ host.public_dns_name }}  # {{ host.private_dns_name }}
 {% endfor %}
 
 [compute]
 {% for host in compute_list %}
-{{ host }}
+{{ host.public_dns_name }}  # {{ host.private_dns_name }}
 {% endfor %}
 
 [nodes:children]
@@ -24,7 +24,7 @@ compute
 masters
 
 [lb]
-{{ lb_host }}
+{{ lb_host.public_dns_name }}  # {{ lb_host.private_dns_name }}
 
 # Scale-up Groups
 [new_etcd]

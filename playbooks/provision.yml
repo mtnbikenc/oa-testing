@@ -72,19 +72,19 @@
 
   - name: Create list of masters
     set_fact:
-      master_list: "{{ master_list + [ item.public_dns_name ] }}"
+      master_list: "{{ master_list + [ item ] }}"
     with_items:
     - "{{ aws_instances.instances[:master_count|int] }}"
 
   - name: Create list of compute
     set_fact:
-      compute_list: "{{ compute_list + [ item.public_dns_name ] }}"
+      compute_list: "{{ compute_list + [ item ] }}"
     with_items:
     - "{{ aws_instances.instances[master_count|int:master_count|int+compute_count|int] }}"
 
   - name: Create lb_host
     set_fact:
-      lb_host: "{{ aws_instances.instances[-1].public_dns_name }}"
+      lb_host: "{{ aws_instances.instances[-1] }}"
     when: master_count | int > 1
 
   - name: Create Ansible Inventory File
