@@ -41,10 +41,6 @@
         "tag:ready": "yes"
     register: ec2_ami_facts_results
 
-  - name: Print AMIs
-    debug:
-      var: ec2_ami_facts_results
-
   - name: Set the openshift_aws_ami
     set_fact:
       aws_ami: "{{ ec2_ami_facts_results.images[-1].image_id }}"
