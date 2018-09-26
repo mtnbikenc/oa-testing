@@ -42,12 +42,12 @@
         Name: "{{ cluster_id }}-terminate"
     with_items: "{{ aws_instances.instance_ids }}"
 
-  - name: Remove AWS Instance File
-    file:
-      path: "{{ aws_instance_file }}"
-      state: absent
-
   - name: Remove Ansible Inventory File
     file:
       path: "{{ cluster_dir }}/inventory/hosts"
+      state: absent
+
+  - name: Remove AWS Instance File
+    file:
+      path: "{{ aws_instance_file }}"
       state: absent
