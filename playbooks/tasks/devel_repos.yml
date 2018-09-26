@@ -1,9 +1,9 @@
 ---
 
-- name: Create rhel-7-server-ose-<target_version>-<build_version>-rpms repo file
+- name: Create rhel-7-server-ose-rpms repo file
   template:
     src: rhel-7-server-ose-X.X-devel-rpms.repo.j2
-    dest: /etc/yum.repos.d/rhel-7-server-ose-{{ target_version }}-{{ build_version }}-rpms.repo
+    dest: /etc/yum.repos.d/rhel-7-server-ose-rpms.repo
   vars:
     target_version: "{{ prep_version }}"
   notify: refresh cache

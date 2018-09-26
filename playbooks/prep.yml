@@ -52,21 +52,8 @@
 
   - include_tasks: tasks/wait_for_hosts.yml
 
-# Uninstall and clean up docker installation because we don't use these images
-# Copying/Moving images during container_runtime role (for crio) takes a long
-#  - name: Uninstall docker
-#    package:
-#      name: docker
-#      state: absent
-#
-#  - name: Remove /var/lib/docker
-#    file:
-#      path: /var/lib/docker
-#      state: absent
-
-# Using the charlie.repo file to determine if prep.yml has already been run on hosts
-# If it has, don't continue to wipe out the repo files if run again.
-  - name: Check status of master certificates
+  # Using the charlie.repo file to determine if prep.yml has already been run on hosts
+  - name: Check status of charlie.repo file
     stat:
       path: /etc/yum.repos.d/charlie.repo
       get_checksum: false
@@ -74,15 +61,29 @@
       get_mime: false
     register: charlie_stat_result
 
-  - name: Make tmp repo directory
-    tempfile:
-      state: directory
-    register: repo_temp
-    when: charlie_stat_result.stat.exists
+  - when: charlie_stat_result.stat.exists
+    block:
 
-  - name: Move all the repo files to tmp
-    shell: mv /etc/yum.repos.d/*.repo {{ repo_temp.path }}
-    when: charlie_stat_result.stat.exists
+    # Uninstall and clean up docker installation because we don't use these images
+    # Copying/Moving images during container_runtime role (for crio) takes a long
+    - name: Uninstall docker
+      package:
+        name: docker
+        state: absent
+
+    - name: Remove /var/lib/docker
+      file:
+        path: /var/lib/docker
+        state: absent
+
+    # Wipe out the repo files
+    - name: Make tmp repo directory
+      tempfile:
+        state: directory
+      register: repo_temp
+
+    - name: Move all the repo files to tmp
+      shell: mv /etc/yum.repos.d/*.repo {{ repo_temp.path }}
 
   - name: Create OCP devel repos
     include_tasks: tasks/devel_repos.yml
