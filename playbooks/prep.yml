@@ -17,7 +17,7 @@
 
   tasks:
   # The token expires every 30 days so make sure it still works
-  - name: Validate oreg_auth_password (~/openshift_creds.txt)
+  - name: Validate oreg_auth_password (~/openshift-creds.txt)
     command: oc login https://api.reg-aws.openshift.com --token={{ oreg_auth_password }}
     delegate_to: localhost
     run_once: true
