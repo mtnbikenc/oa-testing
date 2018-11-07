@@ -5,9 +5,9 @@ source ansible/hacking/env-setup
 
 source build_options.sh
 
-ansible --version
+${PYTHON} $(which ansible) --version
 
-ansible-inventory -i inventory/hosts --list --yaml
+${PYTHON} $(which ansible-inventory) -i inventory/hosts --list --yaml
 
 playbook_base='openshift-ansible/playbooks'
 
@@ -18,5 +18,5 @@ else
     playbook="${playbook_base}/byo/openshift-etcd/scaleup.yml"
 fi
 
-time ansible-playbook -i inventory/hosts ${playbook} -vvv
+time ${PYTHON} $(which ansible-playbook) -i inventory/hosts ${playbook} -vvv
 

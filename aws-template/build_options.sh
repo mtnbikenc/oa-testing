@@ -2,6 +2,7 @@
 
 CURRENT_USER=$(whoami)
 export OPT_CLUSTER_ID=${CURRENT_USER}-${PWD##*-}
+export PYTHON=$(which python3)
 
 ##################################################
 # Provision/Terminate
@@ -24,7 +25,7 @@ export OPT_ANSIBLE_TAG=v2.6.2
 # Clone OpenShift-Ansible
 ##################################################
 #export OPT_OA_PRNUM=XXXX
-#export OPT_OA_TAG=release-3.11
+export OPT_OA_TAG=release-3.11
 #export OPT_OA_TAG=openshift-ansible-3.9.31-1
 
 ##################################################
