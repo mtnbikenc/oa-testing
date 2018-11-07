@@ -17,7 +17,7 @@ Basic tasks performed:
 ## Prerequisites
 
 * ~/.aws/credentials file (Configuring AWS CLI https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html)
-* Packages: unbuffer, tee
+* Packages: expect (for unbuffer), tee, libselinux-python
 * ???
 
 ## Building A Cluster
