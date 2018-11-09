@@ -13,10 +13,12 @@
     aws_instance_type: "{{ lookup('env', 'OPT_INSTANCE_TYPE') | default('t2.medium') }}"
     master_count: "{{ lookup('env', 'OPT_MASTER_COUNT') | default(1)}}"
     compute_count: "{{ lookup('env', 'OPT_COMPUTE_COUNT') | default(0)}}"
+    infra_count: "{{ lookup('env', 'OPT_INFRA_COUNT') | default(0)}}"
     lb_count: "{{ ( 1 if master_count | int > 1 else 0 )}}"
-    cluster_count: "{{ master_count | int + compute_count | int + lb_count | int }}"
+    cluster_count: "{{ master_count | int + compute_count | int + infra_count | int + lb_count | int }}"
     master_list: []
     compute_list: []
+    infra_list: []
     lb_host: ''
 
   tasks:
@@ -77,6 +79,12 @@
       compute_list: "{{ compute_list + [ item ] }}"
     with_items:
     - "{{ aws_instances.instances[master_count|int:master_count|int+compute_count|int] }}"
+
+  - name: Create list of infra
+    set_fact:
+      infra_list: "{{ infra_list + [ item ] }}"
+    with_items:
+    - "{{ aws_instances.instances[master_count|int+compute_count|int:master_count|int+compute_count|int+infra_count|int] }}"
 
   - name: Create lb_host
     set_fact:

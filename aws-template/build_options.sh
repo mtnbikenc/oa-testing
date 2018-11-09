@@ -10,6 +10,7 @@ export PYTHON=$(which python3)
 export OPT_CLUSTER_DIR=${PWD}
 export OPT_MASTER_COUNT=3
 export OPT_COMPUTE_COUNT=2
+export OPT_INFRA_COUNT=0
 export OPT_INSTANCE_TYPE=t2.medium
 #export OPT_INSTANCE_TYPE=c5.large
 

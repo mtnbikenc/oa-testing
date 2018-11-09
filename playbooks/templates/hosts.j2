@@ -17,9 +17,15 @@ lb
 {{ host.public_dns_name }}  # {{ host.private_dns_name }}
 {% endfor %}
 
+[infra]
+{% for host in infra_list %}
+{{ host.public_dns_name }}  # {{ host.private_dns_name }}
+{% endfor %}
+
 [nodes:children]
 masters
 compute
+infra
 
 [etcd:children]
 masters
