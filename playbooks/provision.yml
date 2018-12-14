@@ -43,7 +43,7 @@
         "tag:ready": "yes"
     register: ec2_ami_facts_results
 
-  - name: Set the openshift_aws_ami
+  - name: Set aws_ami to most recent image
     set_fact:
       aws_ami: "{{ ec2_ami_facts_results.images[-1].image_id }}"
 

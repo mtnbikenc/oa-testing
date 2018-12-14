@@ -31,7 +31,9 @@ infra
 masters
 
 [lb]
+{% if lb_host %}
 {{ lb_host.public_dns_name }}  # {{ lb_host.private_dns_name }}
+{% endif %}
 
 # Scale-up Groups
 [new_etcd]
