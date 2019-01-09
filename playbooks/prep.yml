@@ -1,7 +1,6 @@
 ---
 - name: Prep Playbook
   hosts: all
-  gather_facts: false
   any_errors_fatal: true
 
   handlers:
@@ -50,48 +49,25 @@
     when:
       - prep_version is not defined
 
-  - include_tasks: tasks/wait_for_hosts.yml
+  - name: Wait for hosts to come online
+    include_tasks: tasks/wait_for_hosts.yml
 
-  # Using the charlie.repo file to determine if prep.yml has already been run on hosts
-  - name: Check status of charlie.repo file
-    stat:
-      path: /etc/yum.repos.d/charlie.repo
-      get_checksum: false
-      get_attributes: false
-      get_mime: false
-    register: charlie_stat_result
-
-  - when: charlie_stat_result.stat.exists
-    block:
-
-    # Uninstall and clean up docker installation because we don't use these images
-    # Copying/Moving images during container_runtime role (for crio) takes a long
-    - name: Uninstall docker
-      package:
-        name: docker
-        state: absent
-
-    - name: Remove /var/lib/docker
-      file:
-        path: /var/lib/docker
-        state: absent
-
-    # Wipe out the repo files
-    - name: Make tmp repo directory
-      tempfile:
-        state: directory
-      register: repo_temp
-
-    - name: Move all the repo files to tmp
-      shell: mv /etc/yum.repos.d/*.repo {{ repo_temp.path }}
+  # Needed this for the bare public CentOS images
+  - name: Install NetworkManager
+    include_tasks: tasks/network_manager.yml
+    when: ansible_distribution == "CentOS"
 
   - name: Create OCP devel repos
     include_tasks: tasks/devel_repos.yml
-    when: not (lookup('env', 'OPT_PREP_USE_RHN') | default(false) | bool)
+    when:
+      - not (lookup('env', 'OPT_PREP_USE_RHN') | default(false) | bool)
+      - openshift_deployment_type != 'origin'
 
   - name: Subscribe and enable OCP release repos
     include_tasks: tasks/rhn_repos.yml
-    when: lookup('env', 'OPT_PREP_USE_RHN') | default(false) | bool
+    when:
+      - lookup('env', 'OPT_PREP_USE_RHN') | default(false) | bool
+      - openshift_deployment_type != 'origin'
 
   - meta: flush_handlers
 
