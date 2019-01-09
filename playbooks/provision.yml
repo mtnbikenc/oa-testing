@@ -20,6 +20,17 @@
     compute_list: []
     infra_list: []
     lb_host: ''
+    aws_volumes:
+      - device_name: /dev/sda1
+        volume_size: 50
+        volume_type: gp2
+        delete_on_termination: true
+    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel') }}"
+    platform_type_name_dict:
+      rhel: "qe-rhel-7-release"
+      centos: "CentOS Linux 7 x86_64 HVM EBS*"
+    platform_type_name: "{{ platform_type_name_dict[platform_type] }}"
+
 
   tasks:
   - name: Check for AWS Instance File
@@ -38,9 +49,7 @@
     ec2_ami_facts:
       region: "{{ aws_region }}"
       filters:
-        "tag:operating_system": "rhel"
-        "tag:image_stage": "build"
-        "tag:ready": "yes"
+        name: "{{ platform_type_name }}"
     register: ec2_ami_facts_results
 
   - name: Set aws_ami to most recent image
@@ -58,6 +67,7 @@
         - sg-e1760186  # public-http
       vpc_subnet_id: "subnet-cf57c596"  # devenv-subnet-1
       image: "{{ aws_ami }}"
+      volumes: "{{ aws_volumes }}"
       wait: yes
       instance_tags: "{{ {'kubernetes.io/cluster/' ~ cluster_id: 'owned', 'Name': cluster_id} }}"
 
