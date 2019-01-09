@@ -4,8 +4,8 @@ baseurl = https://mirror.openshift.com/libra/rhui-rhel-server-7-releases/
 failovermethod = priority
 gpgcheck = 0
 gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta https://mirror.openshift.com/libra/keys/RPM-GPG-KEY-redhat-openshifthosted
-sslclientcert = /var/lib/yum/client-cert.pem
-sslclientkey = /var/lib/yum/client-key.pem
+sslclientcert = /var/lib/yum/ops-mirror.pem
+sslclientkey = /var/lib/yum/ops-mirror.pem
 sslverify = 0
 enabled = 1
 
@@ -15,8 +15,8 @@ baseurl = https://mirror.openshift.com/libra/rhui-rhel-server-7-releases-optiona
 failovermethod = priority
 gpgcheck = 0
 gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta https://mirror.openshift.com/libra/keys/RPM-GPG-KEY-redhat-openshifthosted
-sslclientcert = /var/lib/yum/client-cert.pem
-sslclientkey = /var/lib/yum/client-key.pem
+sslclientcert = /var/lib/yum/ops-mirror.pem
+sslclientkey = /var/lib/yum/ops-mirror.pem
 sslverify = 0
 enabled = 1
 
@@ -26,8 +26,19 @@ baseurl = https://mirror.openshift.com/libra/rhui-rhel-server-7-extras/
 failovermethod = priority
 gpgcheck = 0
 gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta https://mirror.openshift.com/libra/keys/RPM-GPG-KEY-redhat-openshifthosted
-sslclientcert = /var/lib/yum/client-cert.pem
-sslclientkey = /var/lib/yum/client-key.pem
+sslclientcert = /var/lib/yum/ops-mirror.pem
+sslclientkey = /var/lib/yum/ops-mirror.pem
+sslverify = 0
+enabled = 1
+
+[rhel-7-server-ansible-2.6-rpms]
+name = Red Hat Enterprise Linux 7 Server - Ansible 2.6 (RPMs)
+baseurl = https://mirror.openshift.com/enterprise/rhel/rhel-7-server-ansible-2.6-rpms/
+failovermethod = priority
+gpgcheck = 0
+gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta https://mirror.openshift.com/libra/keys/RPM-GPG-KEY-redhat-openshifthosted
+sslclientcert = /var/lib/yum/ops-mirror.pem
+sslclientkey = /var/lib/yum/ops-mirror.pem
 sslverify = 0
 enabled = 1
 
@@ -37,7 +48,7 @@ baseurl = https://mirror.openshift.com/enterprise/rhel/rhel-7-fast-datapath-rpms
 failovermethod = priority
 gpgcheck = 0
 gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta https://mirror.openshift.com/libra/keys/RPM-GPG-KEY-redhat-openshifthosted
-sslclientcert = /var/lib/yum/client-cert.pem
-sslclientkey = /var/lib/yum/client-key.pem
+sslclientcert = /var/lib/yum/ops-mirror.pem
+sslclientkey = /var/lib/yum/ops-mirror.pem
 sslverify = 0
 enabled = 1

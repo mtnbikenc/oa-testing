@@ -18,6 +18,7 @@ Basic tasks performed:
 
 * ~/.aws/credentials file (Configuring AWS CLI https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html)
 * Packages: expect (for unbuffer), tee, libselinux-python
+* OpenShift shared secrets repo cloned parallel to this repo
 * ???
 
 ## Building A Cluster

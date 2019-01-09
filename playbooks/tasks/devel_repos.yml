@@ -1,5 +1,10 @@
 ---
 
+- name: Copy Atomic OpenShift yum repository certificate and key
+  copy:
+    src: "{{ playbook_dir }}/../../shared-secrets/mirror/ops-mirror.pem"
+    dest: /var/lib/yum/
+
 - name: Create rhel-7-server-ose-rpms repo file
   template:
     src: rhel-7-server-ose-X.X-devel-rpms.repo.j2
