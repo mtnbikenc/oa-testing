@@ -6,7 +6,7 @@
 #openshift_schedulable: true
 
 # >= 3.10
-openshift_node_group_name: "node-config-master-infra"
+openshift_node_group_name: "node-config-master"
 
 #openshift_node_group_name: "node-config-master-infra-crio"
 #openshift_use_crio: true
