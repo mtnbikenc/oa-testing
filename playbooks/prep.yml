@@ -2,6 +2,7 @@
 - name: Prep Playbook
   hosts: all
   any_errors_fatal: true
+  gather_facts: false  # Don't gather at start because hosts may not be online
 
   handlers:
   - import_tasks: handlers/main.yml
@@ -51,6 +52,9 @@
 
   - name: Wait for hosts to come online
     include_tasks: tasks/wait_for_hosts.yml
+
+  - name: Gather Ansible facts after hosts are online
+    setup:
 
   # Needed this for the bare public CentOS images
   - name: Install NetworkManager
