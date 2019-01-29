@@ -3,7 +3,7 @@ set -euxo pipefail
 
 source build_options.sh
 
-time ${PYTHON} $(which ansible-playbook) -i localhost, ../playbooks/terminate.yml -vvv -e ansible_python_interpreter=${PYTHON}
+time ansible-playbook -i localhost, ../playbooks/terminate.yml -vvv
 
 rm -f ansible.log
 rm -f logs/*.log
