@@ -8,9 +8,9 @@ sed -i 's/^openshift_aws_scaleup_ami.*/openshift_aws_scaleup_ami: "ami-0f2b4fc90
 # Update username for public CentOS image
 sed -i 's/ec2-user/centos/g' openshift-ansible/inventory/dynamic/aws/group_vars/all/vars.yaml
 # Copy libra.pem file to dynamic injected inventory
-cp /home/rteague/git/shared-secrets/aws/libra.pem openshift-ansible/inventory/dynamic/injected/ssh-privatekey
+cp $(pwd)/../../shared-secrets/aws/libra.pem openshift-ansible/inventory/dynamic/injected/ssh-privatekey
 # Copy ops-mirror.pem file to dynamic injected inventory
-cp /home/rteague/git/shared-secrets/mirror/ops-mirror.pem openshift-ansible/inventory/dynamic/injected
+cp $(pwd)/../../shared-secrets/mirror/ops-mirror.pem openshift-ansible/inventory/dynamic/injected
 # Create host_vars directory for localhost vars file
 mkdir -p openshift-ansible/inventory/dynamic/aws/host_vars
 # Create localhost vars file to disable ansible_become
