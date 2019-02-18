@@ -7,8 +7,6 @@ curl -o openshift-ansible/inventory/dynamic/aws/group_vars/all/vars.yaml https:/
 sed -i 's/^openshift_aws_scaleup_ami.*/openshift_aws_scaleup_ami: "ami-0f2b4fc905b0bd1f1"  #us-east-2/' openshift-ansible/inventory/dynamic/aws/group_vars/all/vars.yaml
 # Update username for public CentOS image
 sed -i 's/ec2-user/centos/g' openshift-ansible/inventory/dynamic/aws/group_vars/all/vars.yaml
-# Update the IdentityFile to local libra.pem
-sed -i 's/\/opt\/app-root\/src\/.ssh\/id_rsa/\/home\/rteague\/git\/shared-secrets\/aws\/libra.pem/g' openshift-ansible/test/aws/create_machineset.yml
 # Copy libra.pem file to dynamic injected inventory
 cp /home/rteague/git/shared-secrets/aws/libra.pem openshift-ansible/inventory/dynamic/injected/ssh-privatekey
 # Copy ops-mirror.pem file to dynamic injected inventory
