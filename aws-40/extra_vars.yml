@@ -1,0 +1,18 @@
+---
+openshift_test_repo: https://rpms.svc.ci.openshift.org/openshift-origin-v4.0/
+kubeconfig_path: /home/rteague/git/clusters/aws-40/assets/auth/kubeconfig
+openshift_install_config_path: /home/rteague/git/clusters/aws-40/install-config.yaml
+ansible_private_key_file: /home/rteague/.ssh/libra.pem
+
+
+
+
+
+
+
+#ansible_user: centos
+#kubeconfig_path: /home/rteague/git/clusters/aws-40/assets/auth/kubeconfig
+#openshift_aws_scaleup_key: libra
+#openshift_aws_scaleup_ami: ami-9c0638f9  # us-east-2 'CentOS Linux 7 x86_64 HVM EBS*'
+#
+#openshift_install_config_path: /home/rteague/git/clusters/aws-40/install-config.yaml

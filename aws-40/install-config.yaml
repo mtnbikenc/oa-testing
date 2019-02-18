@@ -1,0 +1,10 @@
+apiVersion: v1beta2
+baseDomain: devcluster.openshift.com
+metadata:
+  name: rteague
+platform:
+  aws:
+    region: us-east-2
+pullSecret: 'REDACTED'
+sshKey: |
+  REDACTED
