@@ -33,5 +33,5 @@ export OPT_ANSIBLE_TAG=v2.7.7
 ##################################################
 # Clone OpenShift-Ansible
 ##################################################
-export OPT_OA_PRNUM=11203
-#export OPT_OA_TAG=devel-40
+#export OPT_OA_PRNUM=XXXXX
+export OPT_OA_TAG=devel-40
