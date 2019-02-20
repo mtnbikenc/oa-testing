@@ -9,4 +9,6 @@ rm -f ./assets/.openshift_install*
 rm -f ./assets/metadata.json
 rm -f ./assets/terraform.tfstate
 
+rm -f extra_vars.yml
+
 rm -f logs/*.log
