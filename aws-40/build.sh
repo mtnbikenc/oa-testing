@@ -1,24 +1,12 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-pushd ${GOPATH}/src/github.com/openshift/installer
+./compile-installer.sh
 
-git checkout master
-git pull --rebase
-git fetch --all --tags --prune
-# Checkout the latest tag
-#git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
+source build_options.sh
 
-hack/build.sh
+ansible-playbook -i localhost, create-install-assets.yml
 
-popd
-
-cp ${GOPATH}/src/github.com/openshift/installer/bin/openshift-install ./bin/
-
-rm -Rf assets/* assets/.openshift*
-
-cp ./install-config.yaml ./assets/
-
-export AWS_PROFILE="openshift-dev"
+export OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE=registry.svc.ci.openshift.org/openshift/origin-release:v4.0
 
 bin/openshift-install create cluster --dir=./assets --log-level=debug

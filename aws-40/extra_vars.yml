@@ -1,5 +1,0 @@
----
-openshift_test_repo: https://rpms.svc.ci.openshift.org/openshift-origin-v4.0/
-kubeconfig_path: /home/rteague/git/clusters/aws-40/assets/auth/kubeconfig
-ansible_private_key_file: /home/rteague/.ssh/libra.pem
-openshift_aws_scaleup_key_path: '{{ ansible_private_key_file }}'
