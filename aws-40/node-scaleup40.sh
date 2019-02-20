@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
+source build_options.sh
+
 # Prepare scale up files and vars
 ansible-playbook -i localhost, prep-scaleup.yml -vvv
 
