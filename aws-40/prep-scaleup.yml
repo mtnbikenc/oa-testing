@@ -13,7 +13,8 @@
       centos: "CentOS Linux 7 x86_64 HVM EBS*"
     platform_type_name: "{{ platform_type_name_dict[platform_type] }}"
     kubeconfig_path: "{{ playbook_dir }}/assets/auth/kubeconfig"
-    private_key: "{{ lookup('env', 'OPT_PRIVATE_KEY') }}"
+    pull_secret_path: "{{ lookup('env', 'OPT_PULL_SECRET') }}"
+    private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') }}"
 
   tasks:
 
@@ -52,7 +53,7 @@
 
   - name: Copy private key file to dynamic injected inventory
     get_url:
-      url: file://{{ private_key }}
+      url: file://{{ private_key_path }}
       dest: openshift-ansible/inventory/dynamic/injected/ssh-privatekey
 
   - name: Copy ops-mirror.pem file to dynamic injected inventory
