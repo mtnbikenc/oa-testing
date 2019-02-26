@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-export KUBECONFIG=/home/rteague/git/oa-testing/aws-40/assets/auth/kubeconfig
+export KUBECONFIG=${PWD}/assets/auth/kubeconfig
 
 # Uncordon CoreOS node
 oc adm uncordon $(oc get nodes -o wide | grep worker | grep CoreOS | awk '{print $1}')
