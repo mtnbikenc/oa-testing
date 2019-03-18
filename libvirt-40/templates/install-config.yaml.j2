@@ -1,0 +1,19 @@
+apiVersion: v1beta3
+baseDomain: tt.testing
+compute:
+- name: worker
+  replicas: 1
+controlPlane:
+  name: master
+  replicas: 1
+metadata:
+  name: {{ cluster_id }}
+networking:
+  machineCIDR: 192.168.126.0/24
+platform:
+  libvirt:
+    network:
+      if: tt0
+pullSecret: '{{ pull_secret['content'] | b64decode | from_json | to_json(separators=(',',':')) }}'
+sshKey: |
+  {{ keygen_output.stdout }}
