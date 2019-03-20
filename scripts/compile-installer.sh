@@ -9,7 +9,7 @@ git fetch --all --tags --prune
 # Checkout the latest tag
 git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
 git describe
-git log --oneline -5
+git --no-pager log --oneline -5
 
 hack/build.sh
 

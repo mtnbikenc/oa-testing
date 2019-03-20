@@ -36,4 +36,4 @@ if [ -v OPT_ANSIBLE_TAG ]; then
 fi
 
 git describe
-git log --oneline -5
+git --no-pager log --oneline -5
