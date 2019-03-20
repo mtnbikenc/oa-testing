@@ -7,7 +7,7 @@ source build_options.sh
 ansible-playbook -i localhost, prep-scaleup.yml -vvv
 
 # Delete the scaleup tasks that remove the CoreOS worker machinesets and nodes
-sed -i '/- name: remove existing machinesets/,$d' openshift-ansible/test/aws/scaleup.yml
+sed -i '/- name: Remove CoreOS nodes/,$d' openshift-ansible/test/aws/scaleup.yml
 
 # Run the scaleup
 SCRIPT_TYPE=$(basename -s .sh "$0")
