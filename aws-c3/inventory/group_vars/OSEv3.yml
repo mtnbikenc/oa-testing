@@ -39,7 +39,7 @@ oreg_auth_user: "{{ ansible_user_id }}"
 # https://console.reg-aws.openshift.com/console/command-line
 # Put your token in the file referenced below
 oreg_auth_password: "{{ lookup('ini', 'oreg_auth_password section=default file=~/openshift-creds.txt') }}"
-oreg_auth_credentials_replace: true
+#oreg_auth_credentials_replace: true
 
 rhn_user: "{{ lookup('ini', 'rhn_user section=default file=~/openshift-creds.txt') }}"
 rhn_pass: "{{ lookup('ini', 'rhn_pass section=default file=~/openshift-creds.txt') }}"
@@ -53,7 +53,7 @@ rhn_pool: "{{ lookup('ini', 'rhn_pool section=default file=~/openshift-creds.txt
 #openshift_install_examples: false  # default(true)
 #openshift_use_manageiq: false  # default(true)
 #osm_use_cockpit: false  # default(true)
-openshift_cockpit_deployer_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.9
+#openshift_cockpit_deployer_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.9
 #openshift_use_flannel: true  # default(false)
 #openshift_use_openshift_sdn: false  # default(true)
 
