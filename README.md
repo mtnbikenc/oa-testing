@@ -17,9 +17,18 @@ Basic tasks performed:
 ## Prerequisites
 
 * ~/.aws/credentials file (Configuring AWS CLI https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html)
+  * A default profile must exist
 * Packages: expect (for unbuffer), tee, libselinux-python
 * OpenShift shared secrets repo cloned parallel to this repo
-* ???
+* Create ~/openshift-creds.txt with the format below
+
+```
+[default]
+oreg_auth_password=
+rhn_user=
+rhn_pass=
+rhn_pool=
+```
 
 ## Building A Cluster
 
