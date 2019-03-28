@@ -14,12 +14,7 @@ export OPT_PRIVATE_KEY=${PWD}/../../shared-secrets/aws/libra.pem
 # Provision/Terminate
 ##################################################
 export OPT_CLUSTER_DIR=${PWD}
-export OPT_MASTER_COUNT=0
-export OPT_COMPUTE_COUNT=1
-export OPT_INFRA_COUNT=0
 export OPT_PLATFORM_TYPE=centos        # rhel/centos
-export OPT_INSTANCE_TYPE=t2.medium
-#export OPT_INSTANCE_TYPE=c5.large
 export AWS_PROFILE="openshift-dev"
 export AWS_DEFAULT_REGION=us-east-2
 
