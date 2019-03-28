@@ -7,7 +7,8 @@ git checkout master
 git pull --rebase
 git fetch --all --tags --prune
 # Checkout the latest tag
-git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
+# 0.15.0 is broken, using master
+#git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
 git describe
 git --no-pager log --oneline -5
 
