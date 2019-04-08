@@ -1,0 +1,106 @@
+---
+ansible_user: ec2-user
+#ansible_user: centos
+ansible_become: yes
+openshift_deployment_type: openshift-enterprise
+#openshift_deployment_type: origin
+
+#openshift_release: "3.7"
+#openshift_image_tag: v3.7.29-1
+#openshift_pkg_version: -3.7.29-1.git.0.0e0f138.el7
+
+#openshift_release: "3.9"
+#openshift_image_tag: v3.9.31
+#openshift_pkg_version: -3.9.31
+
+#openshift_release: "3.10"
+#openshift_image_tag: "v3.10.18"
+#openshift_pkg_version: -3.10.18
+
+openshift_release: "3.10"
+
+#openshift_disable_check:
+#  - package_version
+#  - disk_availability
+#  - memory_availability
+#  - docker_storage
+#  - docker_image_availability
+openshift_check_min_host_disk_gb: 10
+openshift_check_min_host_memory_gb: 3
+
+openshift_portal_net: "172.30.0.0/16"
+
+openshift_docker_additional_registries:
+  - registry.reg-aws.openshift.com:443
+
+oreg_url: registry.reg-aws.openshift.com:443/openshift3/ose-${component}:${version}
+oreg_auth_user: "{{ ansible_user_id }}"
+# Get your token from the 'oc login' line at
+# https://console.reg-aws.openshift.com/console/command-line
+# Put your token in the file referenced below
+oreg_auth_password: "{{ lookup('ini', 'oreg_auth_password section=default file=~/openshift-creds.txt') }}"
+#oreg_auth_credentials_replace: true
+
+rhn_user: "{{ lookup('ini', 'rhn_user section=default file=~/openshift-creds.txt') }}"
+rhn_pass: "{{ lookup('ini', 'rhn_pass section=default file=~/openshift-creds.txt') }}"
+rhn_pool: "{{ lookup('ini', 'rhn_pool section=default file=~/openshift-creds.txt') }}"
+
+## 3.9 System Containers
+#openshift_use_system_containers: true
+#system_images_registry: registry.reg-aws.openshift.com:443
+
+### openshift-master additional_config.yml
+#openshift_install_examples: false  # default(true)
+#openshift_use_manageiq: false  # default(true)
+#osm_use_cockpit: false  # default(true)
+#openshift_cockpit_deployer_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.9
+#openshift_use_flannel: true  # default(false)
+#openshift_use_openshift_sdn: false  # default(true)
+
+## OpenShift Cloud Provider Settings
+# This is needed for the proper install of Ansible Service Broker
+# Used by OpenShift Service Catalog and OpenShift Management
+openshift_cloudprovider_kind: aws
+openshift_clusterid: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
+openshift_cloudprovider_aws_access_key: "{{ lookup('ini', 'aws_access_key_id section=default file=~/.aws/credentials') }}"
+openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key section=default file=~/.aws/credentials') }}"
+
+### Components
+## OpenShift Web Console
+#openshift_web_console_install: false  # default(true)
+#openshift_web_console_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-  # 3.9
+
+## OpenShift Metrics
+#openshift_metrics_install_metrics: true  # default(false)
+#openshift_metrics_image_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.9
+
+## OpenShift Logging
+#openshift_logging_install_logging: true  # default(false)
+#openshift_logging_image_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.9
+#openshift_logging_elasticsearch_cpu_request: 200m
+#openshift_logging_elasticsearch_cpu_limit: 200m
+#openshift_logging_elasticsearch_memory_limit: 1Gi
+
+## OpenShift Prometheus
+#openshift_hosted_prometheus_deploy: true  # default(false)
+#openshift_prometheus_image_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.9
+
+## OpenShift Service Catalog
+#openshift_enable_service_catalog: false  # default(true)
+#openshift_service_catalog_image_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-  # 3.9
+#template_service_broker_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-  # 3.9
+#template_service_broker_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.7
+#ansible_service_broker_image_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-  # 3.9
+
+## OpenShift Management
+#openshift_management_install_management: true  # default(false)
+#openshift_management_install_beta: true
+#openshift_management_app_template: cfme-template
+#openshift_management_storage_class: cloudprovider
+#
+#openshift_management_template_parameters:
+#  APPLICATION_MEM_REQ: '3000Mi'
+#  APPLICATION_VOLUME_CAPACITY: '2Gi'
+#  POSTGRESQL_MEM_REQ: '1Gi'
+#  ANSIBLE_MEM_REQ: '512Mi'
+#  DATABASE_VOLUME_CAPACITY: '2Gi'

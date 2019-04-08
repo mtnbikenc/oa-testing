@@ -1,0 +1,2 @@
+---
+openshift_node_group_name: "node-config-compute"
