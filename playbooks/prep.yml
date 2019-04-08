@@ -14,6 +14,7 @@
     openshift_service_type: "{{ openshift_service_type_dict[openshift_deployment_type] }}"
     latest_version: '3.11'
     build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
+    ops_mirror_path: "{{ lookup('env', 'OPT_OPS_MIRROR_PATH') | default('{{ playbook_dir }}/../../shared-secrets/mirror/ops-mirror.pem') }}"
 
   tasks:
   # The token expires every 30 days so make sure it still works
