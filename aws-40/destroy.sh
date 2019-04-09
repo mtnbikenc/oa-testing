@@ -9,7 +9,7 @@ rm -f ./assets/.openshift_install*
 rm -f ./assets/metadata.json
 rm -f ./assets/terraform.tfstate
 
-rm -f ./bin/openshift-install
+rm -fv bin/o* bin/sha*
 
 rm -f extra_vars.yml
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-./compile-installer.sh
+#./compile-installer.sh
+./extract-installer.sh
 ./create-cluster.sh
 ./clone-ansible.sh
 ./clone-openshift-ansible.sh
