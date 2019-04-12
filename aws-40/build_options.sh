@@ -18,6 +18,14 @@ export OPT_PLATFORM_TYPE=centos        # rhel/centos
 export AWS_PROFILE="openshift-dev"
 export AWS_DEFAULT_REGION=us-east-2
 
+#export OPT_REGISTRY=registry.svc.ci.openshift.org/ocp/release
+#export OPT_PAYLOAD=v4.0                # This points to the latest accepted nightly
+#export OPT_PAYLOAD=4.0.0-0.ci-YYYY-MM-DD-HHMMSS
+
+export OPT_REGISTRY=registry.svc.ci.openshift.org/openshift/origin-release
+export OPT_PAYLOAD=v4.0                # This points to the latest accepted alpha
+#export OPT_PAYLOAD=4.0.0-0.alpha-YYYY-MM-DD-HHMMSS
+
 ##################################################
 # Clone Ansible
 ##################################################
