@@ -1,0 +1,35 @@
+---
+- name: Define libvirt domain
+  virt:
+    command: define
+    name: "{{ ansible_host }}"
+    xml: '{{ lookup("template", "virt.xml.j2") }}'
+
+- name: Query libvirt domain
+  virt:
+    command: get_xml
+    name: "{{ ansible_host }}"
+  register: virt_result
+
+- name: Set mac_address fact
+  set_fact:
+    libvirt_mac: "{{ virt_result.get_xml | default('') | regex_findall(\"mac address='(.+)'\") }}"
+
+- name: Add dhcp entry to libvirt net
+  virt_net:
+    command: modify
+    name: "{{ libvirt_cluster_name }}"
+    xml: "<host mac='{{ libvirt_mac.0 }}' name='{{ ansible_host | regex_replace('\\.(.*)') }}' ip='{{ libvirt_ip }}'/>"
+  when:
+    - libvirt_mac is defined
+    - libvirt_ip is defined
+
+- name: Create libvirt root volume
+  shell: |
+    virsh --connect qemu:///system vol-create-as default {{ ansible_host }}.qcow2 $(stat -Lc%s {{ guest_image }})
+    virsh --connect qemu:///system vol-upload --pool default {{ ansible_host }}.qcow2 {{ guest_image }}
+
+- name: Create libvirt iso/ign volume
+  shell: |
+    virsh --connect qemu:///system vol-create-as default {{ ansible_host }}.ign $(stat -Lc%s {{ iso_image }})
+    virsh --connect qemu:///system vol-upload --pool default {{ ansible_host }}.ign {{ iso_image }}

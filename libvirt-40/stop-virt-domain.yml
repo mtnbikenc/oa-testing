@@ -1,0 +1,16 @@
+---
+- name: Stop virt domain
+  hosts: all
+  connection: local
+  gather_facts: false
+  tasks:
+  - name: Check virt domain status
+    virt:
+      name: "{{ ansible_host }}"
+      command: status
+    register: virt_status
+  - name: Stop virt domain
+    virt:
+      name: "{{ ansible_host }}"
+      state: shutdown
+    when: virt_status.status != 'shutdown'

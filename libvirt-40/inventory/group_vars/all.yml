@@ -1,0 +1,5 @@
+---
+openshift_kubeconfig_path: './assets/auth/kubeconfig'
+guest_image: 'rhcos.qcow2'
+libvirt_cluster_name: "{{ lookup('ENV', 'OPT_CLUSTER_ID') | default('test') }}"
+libvirt_base_domain: "{{ default('tt.testing') }}"

@@ -1,0 +1,4 @@
+---
+iso_image: './assets/worker.ign'
+libvirt_cpu: 2
+libvirt_mem: 4194304

@@ -1,0 +1,16 @@
+---
+- name: Start virt domain
+  hosts: all
+  connection: local
+  gather_facts: false
+  tasks:
+  - name: Check virt domain status
+    virt:
+      name: "{{ ansible_host }}"
+      command: status
+    register: virt_status
+  - name: Start virt domain
+    virt:
+      name: "{{ ansible_host }}"
+      state: running
+    when: virt_status.status != 'running'

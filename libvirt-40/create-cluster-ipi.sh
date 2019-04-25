@@ -3,7 +3,7 @@ set -euxo pipefail
 
 source build_options.sh
 
-ansible-playbook -i localhost, create-install-assets.yml
+ansible-playbook -i localhost, create-install-assets.yml -e 'platform="Libvirt"'
 
 bin/openshift-install create manifests --dir=./assets --log-level=debug
 

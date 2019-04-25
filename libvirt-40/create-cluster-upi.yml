@@ -1,0 +1,22 @@
+---
+- name: Create virt network
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+  - name: Define virt_net
+    virt_net:
+      command: define
+      name: "{{ libvirt_cluster_name }}"
+      xml: "{{ lookup('template', 'virt_net.xml.j2') }}"
+  - name: Start virt_net
+    virt_net:
+      name: "{{ libvirt_cluster_name }}"
+      state: active
+
+- name: Create cluster host
+  hosts: bootstrap, masters, workers_rhcos
+  connection: local
+  gather_facts: false
+  tasks:
+    - import_tasks: 'create-virt-domain.yml'

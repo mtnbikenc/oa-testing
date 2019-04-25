@@ -1,0 +1,27 @@
+<network>
+  <name>{{ libvirt_cluster_name }}</name>
+  <forward mode='nat'>
+    <nat>
+      <port start='1024' end='65535'/>
+    </nat>
+  </forward>
+  <bridge name='tt0' stp='on' delay='0'/>
+  <domain name='{{ libvirt_cluster_name }}.tt.testing' localOnly='yes'/>
+  <dns>
+    <srv service='etcd-server-ssl' protocol='tcp' domain='{{ libvirt_cluster_name }}.tt.testing' target='etcd-0.{{ libvirt_cluster_name }}.tt.testing' port='2380' weight='10'/>
+    <host ip='192.168.126.10'>
+      <hostname>api.{{ libvirt_cluster_name }}.tt.testing</hostname>
+      <hostname>api-int.{{ libvirt_cluster_name }}.tt.testing</hostname>
+    </host>
+    <host ip='192.168.126.11'>
+      <hostname>api.{{ libvirt_cluster_name }}.tt.testing</hostname>
+      <hostname>api-int.{{ libvirt_cluster_name }}.tt.testing</hostname>
+      <hostname>etcd-0.{{ libvirt_cluster_name }}.tt.testing</hostname>
+    </host>
+  </dns>
+  <ip family='ipv4' address='192.168.126.1' prefix='24'>
+    <dhcp>
+        <range start='192.168.126.60' end='192.168.126.254'/>
+    </dhcp>
+  </ip>
+</network>
