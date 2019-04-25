@@ -1,0 +1,22 @@
+[bootstrap]
+user-40-bootstrap.user-40.tt.testing		libvirt_ip='192.168.126.10'
+
+[masters]
+user-40-master-0.user-40.tt.testing		libvirt_ip='192.168.126.11'
+
+[workers_rhcos]
+user-40-worker-0.user-40.tt.testing		libvirt_ip='192.168.126.51'
+
+# For upgrade playbooks.
+[workers:children]
+new_workers
+
+# For scaleup playbooks.
+[new_workers]
+#user-40-worker-centos-1.user-40.tt.testing	libvirt_ip='192.168.126.61'
+
+[new_workers:vars]
+guest_image='~/images/CentOS-7-x86_64-GenericCloud.qcow2'
+ansible_ssh_private_key_file='../../shared-secrets/aws/libra.pem'
+ansible_ssh_user='cloud-user'
+ansible_become=yes

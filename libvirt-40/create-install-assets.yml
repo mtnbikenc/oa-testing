@@ -29,8 +29,8 @@
       ssh-keygen -f {{ private_key_path }} -y
     register: keygen_output
 
+  ## install-config.yaml
   - name: Create install-config.yaml
     template:
       src: install-config.yaml.j2
       dest: assets/install-config.yaml
-  ## install-config.yaml

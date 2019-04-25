@@ -3,6 +3,7 @@
 CURRENT_USER=$(id -un)
 export OPT_CLUSTER_ID=${CURRENT_USER}-${PWD##*-}
 export PYTHON=$(which python3)
+export KUBECONFIG=${PWD}/assets/auth/kubeconfig
 
 ##################################################
 # Secrets

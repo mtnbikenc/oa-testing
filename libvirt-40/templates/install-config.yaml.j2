@@ -8,12 +8,17 @@ controlPlane:
   replicas: 1
 metadata:
   name: {{ cluster_id }}
+{% if platform | default('none') == 'Libvirt' %}
 networking:
   machineCIDR: 192.168.126.0/24
 platform:
   libvirt:
     network:
       if: tt0
+{% else %}
+platform:
+  none: {}
+{% endif %}
 pullSecret: '{{ pull_secret['content'] | b64decode | from_json | to_json(separators=(',',':')) }}'
 sshKey: |
   {{ keygen_output.stdout }}
