@@ -8,10 +8,10 @@
   vars:
     aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('centos') }}"
-    platform_type_name_dict:
-      rhel: "qe-rhel-7-release"
-      centos: "CentOS Linux 7 x86_64 HVM EBS*"
-    platform_type_name: "{{ platform_type_name_dict[platform_type] }}"
+    platform_type_filter_dict:
+      centos:
+        product-code: "aw0evgkw8e5c1q413zgy5pjce"
+    platform_type_filter: "{{ platform_type_filter_dict[platform_type] }}"
     kubeconfig_path: "{{ playbook_dir }}/assets/auth/kubeconfig"
     pull_secret_path: "{{ lookup('env', 'OPT_PULL_SECRET') }}"
     private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') }}"
@@ -21,8 +21,7 @@
   - name: Retreive platform AMI list
     ec2_ami_facts:
       region: "{{ aws_region }}"
-      filters:
-        name: "{{ platform_type_name }}"
+      filters: "{{ platform_type_filter }}"
     register: ec2_ami_facts_results
 
   - name: Set aws_ami to most recent image
