@@ -10,13 +10,23 @@
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('centos') }}"
     platform_type_filter_dict:
       centos:
-        product-code: "aw0evgkw8e5c1q413zgy5pjce"
+        product-code: "aw0evgkw8e5c1q413zgy5pjce"  # CentOS-7 x86_64
     platform_type_filter: "{{ platform_type_filter_dict[platform_type] }}"
     kubeconfig_path: "{{ playbook_dir }}/assets/auth/kubeconfig"
     pull_secret_path: "{{ lookup('env', 'OPT_PULL_SECRET') }}"
     private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') }}"
 
   tasks:
+
+  # https://wiki.centos.org/Cloud/AWS
+  # Example aws cli command for finding the latest CentOS 7 AMI
+  #    aws ec2 describe-images \
+  #    --profile=openshift-dev \
+  #    --region us-east-2 \
+  #    --filters \
+  #        Name=product-code,Values=aw0evgkw8e5c1q413zgy5pjce \
+  #    --query 'sort_by(Images, &CreationDate)[-1].[CreationDate, ImageId]' \
+  #    --output text
 
   - name: Retreive platform AMI list
     ec2_ami_facts:
