@@ -1,0 +1,12 @@
+---
+- name: Grow partition
+  command: "growpart /dev/xvda 3"
+
+- name: Physical Volume resize
+  command: "pvresize /dev/xvda3"
+
+- name: Logical Volume resize
+  command: "lvresize -l +100%FREE /dev/mapper/rhel-root"
+
+- name: File system resize
+  command: "xfs_growfs /dev/mapper/rhel-root"
