@@ -9,6 +9,6 @@ ${PYTHON} $(which ansible) --version
 
 pushd openshift-ansible
 
-time ${PYTHON} $(which ansible-playbook) -i ../inventory playbooks/upgrade.yml -e @../extra_vars.yml -vvv
+time ${PYTHON} $(which ansible-playbook) -i ../inventory/hosts playbooks/upgrade.yml -vvv
 
 popd

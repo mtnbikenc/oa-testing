@@ -28,3 +28,5 @@ if [[ ! -z "${CENTOS_MACHINE_SETS}" ]]
 then
     oc delete machinesets -n openshift-machine-api ${CENTOS_MACHINE_SETS}
 fi
+
+rm -fv inventory/hosts

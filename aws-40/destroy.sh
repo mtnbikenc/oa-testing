@@ -11,6 +11,6 @@ rm -f ./assets/terraform.tfstate
 
 rm -fv bin/o* bin/sha*
 
-rm -f extra_vars.yml
-
 rm -f logs/*.log
+
+rm -fv inventory/hosts

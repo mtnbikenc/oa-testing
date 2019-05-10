@@ -1,0 +1,63 @@
+---
+- name: Create AWS instances using machine sets
+  hosts: localhost
+  connection: local
+
+  vars:
+    aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
+    cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
+    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('centos') }}"
+    platform_type_filter_dict:
+      centos:
+        product-code: "aw0evgkw8e5c1q413zgy5pjce"  # CentOS-7 x86_64
+    platform_type_filter: "{{ platform_type_filter_dict[platform_type] }}"
+    kubeconfig_path: "{{ cluster_dir }}/assets/auth/kubeconfig"
+    pull_secret_path: "{{ lookup('env', 'OPT_PULL_SECRET') }}"
+    private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') | realpath }}"
+    new_workers_list: []
+
+  tasks:
+  - name: Retreive platform AMI list
+    ec2_ami_facts:
+      region: "{{ aws_region }}"
+      filters: "{{ platform_type_filter }}"
+    register: ec2_ami_facts_results
+
+  - name: Set aws_ami to most recent image
+    set_fact:
+      aws_ami: "{{ ec2_ami_facts_results.images[-1].image_id }}"
+
+  - import_tasks: tasks/get_machinesets.yml
+
+  - include_tasks: tasks/create_machineset.yml
+    loop: "{{ machineset.resources }}"
+    when:
+    - item.status.replicas is defined
+    - item.status.replicas != 0
+
+  - name: Get ssh bastion address
+    k8s_facts:
+      kubeconfig: "{{ kubeconfig_path }}"
+      namespace: byoh-ssh-bastion
+      kind: Service
+      name: ssh-bastion
+    register: k8s_result
+    until:
+    - k8s_result.resources is defined
+    - k8s_result.resources | length > 0
+    - k8s_result.resources[0].status is defined
+    - k8s_result.resources[0].status.loadBalancer is defined
+    - k8s_result.resources[0].status.loadBalancer.ingress is defined
+    - k8s_result.resources[0].status.loadBalancer.ingress | length > 0
+    - k8s_result.resources[0].status.loadBalancer.ingress[0].hostname is defined
+    retries: 36
+    delay: 5
+
+  - name: Set fact ssh_bastion
+    set_fact:
+      ssh_bastion: "{{ k8s_result.resources[0].status.loadBalancer.ingress[0].hostname }}"
+
+  - name: Create Ansible Inventory File
+    template:
+      src: hosts40.j2
+      dest: "{{ cluster_dir }}/inventory/hosts"
