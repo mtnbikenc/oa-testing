@@ -26,10 +26,12 @@
         volume_type: gp2
         delete_on_termination: true
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel') }}"
-    platform_type_name_dict:
-      rhel: "qe-rhel-7-release"
-      centos: "CentOS Linux 7 x86_64 HVM EBS*"
-    platform_type_name: "{{ platform_type_name_dict[platform_type] }}"
+    platform_type_filter_dict:
+      rhel:
+        name: "qe-rhel-7-release"
+      centos:
+        product-code: "aw0evgkw8e5c1q413zgy5pjce"  # CentOS-7 x86_64
+    platform_type_filter: "{{ platform_type_filter_dict[platform_type] }}"
 
 
   tasks:
@@ -48,8 +50,7 @@
   - name: Find the most recently created AMI
     ec2_ami_facts:
       region: "{{ aws_region }}"
-      filters:
-        name: "{{ platform_type_name }}"
+      filters: "{{ platform_type_filter }}"
     register: ec2_ami_facts_results
 
   - name: Set aws_ami to most recent image
