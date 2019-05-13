@@ -1,0 +1,40 @@
+---
+- name: Prep Playbook
+  hosts: all
+  any_errors_fatal: true
+  gather_facts: false
+
+  handlers:
+  - import_tasks: handlers/main.yml
+
+  vars:
+    latest_version: '4.1'
+    build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
+    ops_mirror_path: "{{ lookup('env', 'OPT_OPS_MIRROR_PATH') | default(playbook_dir ~ '/../../shared-secrets/mirror/ops-mirror.pem', true) }}"
+
+  tasks:
+  - name: Set prep_version to latest if no version provided
+    set_fact:
+      prep_version: "{{ latest_version }}"
+    when:
+    - prep_version is not defined
+
+  - name: Wait for host connection to ensure SSH has started
+    wait_for_connection:
+      timeout: 600
+
+  - name: Copy Atomic OpenShift yum repository certificate and key
+    copy:
+      src: "{{ ops_mirror_path }}"
+      dest: /var/lib/yum/
+
+  - name: Create rhel-7-server-ose-rpms repo file
+    template:
+      src: rhel-7-server-ose-X.X-devel-rpms.repo.j2
+      dest: /etc/yum.repos.d/rhel-7-server-ose-rpms.repo
+    vars:
+      target_version: "{{ prep_version }}"
+    notify: refresh cache
+
+  - meta: flush_handlers
+

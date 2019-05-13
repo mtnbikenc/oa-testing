@@ -7,8 +7,10 @@ source build_options.sh
 
 ${PYTHON} $(which ansible) --version
 
+${PYTHON} $(which ansible-inventory) -i inventory/hosts --list --yaml
+
 pushd openshift-ansible
 
-time ${PYTHON} $(which ansible-playbook) -i inventory/dynamic/aws/ test/aws/scaleup.yml -e @../extra_vars.yml -vvv
+time ${PYTHON} $(which ansible-playbook) -i ../inventory/hosts playbooks/scaleup.yml -vvv
 
 popd
