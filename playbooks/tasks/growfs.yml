@@ -1,12 +1,24 @@
 ---
 - name: Grow partition
   command: "growpart /dev/xvda 3"
+  register: growpart
+  ignore_errors: true
 
 - name: Physical Volume resize
   command: "pvresize /dev/xvda3"
+  register: pvresize
+  when: growpart is succeeded
 
 - name: Logical Volume resize
   command: "lvresize -l +100%FREE /dev/mapper/rhel-root"
+  register: lvresize
+  when:
+  - growpart is succeeded
+  - pvresize is succeeded
 
 - name: File system resize
   command: "xfs_growfs /dev/mapper/rhel-root"
+  when:
+  - growpart is succeeded
+  - pvresize is succeeded
+  - lvresize is succeeded
