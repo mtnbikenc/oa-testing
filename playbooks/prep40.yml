@@ -36,5 +36,11 @@
       target_version: "{{ prep_version }}"
     notify: refresh cache
 
+  - name: Create rhel-7-server-rpms repo file
+    copy:
+      src: rhel-7-server-rpms.repo
+      dest: /etc/yum.repos.d/
+    notify: refresh cache
+
   - meta: flush_handlers
 

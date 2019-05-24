@@ -5,7 +5,7 @@ openshift_pull_secret_path={{ pull_secret_path }}
 [new_workers:vars]
 # oc get service -n byoh-ssh-bastion ssh-bastion -o jsonpath="{.status.loadBalancer.ingress[0].hostname}"
 ansible_ssh_common_args="-o ProxyCommand=\"ssh -o IdentityFile={{ private_key_path }} -o StrictHostKeyChecking=no -W %h:%p -q core@{{ ssh_bastion }}\""
-ansible_user=centos
+ansible_user={{ platform_type_dict[platform_type].username }}
 ansible_become=True
 
 [new_workers]

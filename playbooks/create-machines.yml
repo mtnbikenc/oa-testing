@@ -7,10 +7,17 @@
     aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('centos') }}"
-    platform_type_filter_dict:
+    platform_type_dict:
       centos:
-        product-code: "aw0evgkw8e5c1q413zgy5pjce"  # CentOS-7 x86_64
-    platform_type_filter: "{{ platform_type_filter_dict[platform_type] }}"
+        username: "centos"
+        owners: "679593333241"
+        filters:
+          product-code: "aw0evgkw8e5c1q413zgy5pjce"  # CentOS-7 x86_64
+      rhel:
+        username: "ec2-user"
+        owners: "309956199498"  # Red Hat, Inc.
+        filters:
+          name: "RHEL-7.6*Hourly*"
     kubeconfig_path: "{{ cluster_dir }}/assets/auth/kubeconfig"
     pull_secret_path: "{{ lookup('env', 'OPT_PULL_SECRET') }}"
     private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') | realpath }}"
@@ -20,7 +27,8 @@
   - name: Retreive platform AMI list
     ec2_ami_facts:
       region: "{{ aws_region }}"
-      filters: "{{ platform_type_filter }}"
+      owners: "{{ platform_type_dict[platform_type].owners }}"
+      filters: "{{ platform_type_dict[platform_type].filters }}"
     register: ec2_ami_facts_results
 
   - name: Set aws_ami to most recent image
