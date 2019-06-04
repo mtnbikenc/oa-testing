@@ -19,12 +19,12 @@ export AWS_PROFILE="openshift-dev"
 export AWS_DEFAULT_REGION=us-east-2
 
 #export OPT_REGISTRY=registry.svc.ci.openshift.org/ocp/release
-#export OPT_PAYLOAD=4.1                # This points to the latest accepted nightly
-#export OPT_PAYLOAD=4.1.0-0.nightly-YYYY-MM-DD-HHMMSS
+#export OPT_PAYLOAD=4.2                # This points to the latest accepted nightly
+#export OPT_PAYLOAD=4.2.0-0.nightly-YYYY-MM-DD-HHMMSS
 
 export OPT_REGISTRY=registry.svc.ci.openshift.org/origin/release
-export OPT_PAYLOAD=4.1                # This points to the latest accepted build
-#export OPT_PAYLOAD=4.1.0-0.okd-YYYY-MM-DD-HHMMSS
+export OPT_PAYLOAD=4.2                # This points to the latest accepted build
+#export OPT_PAYLOAD=4.2.0-0.okd-YYYY-MM-DD-HHMMSS
 
 ##################################################
 # Clone Ansible

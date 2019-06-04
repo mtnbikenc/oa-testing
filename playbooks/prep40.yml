@@ -8,11 +8,18 @@
   - import_tasks: handlers/main.yml
 
   vars:
-    latest_version: '4.1'
+    latest_version: '4.2'
+    payload_version: "{{ lookup('env', 'OPT_PAYLOAD') }}"
     build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
     ops_mirror_path: "{{ lookup('env', 'OPT_OPS_MIRROR_PATH') | default(playbook_dir ~ '/../../shared-secrets/mirror/ops-mirror.pem', true) }}"
 
   tasks:
+  - name: Set prep_version to payload version
+    set_fact:
+      prep_version: "{{ payload_version | regex_search('^\\d+\\.\\d+') }}"
+    when:
+    - payload_version is defined
+
   - name: Set prep_version to latest if no version provided
     set_fact:
       prep_version: "{{ latest_version }}"
