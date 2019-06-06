@@ -2,7 +2,7 @@
 
 CURRENT_USER=$(id -un)
 export OPT_CLUSTER_ID=${CURRENT_USER}-${PWD##*-}
-export PYTHON=$(which python3)
+export PYTHON=$(which python3 || which python)
 
 ##################################################
 # Provision/Terminate
@@ -13,7 +13,7 @@ export OPT_COMPUTE_COUNT=1
 export OPT_INFRA_COUNT=2
 export OPT_PLATFORM_TYPE=rhel        # rhel/centos
 export OPT_INSTANCE_TYPE=t2.medium
-#export OPT_INSTANCE_TYPE=c5.large
+#export OPT_INSTANCE_TYPE=m4.xlarge
 
 ##################################################
 # Clone Ansible
