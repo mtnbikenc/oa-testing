@@ -26,11 +26,19 @@
         volume_type: gp2
         delete_on_termination: true
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel') }}"
-    platform_type_filter_dict:
-      rhel:
-        name: "qe-rhel-7-release"
+    platform_type_dict:
       centos:
-        product-code: "aw0evgkw8e5c1q413zgy5pjce"  # CentOS-7 x86_64
+        username: "centos"
+        owners: "679593333241"
+        filters:
+          product-code: "aw0evgkw8e5c1q413zgy5pjce"  # CentOS-7 x86_64
+      rhel:
+        username: "ec2-user"
+#        owners: "309956199498"  # Red Hat, Inc.
+        owners: "531415883065"  # OpenShift QE
+        filters:
+#          name: "RHEL-7.6*Hourly*"
+          name: "qe-rhel-7-release"
     platform_type_filter: "{{ platform_type_filter_dict[platform_type] }}"
 
 
@@ -50,7 +58,8 @@
   - name: Find the most recently created AMI
     ec2_ami_facts:
       region: "{{ aws_region }}"
-      filters: "{{ platform_type_filter }}"
+      owners: "{{ platform_type_dict[platform_type].owners }}"
+      filters: "{{ platform_type_dict[platform_type].filters }}"
     register: ec2_ami_facts_results
 
   - name: Set aws_ami to most recent image
