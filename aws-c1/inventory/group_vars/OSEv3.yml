@@ -1,5 +1,6 @@
 ---
 ansible_user: ec2-user
+#ansible_user: cloud-user # for atomic
 ansible_become: yes
 openshift_deployment_type: openshift-enterprise
 
