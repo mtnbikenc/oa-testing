@@ -80,17 +80,6 @@
 
   - meta: flush_handlers
 
-  # AMI ID: ami-0c84cc122caed619f
-  # Creation date: June 2, 2019 at 7:02:25 PM UTC-4
-  - name: Uninstall newer packages on QE image which break bind install
-    package:
-      name: "{{ pkg_list | join(',') }}"
-      state: absent
-    vars:
-      pkg_list:
-      - bind-libs-lite
-      - bind-license
-
   - name: Get available RPM version(s)
     repoquery:
       name: "{{ openshift_service_type }}"
