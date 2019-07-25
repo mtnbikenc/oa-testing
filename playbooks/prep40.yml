@@ -43,6 +43,14 @@
       target_version: "{{ prep_version }}"
     notify: refresh cache
 
+  - name: Create rhel-7-cri-o-tested-rpms repo file
+    template:
+      src: crio-tested.repo.j2
+      dest: /etc/yum.repos.d/crio-tested.repo
+    vars:
+      target_version: "{{ prep_version }}"
+    notify: refresh cache
+
   - name: Create rhel-7-server-rpms repo file
     copy:
       src: rhel-7-server-rpms.repo
