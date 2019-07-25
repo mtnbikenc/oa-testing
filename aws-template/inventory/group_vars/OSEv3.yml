@@ -1,13 +1,7 @@
 ---
 ansible_user: ec2-user
-#ansible_user: centos
 ansible_become: yes
 openshift_deployment_type: openshift-enterprise
-#openshift_deployment_type: origin
-
-#openshift_release: "3.7"
-#openshift_image_tag: v3.7.29-1
-#openshift_pkg_version: -3.7.29-1.git.0.0e0f138.el7
 
 #openshift_release: "3.9"
 #openshift_image_tag: v3.9.31
@@ -31,7 +25,7 @@ openshift_check_min_host_memory_gb: 3
 openshift_portal_net: "172.30.0.0/16"
 
 openshift_docker_additional_registries:
-  - registry.reg-aws.openshift.com:443
+- registry.reg-aws.openshift.com:443
 
 oreg_url: registry.reg-aws.openshift.com:443/openshift3/ose-${component}:${version}
 oreg_auth_user: "{{ ansible_user_id }}"
@@ -70,6 +64,8 @@ openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key
 #openshift_web_console_install: false  # default(true)
 #openshift_web_console_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-  # 3.9
 
+#openshift_metering_install: true
+
 ## OpenShift Metrics
 #openshift_metrics_install_metrics: true  # default(false)
 #openshift_metrics_image_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.9
@@ -80,8 +76,12 @@ openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key
 #openshift_logging_elasticsearch_cpu_request: 200m
 #openshift_logging_elasticsearch_cpu_limit: 200m
 #openshift_logging_elasticsearch_memory_limit: 1Gi
+#openshift_logging_es_nodeselector:
+#  node-role.kubernetes.io/infra: "true"
 
-## OpenShift Prometheus
+#openshift_monitor_availability_install: true
+
+## OpenShift Prometheus (not used in 3.11)
 #openshift_hosted_prometheus_deploy: true  # default(false)
 #openshift_prometheus_image_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.9
 
@@ -92,15 +92,22 @@ openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key
 #template_service_broker_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.7
 #ansible_service_broker_image_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-  # 3.9
 
+#openshift_enable_olm: true
+
 ## OpenShift Management
 #openshift_management_install_management: true  # default(false)
 #openshift_management_install_beta: true
-#openshift_management_app_template: cfme-template
+#openshift_management_app_template: miq-template
 #openshift_management_storage_class: cloudprovider
 #
 #openshift_management_template_parameters:
-#  APPLICATION_MEM_REQ: '3000Mi'
+#  APPLICATION_MEM_REQ: '1Gi'
 #  APPLICATION_VOLUME_CAPACITY: '2Gi'
 #  POSTGRESQL_MEM_REQ: '1Gi'
 #  ANSIBLE_MEM_REQ: '512Mi'
 #  DATABASE_VOLUME_CAPACITY: '2Gi'
+#
+#openshift_descheduler_install: true
+#openshift_node_problem_detector_install: true
+#openshift_autoheal_deploy: true
+#openshift_cluster_autoscaler_install: true
