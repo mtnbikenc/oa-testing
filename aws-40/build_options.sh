@@ -30,7 +30,7 @@ export OPT_PAYLOAD=4.2                # This points to the latest accepted build
 # Clone Ansible
 ##################################################
 #export OPT_ANSIBLE_PRNUM=XXXXX
-export OPT_ANSIBLE_TAG=v2.8.0
+export OPT_ANSIBLE_TAG=v2.8.2
 #export OPT_ANSIBLE_TAG=<commit_hash>
 
 ##################################################

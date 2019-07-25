@@ -19,7 +19,7 @@ export OPT_INSTANCE_TYPE=t2.medium
 # Clone Ansible
 ##################################################
 #export OPT_ANSIBLE_PRNUM=XXXXX
-export OPT_ANSIBLE_TAG=v2.7.5
+export OPT_ANSIBLE_TAG=v2.8.2
 #export OPT_ANSIBLE_TAG=<commit_hash>
 
 ##################################################
