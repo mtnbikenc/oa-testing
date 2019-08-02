@@ -44,6 +44,7 @@
         filters:
 #          name: "RHEL-7.6*Hourly*"
           name: "qe-rhel-7-release"
+#          name: "qe-rhel-77-20190516"  # RHEL 7.7 (rhel-next)
     platform_type_filter: "{{ platform_type_filter_dict[platform_type] }}"
 
 
