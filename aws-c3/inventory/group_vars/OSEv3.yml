@@ -1,5 +1,6 @@
 ---
 ansible_user: ec2-user
+#ansible_user: cloud-user # for atomic
 ansible_become: yes
 openshift_deployment_type: openshift-enterprise
 
@@ -25,7 +26,7 @@ openshift_check_min_host_memory_gb: 3
 openshift_portal_net: "172.30.0.0/16"
 
 openshift_docker_additional_registries:
-- registry.reg-aws.openshift.com:443
+  - registry.reg-aws.openshift.com:443
 
 oreg_url: registry.reg-aws.openshift.com:443/openshift3/ose-${component}:${version}
 oreg_auth_user: "{{ ansible_user_id }}"

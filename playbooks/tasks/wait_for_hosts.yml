@@ -26,3 +26,4 @@
 - name: Wait for host connection to ensure SSH has started
   wait_for_connection:
     timeout: 600
+  when: platform_type != 'atomic'

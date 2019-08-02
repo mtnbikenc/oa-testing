@@ -15,6 +15,7 @@
     latest_version: '3.11'
     build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
     ops_mirror_path: "{{ lookup('env', 'OPT_OPS_MIRROR_PATH') | default(playbook_dir ~ '/../../shared-secrets/mirror/ops-mirror.pem', true) }}"
+    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel') }}"
 
   tasks:
   # The token expires every 30 days so make sure it still works
@@ -54,39 +55,71 @@
   - name: Wait for hosts to come online
     include_tasks: tasks/wait_for_hosts.yml
 
-  - name: Gather Ansible facts after hosts are online
-    setup:
+- import_playbook: lb-for-atomic.yml
+  when: platform_type == 'atomic'
 
-  - name: Grow partition and filesystem
-    include_tasks: tasks/growfs.yml
-    when: growfs | default(true) | bool
+- name: Prep Playbook
+  hosts: all
+  any_errors_fatal: true
+  gather_facts: true
+
+  handlers:
+  - import_tasks: handlers/main.yml
+  vars:
+    openshift_service_type_dict:
+      origin: origin
+      openshift-enterprise: atomic-openshift
+    openshift_service_type: "{{ openshift_service_type_dict[openshift_deployment_type] }}"
+    latest_version: '3.11'
+    build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
+    ops_mirror_path: "{{ lookup('env', 'OPT_OPS_MIRROR_PATH') | default(playbook_dir ~ '/../../shared-secrets/mirror/ops-mirror.pem', true) }}"
+    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel') }}"
+
+  tasks:
+  - name: Detecting Operating System from ostree_booted
+    stat:
+      path: /run/ostree-booted
+      get_checksum: false
+      get_attributes: false
+      get_mime: false
+    register: ostree_booted
+
+  - name: initialize_facts set fact openshift_is_atomic
+    set_fact:
+      openshift_is_atomic: "{{ ostree_booted.stat.exists }}"
 
   # Needed this for the bare public CentOS images
-  - name: Install NetworkManager
-    include_tasks: tasks/network_manager.yml
-    when: ansible_distribution == "CentOS"
+  - when: not (openshift_is_atomic | bool)
+    block:
+    - name: Install NetworkManager
+      include_tasks: tasks/network_manager.yml
+      when: ansible_distribution == "CentOS"
 
-  - name: Create OCP devel repos
-    include_tasks: tasks/devel_repos.yml
-    when:
-      - not (lookup('env', 'OPT_PREP_USE_RHN') | default(false) | bool)
-      - openshift_deployment_type != 'origin'
+    - name: Create OCP devel repos
+      include_tasks: tasks/devel_repos.yml
+      when:
+        - not (lookup('env', 'OPT_PREP_USE_RHN') | default(false) | bool)
+        - openshift_deployment_type != 'origin'
 
-  - name: Subscribe and enable OCP release repos
-    include_tasks: tasks/rhn_repos.yml
-    when:
-      - lookup('env', 'OPT_PREP_USE_RHN') | default(false) | bool
-      - openshift_deployment_type != 'origin'
+    - name: Subscribe and enable OCP release repos
+      include_tasks: tasks/rhn_repos.yml
+      when:
+        - lookup('env', 'OPT_PREP_USE_RHN') | default(false) | bool
+        - openshift_deployment_type != 'origin'
 
-  - meta: flush_handlers
+    - meta: flush_handlers
 
-  - name: Get available RPM version(s)
-    repoquery:
-      name: "{{ openshift_service_type }}"
-      ignore_excluders: true
-      show_duplicates: true
-    register: repoquery_results
+    - name: Get available RPM version(s)
+      repoquery:
+        name: "{{ openshift_service_type }}"
+        ignore_excluders: true
+        show_duplicates: true
+      register: repoquery_results
 
-  - name: Display available RPM versions
-    debug:
-      var: repoquery_results.module_results.versions.available_versions_full
+    - name: Display available RPM versions
+      debug:
+        var: repoquery_results.results.versions.available_versions_full
+
+    - name: Grow partition and filesystem
+      include_tasks: tasks/growfs.yml
+      when: growfs | default(true) | bool

@@ -1,0 +1,34 @@
+---
+- name: Add cloud-user if using Atomic nodes
+  hosts: lb
+  any_errors_fatal: true
+  gather_facts: true # Don't gather at start because hosts may not be online
+  remote_user: ec2-user
+  become: yes
+  become_method: sudo
+  run_once: true
+  vars:
+    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel') }}"
+    ansible_user: ec2-user
+  tasks:
+  - name: Create cloud-user
+    user:
+      name: cloud-user
+      shell: /bin/bash
+      groups:
+      - adm
+      - wheel
+      - systemd-journal
+
+  - name: Add libra key
+    authorized_key:
+      user: cloud-user
+      state: present
+      key: "{{ lookup('file', '~/.ssh/libra.pub') }}"
+
+  - name: Modify sudoers
+    lineinfile:
+      path: /etc/sudoers
+      state: present
+      regexp: '^%wheel\s'
+      line: '%wheel ALL=(ALL) NOPASSWD: ALL'

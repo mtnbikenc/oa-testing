@@ -1,0 +1,36 @@
+---
+- name: Find the most recently created AMI
+  ec2_ami_facts:
+    region: "{{ aws_region }}"
+    owners: "{{ platform_type_dict['rhel'].owners }}"
+    filters: "{{ platform_type_dict['rhel'].filters }}"
+  register: ec2_ami_facts_results
+
+- name: Set aws_ami to most recent image
+  set_fact:
+    aws_ami: "{{ ec2_ami_facts_results.images[-1].image_id }}"
+
+- name: Create AWS Instances
+  ec2:
+    region: "{{ aws_region }}"
+    key_name: "libra"
+    instance_type: "{{ aws_instance_type }}"
+    count: 1
+    group_id:
+      - sg-7e73221a  # default
+      - sg-e1760186  # public-http
+    vpc_subnet_id: "subnet-cf57c596"  # devenv-subnet-1
+    image: "{{ aws_ami }}"
+    volumes: "{{ aws_volumes }}"
+    wait: yes
+    instance_tags: "{{ {'kubernetes.io/cluster/' ~ cluster_id: 'owned', 'Name': cluster_id} }}"
+  register: lb_aws_instance
+
+- name: Create lb_host
+  set_fact:
+    lb_host: "{{ lb_aws_instance.instances[-1] }}"
+
+- name: Save created AWS Instances
+  copy:
+    dest: "{{ aws_lb_instance_file }}"
+    content: "{{ lb_aws_instance | to_nice_json }}"

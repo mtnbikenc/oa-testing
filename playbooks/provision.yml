@@ -10,6 +10,7 @@
     cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
     cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
     aws_instance_file: "{{ cluster_dir }}/inventory/aws.json"
+    aws_lb_instance_file: "{{ cluster_dir }}/inventory/awslb.json"
     aws_instance_type: "{{ lookup('env', 'OPT_INSTANCE_TYPE') | default('t2.medium') }}"
     master_count: "{{ lookup('env', 'OPT_MASTER_COUNT') | default(1)}}"
     compute_count: "{{ lookup('env', 'OPT_COMPUTE_COUNT') | default(0)}}"
@@ -27,6 +28,10 @@
         delete_on_termination: true
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel') }}"
     platform_type_dict:
+      atomic:
+        owners: "309956199498"  # Red Hat, Inc.
+        filters:
+          name: "Atomic-7.6_HVM_GA-20181212-x86_64-0-Access2-GP2"
       centos:
         username: "centos"
         owners: "679593333241"
@@ -55,6 +60,11 @@
         msg: "Skipping provision, existing AWS Instance file found."
     - meta: end_play
 
+  - import_tasks: tasks/lb_for_atomic.yml
+    when:
+    - master_count | int > 1
+    - platform_type == 'atomic'
+
   - name: Find the most recently created AMI
     ec2_ami_facts:
       region: "{{ aws_region }}"
@@ -65,6 +75,11 @@
   - name: Set aws_ami to most recent image
     set_fact:
       aws_ami: "{{ ec2_ami_facts_results.images[-1].image_id }}"
+
+  - name: Set cluster count if Atomic
+    set_fact:
+      cluster_count: "{{ cluster_count|int - 1 }}"
+    when: platform_type == 'atomic'
 
   - name: Create AWS Instances
     ec2:
@@ -109,7 +124,9 @@
   - name: Create lb_host
     set_fact:
       lb_host: "{{ aws_instances.instances[-1] }}"
-    when: master_count | int > 1
+    when:
+    - master_count | int > 1
+    - platform_type != 'atomic'
 
   - name: Create Ansible Inventory File
     template:
