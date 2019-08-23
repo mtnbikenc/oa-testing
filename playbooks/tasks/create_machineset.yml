@@ -27,29 +27,35 @@
                 keyName: "libra"
 
 - name: Import machineset definition
-  k8s:
-    kubeconfig: "{{ kubeconfig_path }}"
-    definition: "{{ machineset | to_yaml }}"
+  command: >
+    oc apply -f -
+    --config={{ kubeconfig_path }}
+  register: oc_apply
+  args:
+    stdin: "{{ machineset | to_yaml }}"
+  changed_when:
+  - ('created' in oc_apply.stdout) or
+    ('configured' in oc_apply.stdout)
 
-- name: wait for machine to be created
-  k8s_facts:
-    api_version: machine.openshift.io/v1beta1
-    kubeconfig: "{{ kubeconfig_path }}"
-    namespace: openshift-machine-api
-    kind: Machine
-    label_selectors:
-    - "machine.openshift.io/cluster-api-machineset={{ machineset_name }}"
+- name: Wait for machine to be created
+  command: >
+    oc get machine
+    --config={{ kubeconfig_path }}
+    --selector='machine.openshift.io/cluster-api-machineset={{ machineset_name }}'
+    --namespace=openshift-machine-api
+    --output=json
   register: new_machine
+  until:
+  - new_machine.stdout != ''
+  - (new_machine.stdout | from_json)['items'] | length > 0
+  - (new_machine.stdout | from_json)['items'][0].status is defined
+  - (new_machine.stdout | from_json)['items'][0].status.providerStatus is defined
+  - (new_machine.stdout | from_json)['items'][0].status.providerStatus.instanceState is defined
+  - (new_machine.stdout | from_json)['items'][0].status.providerStatus.instanceState == 'running'
   retries: 36
   delay: 5
-  until:
-  - new_machine.resources is defined
-  - new_machine.resources | length > 0
-  - new_machine.resources[0].status is defined
-  - new_machine.resources[0].status.providerStatus is defined
-  - new_machine.resources[0].status.providerStatus.instanceState is defined
-  - new_machine.resources[0].status.providerStatus.instanceState == 'running'
+  changed_when: false
 
 - name: Add hostname to new_workers_list
   set_fact:
-    new_workers_list: "{{ new_workers_list + [ new_machine.resources[0].status.addresses | selectattr('type', 'match', '^InternalDNS$') | map(attribute='address') | first ] }}"
+    new_workers_list: "{{ new_workers_list + [ (new_machine.stdout | from_json)['items'][0].status.addresses | selectattr('type', 'match', '^InternalDNS$') | map(attribute='address') | first ] }}"

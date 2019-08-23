@@ -35,35 +35,37 @@
     set_fact:
       aws_ami: "{{ ec2_ami_facts_results.images[-1].image_id }}"
 
-  - import_tasks: tasks/get_machinesets.yml
+  - name: Get existing worker machinesets
+    command: >
+      oc get machinesets
+      --config={{ kubeconfig_path }}
+      --namespace=openshift-machine-api
+      --output=json
+    register: machineset
+    until:
+    - machineset.stdout != ''
+    changed_when: false
 
   - include_tasks: tasks/create_machineset.yml
-    loop: "{{ machineset.resources }}"
+    loop: "{{ (machineset.stdout | from_json)['items'] }}"
     when:
     - item.status.replicas is defined
     - item.status.replicas != 0
 
   - name: Get ssh bastion address
-    k8s_facts:
-      kubeconfig: "{{ kubeconfig_path }}"
-      namespace: byoh-ssh-bastion
-      kind: Service
-      name: ssh-bastion
-    register: k8s_result
+    command: >
+      oc get service ssh-bastion
+      --config={{ kubeconfig_path }}
+      --namespace=byoh-ssh-bastion
+      --output=jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+    register: oc_get
     until:
-    - k8s_result.resources is defined
-    - k8s_result.resources | length > 0
-    - k8s_result.resources[0].status is defined
-    - k8s_result.resources[0].status.loadBalancer is defined
-    - k8s_result.resources[0].status.loadBalancer.ingress is defined
-    - k8s_result.resources[0].status.loadBalancer.ingress | length > 0
-    - k8s_result.resources[0].status.loadBalancer.ingress[0].hostname is defined
-    retries: 36
-    delay: 5
+    - oc_get.stdout != ''
+    changed_when: false
 
   - name: Set fact ssh_bastion
     set_fact:
-      ssh_bastion: "{{ k8s_result.resources[0].status.loadBalancer.ingress[0].hostname }}"
+      ssh_bastion: "{{ oc_get.stdout }}"
 
   - name: Create Ansible Inventory File
     template:
