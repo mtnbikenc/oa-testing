@@ -1,5 +1,5 @@
 ---
-- name: Create ssh Bastion
+- name: Create ssh bastion
   hosts: localhost
   connection: local
 
@@ -9,95 +9,74 @@
     private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') }}"
 
   tasks:
-  - name: Create ssh bastion namespace
-    k8s:
-      kubeconfig: "{{ kubeconfig_path }}"
-      kind: Namespace
-      name: byoh-ssh-bastion
-      state: present
+  - name: Create ssh bastion namespace and secrets
+    command: >
+      oc apply -f -
+      --config={{ kubeconfig_path }}
+    register: oc_apply
+    args:
+      stdin: "{{ item.value | to_yaml }}"
+    loop: "{{ ssh_bastion_resources | dict2items }}"
+    changed_when:
+    - ('created' in oc_apply.stdout) or
+      ('configured' in oc_apply.stdout)
+    vars:
+      ssh_bastion_resources:
+        namespace:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: byoh-ssh-bastion
+        secrets:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: ssh-host-keys
+            namespace: byoh-ssh-bastion
+          data:
+            ssh_host_rsa_key: "{{ lookup('file', private_key_path) | b64encode }}"
+            sshd_config: "{{ lookup('file', 'files/ssh_bastion/sshd_config') | b64encode }}"
 
-  - name: Create ssh bastion keys secret
-    k8s:
-      kubeconfig: "{{ kubeconfig_path }}"
-      resource_definition:
-        apiVersion: v1
-        kind: Secret
-        metadata:
-          name: ssh-host-keys
-          namespace: byoh-ssh-bastion
-        data:
-          ssh_host_rsa_key: "{{ lookup('file', private_key_path) | b64encode }}"
-          sshd_config: "{{ lookup('file', 'files/ssh_bastion/sshd_config') | b64encode }}"
+  - name: Create ssh bastion resources
+    command: >
+      oc apply -f files/ssh_bastion/
+      --config={{ kubeconfig_path }}
+    register: oc_apply
+    changed_when:
+    - ('created' in oc_apply.stdout) or
+      ('configured' in oc_apply.stdout)
 
-  - name: Create ssh bastion service
-    k8s:
-      kubeconfig: "{{ kubeconfig_path }}"
-      src: files/ssh_bastion/01_service.yml
+  - block:
+    - name: Wait for ssh bastion deployment to rollout
+      command: >
+        oc get deployment.apps/ssh-bastion
+        --config={{ kubeconfig_path }}
+        --namespace=byoh-ssh-bastion
+        --output=jsonpath='{.status.availableReplicas}'
+      register: oc_get_deployment_replicas
+      until:
+      - oc_get_deployment_replicas.stdout | int > 0
+      retries: 24
+      delay: 5
+      changed_when: false
 
-  - name: Create ssh bastion service account
-    k8s:
-      kubeconfig: "{{ kubeconfig_path }}"
-      src: files/ssh_bastion/02_serviceaccount.yml
+    rescue:
+    - name: DEBUG - Get ssh bastion pod name
+      command: >
+        oc get pods
+        --config={{ kubeconfig_path }}
+        --namespace=byoh-ssh-bastion
+        --output=jsonpath='{.items[0].metadata.name}'
+      register: ssh_bastion_pod
+      changed_when: false
 
-  - name: Create ssh bastion role
-    k8s:
-      kubeconfig: "{{ kubeconfig_path }}"
-      src: files/ssh_bastion/03_role.yml
+    - name: DEBUG - Get ssh bastion pod logs
+      command: >
+        oc describe pod/{{ ssh_bastion_pod.stdout }}
+        --config={{ kubeconfig_path }}
+        --namespace=byoh-ssh-bastion
+      changed_when: false
 
-  - name: Create ssh bastion role binding
-    k8s:
-      kubeconfig: "{{ kubeconfig_path }}"
-      src: files/ssh_bastion/04_rolebinding.yml
-
-  - name: Create ssh bastion cluster role
-    k8s:
-      kubeconfig: "{{ kubeconfig_path }}"
-      src: files/ssh_bastion/05_clusterrole.yml
-
-  - name: Create ssh bastion cluster role binding
-    k8s:
-      kubeconfig: "{{ kubeconfig_path }}"
-      src: files/ssh_bastion/06_clusterrolebinding.yml
-
-  - name: Create ssh bastion deployment
-    k8s:
-      kubeconfig: "{{ kubeconfig_path }}"
-      src: files/ssh_bastion/07_deployment.yml
-
-  - name: Wait for ssh bastion deployment to rollout
-    k8s_facts:
-      kubeconfig: "{{ kubeconfig_path }}"
-      namespace: byoh-ssh-bastion
-      kind: Deployment
-      name: ssh-bastion
-    register: k8s_result
-    until:
-    - k8s_result.resources is defined
-    - k8s_result.resources | length > 0
-    - k8s_result.resources[0].status is defined
-    - k8s_result.resources[0].status.availableReplicas is defined
-    - k8s_result.resources[0].status.availableReplicas > 0
-    retries: 36
-    delay: 5
-
-  - name: Get ssh bastion address
-    k8s_facts:
-      kubeconfig: "{{ kubeconfig_path }}"
-      namespace: byoh-ssh-bastion
-      kind: Service
-      name: ssh-bastion
-    register: k8s_result
-    until:
-    - k8s_result.resources is defined
-    - k8s_result.resources | length > 0
-    - k8s_result.resources[0].status is defined
-    - k8s_result.resources[0].status.loadBalancer is defined
-    - k8s_result.resources[0].status.loadBalancer.ingress is defined
-    - k8s_result.resources[0].status.loadBalancer.ingress | length > 0
-    - k8s_result.resources[0].status.loadBalancer.ingress[0].hostname is defined
-    retries: 36
-    delay: 5
-
-  - name: Set fact ssh_bastion
-    set_fact:
-      ssh_bastion: "{{ k8s_result.resources[0].status.loadBalancer.ingress[0].hostname }}"
+    - name: DEBUG - ssh bastion deployment failed
+      fail:
+        msg: ssh bastion deployment failed
