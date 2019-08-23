@@ -2,7 +2,7 @@
 - name: Add cloud-user if using Atomic nodes
   hosts: lb
   any_errors_fatal: true
-  gather_facts: true # Don't gather at start because hosts may not be online
+  gather_facts: true
   remote_user: ec2-user
   become: yes
   become_method: sudo
