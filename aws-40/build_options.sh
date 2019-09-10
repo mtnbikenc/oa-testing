@@ -14,16 +14,16 @@ export OPT_PRIVATE_KEY=${PWD}/../../shared-secrets/aws/libra.pem
 # Provision/Terminate
 ##################################################
 export OPT_CLUSTER_DIR=${PWD}
-export OPT_PLATFORM_TYPE=centos        # rhel/centos
+export OPT_PLATFORM_TYPE=rhel         # rhel/centos
 export AWS_PROFILE="openshift-dev"
 export AWS_DEFAULT_REGION=us-east-2
 
-#export OPT_REGISTRY=registry.svc.ci.openshift.org/ocp/release
-#export OPT_PAYLOAD=4.2                # This points to the latest accepted nightly
+export OPT_REGISTRY=registry.svc.ci.openshift.org/ocp/release
+export OPT_PAYLOAD=4.2                # This points to the latest accepted nightly
 #export OPT_PAYLOAD=4.2.0-0.nightly-YYYY-MM-DD-HHMMSS
 
-export OPT_REGISTRY=registry.svc.ci.openshift.org/origin/release
-export OPT_PAYLOAD=4.2                # This points to the latest accepted build
+#export OPT_REGISTRY=registry.svc.ci.openshift.org/origin/release
+#export OPT_PAYLOAD=4.2                # This points to the latest accepted build
 #export OPT_PAYLOAD=4.2.0-0.okd-YYYY-MM-DD-HHMMSS
 
 ##################################################
