@@ -29,9 +29,10 @@
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel') }}"
     platform_type_dict:
       atomic:
+        username: "cloud-user"
         owners: "309956199498"  # Red Hat, Inc.
         filters:
-          name: "Atomic-7.6_HVM_GA-20181212-x86_64-0-Access2-GP2"
+          name: "RHEL-Atomic_7.7*"
       centos:
         username: "centos"
         owners: "679593333241"
@@ -39,12 +40,9 @@
           product-code: "aw0evgkw8e5c1q413zgy5pjce"  # CentOS-7 x86_64
       rhel:
         username: "ec2-user"
-#        owners: "309956199498"  # Red Hat, Inc.
-        owners: "531415883065"  # OpenShift QE
+        owners: "309956199498"  # Red Hat, Inc.
         filters:
-#          name: "RHEL-7.6*Hourly*"
-          name: "qe-rhel-7-release"
-#          name: "qe-rhel-77-20190516"  # RHEL 7.7 (rhel-next)
+          name: "RHEL-7.7*Hourly*"
     platform_type_filter: "{{ platform_type_filter_dict[platform_type] }}"
 
 
