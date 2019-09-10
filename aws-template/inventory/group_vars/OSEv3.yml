@@ -1,5 +1,6 @@
 ---
 ansible_user: ec2-user
+#ansible_user: cloud-user # for atomic
 ansible_become: yes
 openshift_deployment_type: openshift-enterprise
 
@@ -38,6 +39,8 @@ oreg_auth_password: "{{ lookup('ini', 'oreg_auth_password section=default file=~
 rhn_user: "{{ lookup('ini', 'rhn_user section=default file=~/openshift-creds.txt') }}"
 rhn_pass: "{{ lookup('ini', 'rhn_pass section=default file=~/openshift-creds.txt') }}"
 rhn_pool: "{{ lookup('ini', 'rhn_pool section=default file=~/openshift-creds.txt') }}"
+
+#openshift_crio_enable_docker_gc: true  # default(false)
 
 ## 3.9 System Containers
 #openshift_use_system_containers: true

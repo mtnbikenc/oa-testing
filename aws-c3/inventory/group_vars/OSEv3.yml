@@ -26,7 +26,7 @@ openshift_check_min_host_memory_gb: 3
 openshift_portal_net: "172.30.0.0/16"
 
 openshift_docker_additional_registries:
-  - registry.reg-aws.openshift.com:443
+- registry.reg-aws.openshift.com:443
 
 oreg_url: registry.reg-aws.openshift.com:443/openshift3/ose-${component}:${version}
 oreg_auth_user: "{{ ansible_user_id }}"
@@ -39,6 +39,8 @@ oreg_auth_password: "{{ lookup('ini', 'oreg_auth_password section=default file=~
 rhn_user: "{{ lookup('ini', 'rhn_user section=default file=~/openshift-creds.txt') }}"
 rhn_pass: "{{ lookup('ini', 'rhn_pass section=default file=~/openshift-creds.txt') }}"
 rhn_pool: "{{ lookup('ini', 'rhn_pool section=default file=~/openshift-creds.txt') }}"
+
+#openshift_crio_enable_docker_gc: true  # default(false)
 
 ## 3.9 System Containers
 #openshift_use_system_containers: true
