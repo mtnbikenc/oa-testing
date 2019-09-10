@@ -3,3 +3,4 @@ ansible/
 aws.json
 hosts
 openshift-ansible/
+test/
