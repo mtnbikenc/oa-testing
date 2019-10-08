@@ -9,7 +9,7 @@
     aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
     pull_secret_path: "{{ lookup('env', 'OPT_PULL_SECRET') }}"
-    private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') }}"
+    private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') | realpath }}"
 
   tasks:
   ## Create install-config.yaml
