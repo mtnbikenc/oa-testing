@@ -83,7 +83,7 @@
   - name: Create AWS Instances
     ec2:
       region: "{{ aws_region }}"
-      key_name: "libra"
+      key_name: "openshift-dev"
       instance_type: "{{ aws_instance_type }}"
       count: "{{ cluster_count }}"
       group_id:

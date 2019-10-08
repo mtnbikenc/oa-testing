@@ -9,7 +9,7 @@ export KUBECONFIG=${PWD}/assets/auth/kubeconfig
 # Secrets
 ##################################################
 export OPT_PULL_SECRET=~/pull-secret.txt   # https://cloud.openshift.com/clusters/install, Step 4
-export OPT_PRIVATE_KEY=${PWD}/../../shared-secrets/aws/libra.pem
+export OPT_PRIVATE_KEY=${PWD}/../../shared-secrets/aws/openshift-dev.pem
 
 ##################################################
 # Provision/Terminate

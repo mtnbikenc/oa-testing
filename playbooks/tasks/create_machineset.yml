@@ -24,7 +24,7 @@
               value:
                 ami:
                   id: "{{ aws_ami }}"
-                keyName: "libra"
+                keyName: "openshift-dev"
 
 - name: Import machineset definition
   command: >

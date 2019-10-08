@@ -6,7 +6,7 @@
   vars:
     cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
     kubeconfig_path: "{{ cluster_dir }}/assets/auth/kubeconfig"
-    private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') }}"
+    private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') | realpath }}"
 
   tasks:
   - name: Create ssh bastion namespace and secrets
