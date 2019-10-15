@@ -118,7 +118,7 @@
 
     - name: Display available RPM versions
       debug:
-        var: repoquery_results.results.versions.available_versions_full
+        var: repoquery_results.module_results.versions.available_versions_full
 
     - name: Grow partition and filesystem
       include_tasks: tasks/growfs.yml
