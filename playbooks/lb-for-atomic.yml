@@ -10,7 +10,6 @@
   vars:
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel') }}"
     ansible_user: ec2-user
-    private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') | realpath }}"
 
   tasks:
   - name: Create cloud-user
@@ -22,21 +21,11 @@
       - wheel
       - systemd-journal
 
-  - name: Ensure proper permissions on private key file
-    file:
-      path: "{{ private_key_path }}"
-      mode: 0600
-
-  - name: Create public key from private key file
-    command: >
-      ssh-keygen -f {{ private_key_path }} -y
-    register: keygen_output
-
   - name: Add openshift-dev key
     authorized_key:
       user: cloud-user
       state: present
-      key: "{{ keygen_output.stdout }}"
+      key: "{{ lookup('file', '~/.ssh/openshift-dev.pub') }}"
 
   - name: Modify sudoers
     lineinfile:
