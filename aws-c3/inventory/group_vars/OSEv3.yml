@@ -1,18 +1,9 @@
 ---
-ansible_user: ec2-user
-#ansible_user: cloud-user # for atomic
-ansible_become: yes
 openshift_deployment_type: openshift-enterprise
 
-#openshift_release: "3.9"
-#openshift_image_tag: v3.9.31
-#openshift_pkg_version: -3.9.31
-
-#openshift_release: "3.10"
-#openshift_image_tag: "v3.10.18"
-#openshift_pkg_version: -3.10.18
-
 openshift_release: "3.11"
+#openshift_image_tag: v3.x.y
+#openshift_pkg_version: -3.x.y
 
 #openshift_disable_check:
 #  - package_version
@@ -63,11 +54,15 @@ openshift_cloudprovider_aws_access_key: "{{ lookup('ini', 'aws_access_key_id sec
 openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key section=default file=~/.aws/credentials') }}"
 
 ### Components
+#openshift_cluster_monitoring_operator_install: true  # default(false)
+
+#openshift_metering_install: true  # default(false)
+
 ## OpenShift Web Console
 #openshift_web_console_install: false  # default(true)
 #openshift_web_console_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-  # 3.9
 
-#openshift_metering_install: true
+#openshift_console_install: false  # default(true)
 
 ## OpenShift Metrics
 #openshift_metrics_install_metrics: true  # default(false)
@@ -82,9 +77,9 @@ openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key
 #openshift_logging_es_nodeselector:
 #  node-role.kubernetes.io/infra: "true"
 
-#openshift_monitor_availability_install: true
+#openshift_monitor_availability_install: true  # default(false)
 
-## OpenShift Prometheus (not used in 3.11)
+## OpenShift Prometheus (not used in 3.11, now uses openshift_monitor_availability_install)
 #openshift_hosted_prometheus_deploy: true  # default(false)
 #openshift_prometheus_image_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.9
 
@@ -95,22 +90,21 @@ openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key
 #template_service_broker_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.7
 #ansible_service_broker_image_prefix: registry.reg-aws.openshift.com:443/openshift3/ose-  # 3.9
 
-#openshift_enable_olm: true
+#openshift_enable_olm: true  # default(false)
 
 ## OpenShift Management
 #openshift_management_install_management: true  # default(false)
 #openshift_management_install_beta: true
 #openshift_management_app_template: miq-template
 #openshift_management_storage_class: cloudprovider
-#
 #openshift_management_template_parameters:
 #  APPLICATION_MEM_REQ: '1Gi'
 #  APPLICATION_VOLUME_CAPACITY: '2Gi'
 #  POSTGRESQL_MEM_REQ: '1Gi'
 #  ANSIBLE_MEM_REQ: '512Mi'
 #  DATABASE_VOLUME_CAPACITY: '2Gi'
-#
-#openshift_descheduler_install: true
-#openshift_node_problem_detector_install: true
-#openshift_autoheal_deploy: true
-#openshift_cluster_autoscaler_install: true
+
+#openshift_descheduler_install: true  # default(false)
+#openshift_node_problem_detector_install: true  # default(false)
+#openshift_autoheal_deploy: true  # default(false)
+#openshift_cluster_autoscaler_install: true  # default(false)

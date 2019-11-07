@@ -7,8 +7,7 @@
 
 # >= 3.10
 openshift_node_group_name: "node-config-master"
-
-#openshift_node_group_name: "node-config-master-infra-crio"
+#openshift_node_group_name: "node-config-master-crio"
 #openshift_use_crio: true
 #openshift_use_crio_only: true
 #openshift_crio_enable_docker_gc: true
