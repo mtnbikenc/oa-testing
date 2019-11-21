@@ -2,8 +2,8 @@
 openshift_deployment_type: openshift-enterprise
 
 openshift_release: "3.11"
-#openshift_image_tag: v3.x.y
-#openshift_pkg_version: -3.x.y
+#openshift_image_tag: "v3.y.z"
+#openshift_pkg_version: -3.y.z
 
 #openshift_disable_check:
 #  - package_version
@@ -26,6 +26,8 @@ oreg_auth_user: "{{ ansible_user_id }}"
 # Put your token in the file referenced below
 oreg_auth_password: "{{ lookup('ini', 'oreg_auth_password section=default file=~/openshift-creds.txt') }}"
 #oreg_auth_credentials_replace: true
+
+openshift_master_cluster_hostname: "{{ groups.lb[0] }}"
 
 rhn_user: "{{ lookup('ini', 'rhn_user section=default file=~/openshift-creds.txt') }}"
 rhn_pass: "{{ lookup('ini', 'rhn_pass section=default file=~/openshift-creds.txt') }}"
@@ -54,7 +56,11 @@ openshift_cloudprovider_aws_access_key: "{{ lookup('ini', 'aws_access_key_id sec
 openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key section=default file=~/.aws/credentials') }}"
 
 ### Components
-#openshift_cluster_monitoring_operator_install: true  # default(false)
+
+#openshift_cluster_monitoring_operator_install: false  # default(true)
+## OpenShift Prometheus (not used in 3.11), use ^^
+#openshift_hosted_prometheus_deploy: true  # default(false)
+#openshift_prometheus_image_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.9
 
 #openshift_metering_install: true  # default(false)
 
@@ -78,10 +84,6 @@ openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key
 #  node-role.kubernetes.io/infra: "true"
 
 #openshift_monitor_availability_install: true  # default(false)
-
-## OpenShift Prometheus (not used in 3.11, now uses openshift_monitor_availability_install)
-#openshift_hosted_prometheus_deploy: true  # default(false)
-#openshift_prometheus_image_prefix: registry.reg-aws.openshift.com:443/openshift3/  # 3.9
 
 ## OpenShift Service Catalog
 #openshift_enable_service_catalog: false  # default(true)
