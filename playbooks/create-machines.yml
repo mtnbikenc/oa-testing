@@ -6,7 +6,8 @@
   vars:
     aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
-    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('centos') }}"
+    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
+    platform_version: "{{ lookup('env', 'OPT_PLATFORM_VERSION') | default('7.7', true) }}"
     platform_type_dict:
       centos:
         username: "centos"
@@ -17,7 +18,8 @@
         username: "ec2-user"
         owners: "309956199498"  # Red Hat, Inc.
         filters:
-          name: "RHEL-7.7*Hourly*"
+          name: "RHEL-{{ platform_version }}*Hourly*"
+          architecture: "x86_64"
     kubeconfig_path: "{{ cluster_dir }}/assets/auth/kubeconfig"
     pull_secret_path: "{{ lookup('env', 'OPT_PULL_SECRET') }}"
     private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') | realpath }}"

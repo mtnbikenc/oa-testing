@@ -15,7 +15,7 @@
     latest_version: '3.11'
     build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
     ops_mirror_path: "{{ lookup('env', 'OPT_OPS_MIRROR_PATH') | default(playbook_dir ~ '/../../shared-secrets/mirror/ops-mirror.pem', true) }}"
-    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel') }}"
+    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
 
   tasks:
   # The token expires every 30 days so make sure it still works
@@ -73,7 +73,7 @@
     latest_version: '3.11'
     build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
     ops_mirror_path: "{{ lookup('env', 'OPT_OPS_MIRROR_PATH') | default(playbook_dir ~ '/../../shared-secrets/mirror/ops-mirror.pem', true) }}"
-    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel') }}"
+    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
 
   tasks:
   - name: Detecting Operating System from ostree_booted
@@ -98,13 +98,13 @@
     - name: Create OCP devel repos
       include_tasks: tasks/devel_repos.yml
       when:
-        - not (lookup('env', 'OPT_PREP_USE_RHN') | default(false) | bool)
+        - not (lookup('env', 'OPT_PREP_USE_RHN') | default(false, true) | bool)
         - openshift_deployment_type != 'origin'
 
     - name: Subscribe and enable OCP release repos
       include_tasks: tasks/rhn_repos.yml
       when:
-        - lookup('env', 'OPT_PREP_USE_RHN') | default(false) | bool
+        - lookup('env', 'OPT_PREP_USE_RHN') | default(false, true) | bool
         - openshift_deployment_type != 'origin'
 
     - meta: flush_handlers

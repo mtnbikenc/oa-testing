@@ -11,7 +11,7 @@
     cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
     aws_instances_file: "{{ cluster_dir }}/inventory/aws.json"
     aws_lb_instance_file: "{{ cluster_dir }}/inventory/awslb.json"
-    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel') }}"
+    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
 
   tasks:
   - import_tasks: tasks/terminate.yml

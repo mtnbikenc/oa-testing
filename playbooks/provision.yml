@@ -11,10 +11,10 @@
     cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
     aws_instance_file: "{{ cluster_dir }}/inventory/aws.json"
     aws_lb_instance_file: "{{ cluster_dir }}/inventory/awslb.json"
-    aws_instance_type: "{{ lookup('env', 'OPT_INSTANCE_TYPE') | default('t2.medium') }}"
-    master_count: "{{ lookup('env', 'OPT_MASTER_COUNT') | default(1)}}"
-    compute_count: "{{ lookup('env', 'OPT_COMPUTE_COUNT') | default(0)}}"
-    infra_count: "{{ lookup('env', 'OPT_INFRA_COUNT') | default(0)}}"
+    aws_instance_type: "{{ lookup('env', 'OPT_INSTANCE_TYPE') | default('t2.medium', true) }}"
+    master_count: "{{ lookup('env', 'OPT_MASTER_COUNT') | default(1, true)}}"
+    compute_count: "{{ lookup('env', 'OPT_COMPUTE_COUNT') | default(0, true)}}"
+    infra_count: "{{ lookup('env', 'OPT_INFRA_COUNT') | default(0, true)}}"
     lb_count: "{{ ( 1 if master_count | int > 1 else 0 )}}"
     cluster_count: "{{ master_count | int + compute_count | int + infra_count | int + lb_count | int }}"
     master_list: []
@@ -26,7 +26,7 @@
         volume_size: 50
         volume_type: gp2
         delete_on_termination: true
-    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel') }}"
+    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
     platform_type_dict:
       atomic:
         username: "cloud-user"

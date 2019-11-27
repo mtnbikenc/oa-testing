@@ -32,7 +32,7 @@
   notify: refresh cache
   when:
     - prep_version == '3.9'
-    - lookup('env', 'OPT_PREP_UPGRADE') | default(false) | bool
+    - lookup('env', 'OPT_PREP_UPGRADE') | default(false, true) | bool
 
 - name: Create rhel-7-server-rpms repo file
   copy:

@@ -15,6 +15,7 @@ export OPT_PRIVATE_KEY=${PWD}/../../shared-secrets/aws/openshift-dev.pem
 ##################################################
 export OPT_CLUSTER_DIR=${PWD}
 export OPT_PLATFORM_TYPE=rhel         # rhel/centos
+export OPT_PLATFORM_VERSION=7.7
 export AWS_PROFILE="openshift-dev"
 export AWS_DEFAULT_REGION=us-east-2
 
