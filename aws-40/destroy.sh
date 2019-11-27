@@ -5,12 +5,10 @@ source build_options.sh
 
 bin/openshift-install destroy cluster --dir=./assets --log-level=debug
 
-rm -f ./assets/.openshift_install*
-rm -f ./assets/metadata.json
-rm -f ./assets/terraform.tfstate
+find assets/ -type f -not -name '.gitignore' -print0 | xargs -0 -I {} rm -v {}
 
-rm -fv bin/o* bin/sha*
+find bin/ -type f -not -name '.gitignore' -print0 | xargs -0 -I {} rm -v {}
 
-rm -f logs/*.log
+find logs/ -type f -not -name '.gitignore' -print0 | xargs -0 -I {} rm -v {}
 
 rm -fv inventory/hosts
