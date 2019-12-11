@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-export KUBECONFIG=${PWD}/assets/auth/kubeconfig
+source build_options.sh
+
+export KUBECONFIG=${OPT_CLUSTER_DIR}/assets/auth/kubeconfig
 
 # Remove ssh bastion
 #oc delete project byoh-ssh-bastion
@@ -43,4 +45,4 @@ then
     oc delete machinesets -n openshift-machine-api ${RHEL_MACHINE_SETS}
 fi
 
-rm -fv inventory/hosts
+rm -fv "${OPT_CLUSTER_DIR}/inventory/hosts"

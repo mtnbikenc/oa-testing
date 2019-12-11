@@ -3,4 +3,4 @@ set -euxo pipefail
 
 source build_options.sh
 
-ansible-playbook -i inventory/hosts ../playbooks/prep40.yml -vvv
+ansible-playbook -i "${OPT_CLUSTER_DIR}/inventory/hosts" ../playbooks/prep40.yml -vvv

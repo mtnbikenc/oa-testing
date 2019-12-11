@@ -2,7 +2,8 @@
 
 CURRENT_USER=$(id -un)
 export OPT_CLUSTER_ID=${CURRENT_USER}-${PWD##*-}
-export PYTHON=$(which python3 || which python)
+LOCAL_PYTHON=$(command -v python3 || command -v python)
+export LOCAL_PYTHON
 
 ##################################################
 # Secrets
@@ -14,6 +15,7 @@ export OPT_PRIVATE_KEY=${PWD}/../../shared-secrets/aws/openshift-dev.pem
 # Provision/Terminate
 ##################################################
 export OPT_CLUSTER_DIR=${PWD}
+#export OPT_CLUSTER_DIR=/tmp           # use this for 'toolbox'
 export OPT_PLATFORM_TYPE=rhel         # rhel/centos
 export OPT_PLATFORM_VERSION=7.7
 export AWS_PROFILE="openshift-dev"
@@ -31,7 +33,7 @@ export OPT_PAYLOAD=4.3                # This points to the latest accepted night
 # Clone Ansible
 ##################################################
 #export OPT_ANSIBLE_PRNUM=XXXXX
-export OPT_ANSIBLE_TAG=v2.9.0
+export OPT_ANSIBLE_TAG=v2.9.2
 #export OPT_ANSIBLE_TAG=<commit_hash>
 
 ##################################################

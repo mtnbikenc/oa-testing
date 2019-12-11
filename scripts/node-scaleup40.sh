@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-source ansible/hacking/env-setup
-
 source build_options.sh
 
+# shellcheck source=/dev/null
+source "${OPT_CLUSTER_DIR}/ansible/hacking/env-setup"
+
 # Use the extracted `oc` when running playbooks
-PATH=$PWD/bin:$PATH
-which oc
+PATH=${OPT_CLUSTER_DIR}/bin:$PATH
+command -v oc
 
-${PYTHON} $(which ansible) --version
+${LOCAL_PYTHON} "$(command -v ansible)" --version
 
-${PYTHON} $(which ansible-inventory) -i inventory/hosts --list --yaml
+${LOCAL_PYTHON} "$(command -v ansible-inventory)" -i "${OPT_CLUSTER_DIR}/inventory/hosts" --list --yaml
 
-pushd openshift-ansible
+pushd "${OPT_CLUSTER_DIR}/openshift-ansible"
 
-time ${PYTHON} $(which ansible-playbook) -i ../inventory/hosts playbooks/scaleup.yml -vvv
+time ${LOCAL_PYTHON} "$(command -v ansible-playbook)" -i "${OPT_CLUSTER_DIR}/inventory/hosts" playbooks/scaleup.yml -vvv
 
 popd

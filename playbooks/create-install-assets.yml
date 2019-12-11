@@ -8,6 +8,7 @@
   vars:
     aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
+    cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
     pull_secret_path: "{{ lookup('env', 'OPT_PULL_SECRET') }}"
     private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') | realpath }}"
 
@@ -29,8 +30,13 @@
       ssh-keygen -f {{ private_key_path }} -y
     register: keygen_output
 
+  - name: Create Assets directory
+    file:
+      path: "{{ cluster_dir }}/assets"
+      state: directory
+
   - name: Create install-config.yaml
     template:
       src: install-config.yaml.j2
-      dest: assets/install-config.yaml
+      dest: "{{ cluster_dir }}/assets/install-config.yaml"
   ## install-config.yaml

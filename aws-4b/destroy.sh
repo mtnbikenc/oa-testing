@@ -3,12 +3,15 @@ set -euxo pipefail
 
 source build_options.sh
 
-bin/openshift-install destroy cluster --dir=./assets --log-level=debug
+if [ -f "${OPT_CLUSTER_DIR}/assets/metadata.json" ]
+then
+  "${OPT_CLUSTER_DIR}/bin/openshift-install" destroy cluster --dir="${OPT_CLUSTER_DIR}/assets" --log-level=debug
+fi
 
-find assets/ -type f -not -name '.gitignore' -print0 | xargs -0 -I {} rm -v {}
+rm -rfv "${OPT_CLUSTER_DIR}/assets/"
 
-find bin/ -type f -not -name '.gitignore' -print0 | xargs -0 -I {} rm -v {}
+rm -rfv "${OPT_CLUSTER_DIR:?}/bin/"
 
-find logs/ -type f -not -name '.gitignore' -print0 | xargs -0 -I {} rm -v {}
+rm -rfv "${OPT_CLUSTER_DIR}/inventory/"
 
-rm -fv inventory/hosts
+rm -rfv "logs/"

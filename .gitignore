@@ -4,3 +4,7 @@ aws.json
 hosts
 openshift-ansible/
 test/
+assets/
+bin/
+logs/
+aws-4?/inventory/

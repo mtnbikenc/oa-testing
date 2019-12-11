@@ -69,6 +69,11 @@
     set_fact:
       ssh_bastion: "{{ oc_get.stdout }}"
 
+  - name: Create Inventory directory
+    file:
+      path: "{{ cluster_dir }}/inventory"
+      state: directory
+
   - name: Create Ansible Inventory File
     template:
       src: hosts40.j2

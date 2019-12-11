@@ -3,6 +3,4 @@ set -euxo pipefail
 
 source build_options.sh
 
-ansible-playbook -i localhost, create-install-assets.yml
-
-bin/openshift-install create cluster --dir=./assets --log-level=debug
+"${OPT_CLUSTER_DIR}/bin/openshift-install" create cluster --dir="${OPT_CLUSTER_DIR}/assets" --log-level=debug
