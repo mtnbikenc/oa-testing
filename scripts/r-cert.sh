@@ -11,10 +11,11 @@ ${PYTHON} $(which ansible) --version
 
 playbook_base='openshift-ansible/playbooks/'
 
-echo "### Running OpenShift-Ansible Deploy ###"
-playbook="${playbook_base}/redeploy-certificates.yml"
-
-#export ANSIBLE_CALLBACK_PLUGINS="$(python3 -m ara.setup.callback_plugins)"
-
+echo "### Running OpenShift-Ansible Redeploy Certificates ###"
+if [[ -s "${playbook_base}/redeploy-certificates.yml" ]]; then
+    playbook="${playbook_base}redeploy-certificates.yml"
+else
+    playbook="${playbook_base}byo/openshift-cluster/redeploy-certificates.yml"
+fi
 
 time ${PYTHON} $(which ansible-playbook)  -i inventory/hosts ${playbook} -vvv
