@@ -1,6 +1,0 @@
----
-# >= 3.10
-openshift_node_group_name: "node-config-compute"
-#openshift_node_group_name: "node-config-compute-crio"
-#openshift_use_crio: true
-#openshift_use_crio_only: true
