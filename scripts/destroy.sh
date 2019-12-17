@@ -9,9 +9,6 @@ then
 fi
 
 rm -rfv "${OPT_CLUSTER_DIR}/assets/"
-
 rm -rfv "${OPT_CLUSTER_DIR:?}/bin/"
-
 rm -rfv "${OPT_CLUSTER_DIR}/inventory/"
-
 rm -rfv "logs/"
