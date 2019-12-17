@@ -32,7 +32,7 @@ rhn_pool=
 
 ## Building A Cluster
 
-* cd aws-c1
+* cd aws-3a
 * Update options in build_options.sh as needed
 * Update options in inventory/group_vars/OSEv3.yml
 * ./build.sh

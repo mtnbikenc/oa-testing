@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#set -euxo pipefail
+set -euxo pipefail
 
 function build {  ## Build an OpenShift cluster and add worker nodes
   extract-installer
