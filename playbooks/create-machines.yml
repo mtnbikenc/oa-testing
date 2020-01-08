@@ -27,7 +27,7 @@
 
   tasks:
   - name: Retreive platform AMI list
-    ec2_ami_facts:
+    ec2_ami_info:
       region: "{{ aws_region }}"
       owners: "{{ platform_type_dict[platform_type].owners }}"
       filters: "{{ platform_type_dict[platform_type].filters }}"
