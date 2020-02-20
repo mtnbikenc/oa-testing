@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euxo pipefail
+set -euo pipefail
 
 function build {  ## Build an OpenShift cluster and add worker nodes
   extract-installer
@@ -96,14 +96,21 @@ then
   exit 1
 fi
 
-# Check if the function exists (bash specific)
-if declare -f "$1" > /dev/null
-then
-  # call command/function
-  "$@"
+# Check if each command given exist as a function (bash specific)
+for COMMAND in "$@"
+do
+  if ! declare -f "$COMMAND" > /dev/null
+  then
+    printf "\033[31mERROR - '%s' is not a valid command \033[0m\n" "$COMMAND" >&2
+    usage
+    exit 1
+  fi
+done
 
-else
-  printf "\033[31mERROR - '%s' is not a valid command \033[0m\n" "$1" >&2
-  usage
-  exit 1
-fi
+# Run each command given
+for COMMAND in "$@"
+do
+  # call command/function
+  set -x
+  "$COMMAND"
+done
