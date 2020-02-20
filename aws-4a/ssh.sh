@@ -14,6 +14,6 @@ REMOTEUSER=$(ansible-inventory -i "${OPT_CLUSTER_DIR}/inventory/hosts" --list | 
 
 export KUBECONFIG=${OPT_CLUSTER_DIR}/assets/auth/kubeconfig
 BASTION=$(oc get service -n byoh-ssh-bastion ssh-bastion -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-export BASTION
 
-ssh -o IdentityFile="${OPT_PRIVATE_KEY}" -o StrictHostKeyChecking=no -o ProxyCommand='ssh -A -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -W %h:%p core@${BASTION}' "${REMOTEUSER}"@"${REMOTEHOST}"
+set -x
+ssh -o IdentityFile="${OPT_PRIVATE_KEY}" -o StrictHostKeyChecking=no -o "ProxyCommand=ssh -A -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -W %h:%p core@${BASTION}" "${REMOTEUSER}"@"${REMOTEHOST}"
