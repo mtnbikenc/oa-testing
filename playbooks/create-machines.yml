@@ -40,7 +40,7 @@
   - name: Get existing worker machinesets
     command: >
       oc get machinesets
-      --config={{ kubeconfig_path }}
+      --kubeconfig={{ kubeconfig_path }}
       --namespace=openshift-machine-api
       --output=json
     register: machineset
@@ -57,7 +57,7 @@
   - name: Get ssh bastion address
     command: >
       oc get service ssh-bastion
-      --config={{ kubeconfig_path }}
+      --kubeconfig={{ kubeconfig_path }}
       --namespace=byoh-ssh-bastion
       --output=jsonpath='{.status.loadBalancer.ingress[0].hostname}'
     register: oc_get

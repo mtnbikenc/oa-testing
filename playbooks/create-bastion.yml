@@ -12,7 +12,7 @@
   - name: Create ssh bastion namespace and secrets
     command: >
       oc apply -f -
-      --config={{ kubeconfig_path }}
+      --kubeconfig={{ kubeconfig_path }}
     register: oc_apply
     args:
       stdin: "{{ item.value | to_yaml }}"
@@ -40,7 +40,7 @@
   - name: Create ssh bastion resources
     command: >
       oc apply -f files/ssh_bastion/
-      --config={{ kubeconfig_path }}
+      --kubeconfig={{ kubeconfig_path }}
     register: oc_apply
     changed_when:
     - ('created' in oc_apply.stdout) or
@@ -50,7 +50,7 @@
     - name: Wait for ssh bastion deployment to rollout
       command: >
         oc get deployment.apps/ssh-bastion
-        --config={{ kubeconfig_path }}
+        --kubeconfig={{ kubeconfig_path }}
         --namespace=byoh-ssh-bastion
         --output=jsonpath='{.status.availableReplicas}'
       register: oc_get_deployment_replicas
@@ -64,7 +64,7 @@
     - name: DEBUG - Get ssh bastion pod name
       command: >
         oc get pods
-        --config={{ kubeconfig_path }}
+        --kubeconfig={{ kubeconfig_path }}
         --namespace=byoh-ssh-bastion
         --output=jsonpath='{.items[0].metadata.name}'
       register: ssh_bastion_pod
@@ -73,7 +73,7 @@
     - name: DEBUG - Get ssh bastion pod logs
       command: >
         oc describe pod/{{ ssh_bastion_pod.stdout }}
-        --config={{ kubeconfig_path }}
+        --kubeconfig={{ kubeconfig_path }}
         --namespace=byoh-ssh-bastion
       changed_when: false
 

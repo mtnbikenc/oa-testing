@@ -29,7 +29,7 @@
 - name: Import machineset definition
   command: >
     oc apply -f -
-    --config={{ kubeconfig_path }}
+    --kubeconfig={{ kubeconfig_path }}
   register: oc_apply
   args:
     stdin: "{{ machineset | to_yaml }}"
@@ -37,25 +37,47 @@
   - ('created' in oc_apply.stdout) or
     ('configured' in oc_apply.stdout)
 
-- name: Wait for machine to be created
+- name: Get machines in the machineset
   command: >
     oc get machine
-    --config={{ kubeconfig_path }}
+    --kubeconfig={{ kubeconfig_path }}
+    --namespace=openshift-machine-api
     --selector='machine.openshift.io/cluster-api-machineset={{ machineset_name }}'
+    --output=json
+  register: oc_get_machine
+  changed_when: false
+
+- name: Create list of machines
+  set_fact:
+    worker_machines: "{{ (oc_get_machine.stdout | from_json)['items'] | map(attribute='metadata.name') | list }}"
+
+- name: Wait for machines to be provisioned
+  command: >
+    oc get machine {{ item }}
+    --kubeconfig={{ kubeconfig_path }}
     --namespace=openshift-machine-api
     --output=json
+  loop: "{{ worker_machines }}"
   register: new_machine
   until:
   - new_machine.stdout != ''
-  - (new_machine.stdout | from_json)['items'] | length > 0
-  - (new_machine.stdout | from_json)['items'][0].status is defined
-  - (new_machine.stdout | from_json)['items'][0].status.providerStatus is defined
-  - (new_machine.stdout | from_json)['items'][0].status.providerStatus.instanceState is defined
-  - (new_machine.stdout | from_json)['items'][0].status.providerStatus.instanceState == 'running'
+  - (new_machine.stdout | from_json).status is defined
+  - (new_machine.stdout | from_json).status.phase == 'Provisioned'
   retries: 36
   delay: 5
   changed_when: false
 
+- name: Get machines in the machineset after provisioning
+  command: >
+    oc get machine
+    --kubeconfig={{ kubeconfig_path }}
+    --namespace=openshift-machine-api
+    --selector='machine.openshift.io/cluster-api-machineset={{ machineset_name }}'
+    --output=json
+  register: oc_get_machine
+  changed_when: false
+
 - name: Add hostname to new_workers_list
   set_fact:
-    new_workers_list: "{{ new_workers_list + [ (new_machine.stdout | from_json)['items'][0].status.addresses | selectattr('type', 'match', '^InternalDNS$') | map(attribute='address') | first ] }}"
+    new_workers_list: "{{ new_workers_list + [ item.status.addresses | selectattr('type', 'match', '^InternalDNS$') | map(attribute='address') | first ] }}"
+  loop: "{{ (oc_get_machine.stdout | from_json)['items'] }}"
