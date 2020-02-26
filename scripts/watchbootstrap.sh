@@ -28,7 +28,7 @@ while true; do
       -o PasswordAuthentication=no \
       -o UserKnownHostsFile=/dev/null \
       core@${IP} \
-      'journalctl -b -f -u bootkube.service'
+      'journalctl -b -f -u release-image.service -u bootkube.service'
   fi
   sleep 10
 done;
