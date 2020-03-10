@@ -26,8 +26,16 @@ export GIT_WORK_TREE=${OPT_CLUSTER_DIR}/openshift-ansible
 
 # Checkout a pull request
 if [ -v OPT_OA_PRNUM ]; then
-    git fetch origin "pull/${OPT_OA_PRNUM}/merge:PR${OPT_OA_PRNUM}"
-    git checkout "PR${OPT_OA_PRNUM}"
+  if [ -v OPT_OA_BASE_BRANCH ]; then
+    git checkout "${OPT_OA_BASE_BRANCH}"
+  fi
+  git checkout -b temp-merge
+
+  for PRNUM in ${OPT_OA_PRNUM}
+  do
+    git fetch origin "pull/${PRNUM}/head:PR${PRNUM}"
+    git merge "PR${PRNUM}" -m "Merging ${PRNUM}"
+  done
 fi
 
 # Checkout a tag
