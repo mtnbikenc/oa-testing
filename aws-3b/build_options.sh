@@ -25,6 +25,7 @@ export OPT_ANSIBLE_TAG=v2.8.2
 ##################################################
 # Clone OpenShift-Ansible
 ##################################################
+export OPT_OA_BASE_BRANCH=release-3.11
 #export OPT_OA_PRNUM=XXXX
 export OPT_OA_TAG=release-3.11
 #export OPT_OA_TAG=openshift-ansible-3.y.z-1
