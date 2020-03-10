@@ -58,7 +58,7 @@
     command: >
       oc get service ssh-bastion
       --kubeconfig={{ kubeconfig_path }}
-      --namespace=byoh-ssh-bastion
+      --namespace=test-ssh-bastion
       --output=jsonpath='{.status.loadBalancer.ingress[0].hostname}'
     register: oc_get
     until:

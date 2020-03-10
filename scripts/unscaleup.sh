@@ -6,7 +6,7 @@ source build_options.sh
 export KUBECONFIG=${OPT_CLUSTER_DIR}/assets/auth/kubeconfig
 
 # Remove ssh bastion
-#oc delete project byoh-ssh-bastion
+#oc delete project test-ssh-bastion
 #oc delete clusterrole ssh-bastion
 #oc delete clusterrolebinding ssh-bastion
 
