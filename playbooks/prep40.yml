@@ -8,23 +8,20 @@
   - import_tasks: handlers/main.yml
 
   vars:
-    latest_version: '4.2'
     payload_version: "{{ lookup('env', 'OPT_PAYLOAD') }}"
     build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
     ops_mirror_path: "{{ lookup('env', 'OPT_OPS_MIRROR_PATH') | default(playbook_dir ~ '/../../shared-secrets/mirror/ops-mirror.pem', true) }}"
 
   tasks:
+  - name: Fail if 'OPT_PAYLOAD' is not defined
+    fail:
+      msg: "'OPT_PAYLOAD' must be a defined environment variable"
+    when:
+    - payload_version == ''
+
   - name: Set prep_version to payload version
     set_fact:
       prep_version: "{{ payload_version | regex_search('^\\d+\\.\\d+') }}"
-    when:
-    - payload_version is defined
-
-  - name: Set prep_version to latest if no version provided
-    set_fact:
-      prep_version: "{{ latest_version }}"
-    when:
-    - prep_version is not defined
 
   - name: Wait for host connection to ensure SSH has started
     wait_for_connection:
@@ -37,7 +34,7 @@
 
   - name: Create rhel-7-server-ose-rpms repo file
     template:
-      src: rhel-7-server-ose-X.X-devel-rpms.repo.j2
+      src: rhel-7-server-ose-4.X-devel-rpms.repo.j2
       dest: /etc/yum.repos.d/rhel-7-server-ose-rpms.repo
     vars:
       target_version: "{{ prep_version }}"
@@ -45,7 +42,7 @@
 
   - name: Create rhel-7-server-rpms repo file
     copy:
-      src: rhel-7-server-rpms.repo
+      src: rhel-7-server-rpms-4.X.repo
       dest: /etc/yum.repos.d/
     notify: refresh cache
 

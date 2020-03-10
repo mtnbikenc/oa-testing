@@ -1,0 +1,10 @@
+[rhel-7-server-ose-{{ target_version }}-{{ build_version }}-devel-rpms]
+name = A repository of dependencies for Atomic OpenShift {{ target_version }}
+baseurl = https://mirror.openshift.com/enterprise/reposync/{{ target_version }}/rhel-server-ose-rpms/
+failovermethod = priority
+gpgcheck = 0
+sslclientcert = /var/lib/yum/ops-mirror.pem
+sslclientkey = /var/lib/yum/ops-mirror.pem
+sslverify = 0
+enabled = 1
+
