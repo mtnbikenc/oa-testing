@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-* libvirt installed and configured per https://github.com/openshift/installer/blob/master/docs/dev/libvirt-howto.md
+* libvirt installed and configured per https://github.com/openshift/installer/blob/master/docs/dev/libvirt/README.md
 * Pull secret saved as ~/pull-secret.txt from https://cloud.openshift.com/clusters/install, Step 4
 * OpenShift shared-secrets repo cloned parallel to this repo
 * ???
