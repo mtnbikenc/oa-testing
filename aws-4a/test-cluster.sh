@@ -8,7 +8,8 @@ function build {  ## Build an OpenShift cluster and add worker nodes
   clone-ansible
   clone-openshift-ansible
   create-bastion
-  create-machines
+#  create-machines
+  provision40
   prep40
   node-scaleup40
 }
@@ -41,6 +42,10 @@ function create-machines {  ## Create worker machines on the OpenShift cluster
   run-script
 }
 
+function provision40 {  ## Prepare repos on worker machines
+  run-script
+}
+
 function prep40 {  ## Prepare repos on worker machines
   run-script
 }
@@ -58,7 +63,8 @@ function unscaleup {  ## Remove added worker nodes from cluster
 }
 
 function rescaleup {  ## Run 'create-machines', 'prep40' and 'node-scaleup40'
-  create-machines
+#  create-machines
+  provision40
   prep40
   node-scaleup40
 }
@@ -84,7 +90,7 @@ function run-script {  ## PRIVATE - Runs a script and creates a log file
 
 function usage {  ## PRIVATE - Print usage information
   echo "Available commands are:"
-  grep -oP '(?<=^function )[a-zA-Z0-9_-]+.*$' $0 | grep -v 'PRIVATE' | awk 'BEGIN {FS=" {  ## "}; {printf"\033[36m%-30s\033[0m %s\n", $1, $2}'
+  grep -oP '(?<=^function )[a-zA-Z0-9_-]+.*$' "$0" | grep -v 'PRIVATE' | awk 'BEGIN {FS=" {  ## "}; {printf"\033[36m%-30s\033[0m %s\n", $1, $2}'
 
 }
 

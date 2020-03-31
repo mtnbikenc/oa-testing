@@ -6,7 +6,7 @@
   gather_facts: no
 
   vars:
-    aws_region: us-east-1
+    aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
     cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
     aws_instances_file: "{{ cluster_dir }}/inventory/aws.json"

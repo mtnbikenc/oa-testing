@@ -45,4 +45,6 @@ then
     oc delete machinesets --namespace openshift-machine-api "${RHEL_MACHINE_SETS[@]}"
 fi
 
+time ansible-playbook -i localhost, ../playbooks/terminate.yml -vvv -e ansible_python_interpreter=${LOCAL_PYTHON}
+
 rm --force --verbose "${OPT_CLUSTER_DIR}/inventory/hosts"
