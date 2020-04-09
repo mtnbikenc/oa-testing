@@ -1,0 +1,27 @@
+localhost ansible_connection=local
+[all:vars]
+# SSH user, this user should allow ssh based auth without requiring a
+# password. If using ssh key based auth, then the key should be managed by an
+# ssh agent.
+#ansible_user=cloud-user
+
+# If ansible_user is not root, ansible_become must be set to true and the
+# user must be configured for passwordless sudo
+#ansible_become=True
+
+###############################################################################
+# Required configuration variables                                            #
+###############################################################################
+
+# **NOTE** this variable will need to be changed
+openshift_kubeconfig_path="~/.kube/config"
+
+# probably should be moved
+ansible_ssh_private_key_file="~/.ssh/openshift-dev.pem"
+
+# For running RHEL worker scaleup
+[new_workers]
+%{ for h in hosts ~}
+${h} ansible_user=cloud-user ansible_become=yes
+%{ endfor ~}
+
