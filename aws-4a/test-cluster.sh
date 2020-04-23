@@ -8,10 +8,11 @@ function build {  ## Build an OpenShift cluster and add worker nodes
   clone-ansible
   clone-openshift-ansible
   create-bastion
-#  create-machines
-  provision40
+  create-machines
+#  provision40
   prep40
   node-scaleup40
+#  drain-coreos
 }
 
 function extract-installer {  ## Extract openshift-installer from the release image
@@ -54,6 +55,10 @@ function node-scaleup40 {  ## Run openshift-ansible to scale up worker nodes
   run-script
 }
 
+function drain-coreos {  ## Drain CoreOS worker nodes
+  run-script
+}
+
 function upgrade40 {  ## Run openshift-ansible to upgrade worker nodes
   run-script
 }
@@ -63,10 +68,11 @@ function unscaleup {  ## Remove added worker nodes from cluster
 }
 
 function rescaleup {  ## Run 'create-machines', 'prep40' and 'node-scaleup40'
-#  create-machines
-  provision40
+  create-machines
+#  provision40
   prep40
   node-scaleup40
+#  drain-coreos
 }
 
 function destroy {  ## Destroy OpenShift cluster and clean up artifacts
@@ -75,6 +81,10 @@ function destroy {  ## Destroy OpenShift cluster and clean up artifacts
 }
 
 function sync-oa {  ## Sync working openshift-ansible repo with testing repo
+  run-script
+}
+
+function e2e-tests {  ## Run openshift e2e tests
   run-script
 }
 
