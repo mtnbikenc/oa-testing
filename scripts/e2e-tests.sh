@@ -22,6 +22,7 @@ fi
 
 popd
 
+mkdir --parents "${OPT_CLUSTER_DIR}/bin"
 cp "${GOPATH}/src/github.com/openshift/openshift-tests/extended-platform-tests" ./bin
 export PATH="${PWD}/bin:$PATH"
 
