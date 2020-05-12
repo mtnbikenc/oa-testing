@@ -35,7 +35,7 @@ rhn_pool=
 * cd aws-3a
 * Update options in build_options.sh as needed
 * Update options in inventory/group_vars/OSEv3.yml
-* ./build.sh
+* ./test-cluster.sh build
 
 ## Terminating A Cluster
 
@@ -43,14 +43,31 @@ When you are done with a cluster you can run a command to terminate the AWS
 instances and clean up logs.
 
 ```bash
-$ ./terminate.sh
+$ ./test-cluster.sh terminate
 ```
 
-## Resetting build options and scripts
+## test-cluster.sh Command Help
 
-If you want to revert all your changes to build options and inventory settings,
-you can run a command to revert back to defaults.
+Running the test-cluster.sh script without any options will print a list of supported commands.
 
 ```bash
-$ ./reset.sh
+$ ./test-cluster.sh
+Available commands are:
+build                          Build an OpenShift cluster
+provision                      Provision instances for cluster deployment
+clone-ansible                  Clone the Ansible repo and checks out supplied tag
+clone-openshift-ansible        Clone the OpenShift-Ansible and checks out supplied tag
+prep                           Prepare repos on instances
+prereq                         Run prerequisites playbook
+deploy                         Run deploy_cluster playbook
+upgrade                        Run cluster upgrade playbook
+master-scaleup                 Run master scaleup playbook
+etcd-scaleup                   Run etcd scaleup playbook
+node-scaleup                   Run node scaleup playbook
+logging-config                 Run logging config playbook
+terminate                      Terminate cluster instances
+sync-oa                        Sync working openshift-ansible repo with testing repo
+cert-check                     Run certificate expiry easy-mode playbook
+redeploy-cert                  Run certificate redeploy playbook
+redeploy-ca                    Run OpenShift CA redeploy playbook
 ```
