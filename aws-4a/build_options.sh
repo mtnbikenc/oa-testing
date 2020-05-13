@@ -24,7 +24,7 @@ export OPT_PLATFORM_TYPE=rhel         # rhel/centos
 export OPT_PLATFORM_VERSION=7.8
 export OPT_INSTANCE_TYPE=m4.large
 export AWS_PROFILE="openshift-dev"
-#export AWS_DEFAULT_REGION=us-east-2
+export AWS_DEFAULT_REGION=us-east-2
 
 #export OPT_REGISTRY=registry.svc.ci.openshift.org/origin/release
 export OPT_REGISTRY=registry.svc.ci.openshift.org/ocp/release
