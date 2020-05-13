@@ -58,7 +58,7 @@ function get-kubeconfig {  ## Obtain the kubeconfig from the cluster
   source build_options.sh
   REMOTEHOST=$(ansible-inventory -i "${OPT_CLUSTER_DIR}/inventory/hosts" --list | jq -r '.masters.hosts[0]')
   mkdir --parents "${OPT_CLUSTER_DIR}/assets/auth"
-  ssh "${REMOTEHOST}" "sudo cat /etc/origin/master/admin.kubeconfig" > assets/auth/kubeconfig
+  ssh "${REMOTEHOST}" "sudo cat /etc/origin/master/admin.kubeconfig" > "${OPT_CLUSTER_DIR}/assets/auth/kubeconfig"
 }
 
 function upgrade {  ## Run cluster upgrade playbook
