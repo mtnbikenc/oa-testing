@@ -2,9 +2,9 @@
 set -euo pipefail
 
 function build {  ## Build an OpenShift cluster
-  provision
   clone-ansible
   clone-openshift-ansible
+  provision
   prep
   prereq
   deploy
