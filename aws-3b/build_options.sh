@@ -20,7 +20,7 @@ export AWS_DEFAULT_REGION=us-east-1
 # Clone Ansible
 ##################################################
 #export OPT_ANSIBLE_PRNUM=XXXXX
-export OPT_ANSIBLE_TAG=v2.8.2
+export OPT_ANSIBLE_TAG=v2.9.9
 #export OPT_ANSIBLE_TAG=<commit_hash>
 
 ##################################################

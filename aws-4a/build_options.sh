@@ -42,7 +42,7 @@ export OPT_RELEASE_IMAGE="${OPT_REGISTRY}":"${OPT_PAYLOAD}"
 # Clone Ansible
 ##################################################
 #export OPT_ANSIBLE_PRNUM=XXXXX
-export OPT_ANSIBLE_TAG=v2.9.7
+export OPT_ANSIBLE_TAG=v2.9.9
 #export OPT_ANSIBLE_TAG=<commit_hash>
 
 ##################################################
