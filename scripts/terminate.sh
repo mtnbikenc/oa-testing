@@ -5,5 +5,6 @@ source build_options.sh
 
 time ansible-playbook -i localhost, ../playbooks/terminate.yml -vvv -e ansible_python_interpreter=${PYTHON}
 
-rm -f ansible.log
-rm -f logs/*.log
+rm -rfv ansible.log
+rm -rfv "${OPT_CLUSTER_DIR}/assets/"
+rm -rfv "logs/"

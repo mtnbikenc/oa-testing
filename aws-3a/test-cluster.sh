@@ -8,6 +8,7 @@ function build {  ## Build an OpenShift cluster
   prep
   prereq
   deploy
+  get-kubeconfig
 }
 
 function provision {  ## Provision instances for cluster deployment
@@ -50,6 +51,14 @@ function deploy {  ## Run deploy_cluster playbook
   export PLAYBOOK="playbooks/deploy_cluster.yml"
   export SCRIPT="run-playbook.sh"
   run-script
+}
+
+function get-kubeconfig {  ## Obtain the kubeconfig from the cluster
+  set -euxo pipefail
+  source build_options.sh
+  REMOTEHOST=$(ansible-inventory -i "${OPT_CLUSTER_DIR}/inventory/hosts" --list | jq -r '.masters.hosts[0]')
+  mkdir --parents "${OPT_CLUSTER_DIR}/assets/auth"
+  ssh "${REMOTEHOST}" "sudo cat /etc/origin/master/admin.kubeconfig" > assets/auth/kubeconfig
 }
 
 function upgrade {  ## Run cluster upgrade playbook
