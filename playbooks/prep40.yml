@@ -9,7 +9,6 @@
 
   vars:
     payload_version: "{{ lookup('env', 'OPT_PAYLOAD') }}"
-    build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('', true) }}"
     ops_mirror_path: "{{ lookup('env', 'OPT_OPS_MIRROR_PATH') | default(playbook_dir ~ '/../../shared-secrets/mirror/ops-mirror.pem', true) }}"
 
   tasks:
@@ -22,41 +21,6 @@
   - name: Set release_version to payload version
     set_fact:
       release_version: "{{ payload_version | regex_search('^\\d+\\.\\d+') }}"
-
-  - when: build_version == ''
-    block:
-    - name: Get mirror.openshift.com content
-      uri:
-        url: https://mirror.openshift.com/enterprise/all/{{ release_version }}/?F=0
-        client_cert: "{{ ops_mirror_path }}"
-        return_content: true
-      register: uri_result
-      delegate_to: localhost
-
-    - name: Split content into lines
-      set_fact:
-        content_lines: "{{ (uri_result.content).split('\n') }}"
-
-    - name: Retrieve build items from html list
-      set_fact:
-        build_names: "{{ content_lines | select('search', '^<li>') | map('regex_replace', '<li><a href=\"(.*)/\">.*</li>', '\\1') | list }}"
-
-    - name: Set latest_build
-      set_fact:
-        latest_build: "{{ build_names[-1] }}"
-
-    - name: Verify build sync is complete
-      uri:
-        url: https://mirror.openshift.com/enterprise/all/{{ release_version }}/{{ latest_build }}/status.txt
-        client_cert: "{{ ops_mirror_path }}"
-        return_content: true
-      register: uri_result
-      failed_when: "'COMPLETE' not in uri_result.content"
-      delegate_to: localhost
-
-    - name: Set build_version to latest_build
-      set_fact:
-        build_version: "{{ latest_build }}"
 
   - name: Wait for host connection to ensure SSH has started
     wait_for_connection:
@@ -80,4 +44,3 @@
     notify: refresh cache
 
   - meta: flush_handlers
-
