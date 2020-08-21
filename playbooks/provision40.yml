@@ -24,7 +24,7 @@
         volume_type: gp2
         delete_on_termination: true
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
-    platform_version: "{{ lookup('env', 'OPT_PLATFORM_VERSION') | default('7.7', true) }}"
+    platform_version: "{{ lookup('env', 'OPT_PLATFORM_VERSION') | default('7.9', true) }}"
     platform_type_dict:
       centos:
         username: "centos"

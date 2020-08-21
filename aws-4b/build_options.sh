@@ -21,7 +21,7 @@ export OPT_PRIVATE_KEY
 export OPT_CLUSTER_DIR=${PWD}
 #export OPT_CLUSTER_DIR=/tmp           # use this for 'toolbox'
 export OPT_PLATFORM_TYPE=rhel         # rhel/centos
-export OPT_PLATFORM_VERSION=7.8
+export OPT_PLATFORM_VERSION=7.9
 export OPT_INSTANCE_TYPE=m4.large
 export AWS_PROFILE="openshift-dev"
 export AWS_DEFAULT_REGION=us-east-2
@@ -42,7 +42,7 @@ export OPT_RELEASE_IMAGE="${OPT_REGISTRY}":"${OPT_PAYLOAD}"
 # Clone Ansible
 ##################################################
 #export OPT_ANSIBLE_PRNUM=XXXXX
-export OPT_ANSIBLE_TAG=v2.9.9
+export OPT_ANSIBLE_TAG=v2.9.12
 #export OPT_ANSIBLE_TAG=<commit_hash>
 
 ##################################################
