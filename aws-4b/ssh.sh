@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#set -euxo pipefail
+set -euo pipefail
 
 # Connects to a remote host selected from an Ansible inventory using an ssh bastion
 #
@@ -16,4 +16,4 @@ export KUBECONFIG=${OPT_CLUSTER_DIR}/assets/auth/kubeconfig
 BASTION=$(oc get service -n test-ssh-bastion ssh-bastion -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
 
 set -x
-ssh -o IdentityFile="${OPT_PRIVATE_KEY}" -o StrictHostKeyChecking=no -o "ProxyCommand=ssh -A -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -W %h:%p core@${BASTION}" "${REMOTEUSER}"@"${REMOTEHOST}"
+ssh -o IdentityFile="${OPT_PRIVATE_KEY}" -o StrictHostKeyChecking=no -o "ProxyCommand=ssh -o IdentityFile=${OPT_PRIVATE_KEY} -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -W %h:%p core@${BASTION}" "${REMOTEUSER}"@"${REMOTEHOST}"
