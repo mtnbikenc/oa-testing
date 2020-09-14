@@ -2,7 +2,8 @@
 
 CURRENT_USER=$(id -un)
 export OPT_CLUSTER_ID=${CURRENT_USER}-${PWD##*-}
-export PYTHON=$(which python3 || which python)
+PYTHON=$(command -v python3 || command -v python)
+export PYTHON
 
 ##################################################
 # Provision/Terminate
