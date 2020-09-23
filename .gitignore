@@ -1,6 +1,7 @@
 ansible/
 *.log
 aws.json
+aws_vpc.json
 hosts
 openshift-ansible/
 test/
