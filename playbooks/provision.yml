@@ -12,6 +12,8 @@
     aws_instance_file: "{{ cluster_dir }}/inventory/aws.json"
     aws_lb_instance_file: "{{ cluster_dir }}/inventory/awslb.json"
     aws_instance_type: "{{ lookup('env', 'OPT_INSTANCE_TYPE') | default('t2.medium', true) }}"
+    aws_public_subnet: "{{ (lookup('file', cluster_dir ~ '/inventory/aws_vpc.json') | from_json).Stacks[0].Outputs | selectattr('OutputKey', 'match', '^PublicSubnetIds') | map(attribute='OutputValue') | first }}"
+    aws_security_group: "{{ (lookup('file', cluster_dir ~ '/inventory/aws_vpc.json') | from_json).Stacks[0].Outputs | selectattr('OutputKey', 'match', '^OCPSecurityGroup') | map(attribute='OutputValue') | first }}"
     master_count: "{{ lookup('env', 'OPT_MASTER_COUNT') | default(1, true)}}"
     compute_count: "{{ lookup('env', 'OPT_COMPUTE_COUNT') | default(0, true)}}"
     infra_count: "{{ lookup('env', 'OPT_INFRA_COUNT') | default(0, true)}}"
@@ -57,6 +59,11 @@
         msg: "Skipping provision, existing AWS Instance file found."
     - meta: end_play
 
+  - name: Set aws_region from .aws/config file
+    set_fact:
+      aws_region: "{{ lookup('ini', 'region section=profile\ openshift-dev file=~/.aws/config') }}"
+    when: aws_region == ""
+
   - import_tasks: tasks/lb_for_atomic.yml
     when:
     - master_count | int > 1
@@ -85,9 +92,9 @@
       instance_type: "{{ aws_instance_type }}"
       count: "{{ cluster_count }}"
       group_id:
-        - sg-7e73221a  # default
-        - sg-e1760186  # public-http
-      vpc_subnet_id: "subnet-cf57c596"  # devenv-subnet-1
+        - "{{ aws_security_group }}"
+      vpc_subnet_id: "{{ aws_public_subnet }}"
+      assign_public_ip: yes
       image: "{{ aws_ami }}"
       volumes: "{{ aws_volumes }}"
       wait: yes

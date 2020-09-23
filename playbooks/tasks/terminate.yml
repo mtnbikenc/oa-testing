@@ -19,7 +19,7 @@
   ec2:
     region: "{{ aws_region }}"
     instance_ids: "{{ aws_instances.instance_ids }}"
-    state: stopped
+    state: absent
 
 - name: Rename AWS Instances
   ec2_tag:

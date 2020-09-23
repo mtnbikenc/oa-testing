@@ -52,8 +52,8 @@ rhn_pool: "{{ lookup('ini', 'rhn_pool section=default file=~/openshift-creds.txt
 # Used by OpenShift Service Catalog and OpenShift Management
 openshift_cloudprovider_kind: aws
 openshift_clusterid: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
-openshift_cloudprovider_aws_access_key: "{{ lookup('ini', 'aws_access_key_id section=default file=~/.aws/credentials') }}"
-openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key section=default file=~/.aws/credentials') }}"
+openshift_cloudprovider_aws_access_key: "{{ lookup('ini', 'aws_access_key_id section=openshift-dev file=~/.aws/credentials') }}"
+openshift_cloudprovider_aws_secret_key: "{{ lookup('ini', 'aws_secret_access_key section=openshift-dev file=~/.aws/credentials') }}"
 
 ### Components
 

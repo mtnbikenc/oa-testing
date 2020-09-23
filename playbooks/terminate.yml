@@ -14,9 +14,15 @@
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
 
   tasks:
+  - name: Set aws_region from .aws/config file
+    set_fact:
+      aws_region: "{{ lookup('ini', 'region section=profile\ openshift-dev file=~/.aws/config') }}"
+    when: aws_region == ""
+
   - import_tasks: tasks/terminate.yml
     vars:
       aws_instance_file: "{{ aws_instances_file }}"
+
   - import_tasks: tasks/terminate.yml
     vars:
       aws_instance_file: "{{ aws_lb_instance_file }}"

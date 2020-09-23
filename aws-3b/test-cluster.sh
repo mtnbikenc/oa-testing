@@ -4,6 +4,7 @@ set -euo pipefail
 function build {  ## Build an OpenShift cluster
   clone-ansible
   clone-openshift-ansible
+  provision-vpc
   provision
   prep
   prereq
@@ -11,11 +12,16 @@ function build {  ## Build an OpenShift cluster
   get-kubeconfig
 }
 
+function provision-vpc {  ## Provision instances for cluster deployment
+  export SCRIPT="provision-vpc.sh"
+  run-script
+}
+
 function provision {  ## Provision instances for cluster deployment
   export ANSIBLE_INVENTORY="../playbooks/inventory/hosts"
   export PLAYBOOK_BASE="../playbooks"
   export PLAYBOOK="provision.yml"
-  export SCRIPT="run-playbook.sh"
+  export SCRIPT="run-local-playbook.sh"
   run-script
 }
 
@@ -33,7 +39,7 @@ function prep {  ## Prepare repos on instances
   export ANSIBLE_INVENTORY="inventory/hosts"
   export PLAYBOOK_BASE="../playbooks"
   export PLAYBOOK="prep.yml"
-  export SCRIPT="run-playbook.sh"
+  export SCRIPT="run-local-playbook.sh"
   run-script
 }
 

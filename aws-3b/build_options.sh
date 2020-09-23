@@ -15,7 +15,8 @@ export OPT_INFRA_COUNT=2
 export OPT_PLATFORM_TYPE=rhel        # rhel/centos/atomic
 export OPT_INSTANCE_TYPE=t2.medium
 #export OPT_INSTANCE_TYPE=m4.xlarge
-export AWS_DEFAULT_REGION=us-east-1
+export AWS_PROFILE="openshift-dev"
+#export AWS_DEFAULT_REGION=us-east-1
 
 ##################################################
 # Clone Ansible
