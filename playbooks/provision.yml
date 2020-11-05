@@ -44,7 +44,7 @@
         username: "ec2-user"
         owners: "309956199498"  # Red Hat, Inc.
         filters:
-          name: "RHEL-7.8*Hourly*"
+          name: "RHEL-7.9*Hourly*"
 
   tasks:
   - name: Check for AWS Instance File

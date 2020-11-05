@@ -36,6 +36,6 @@
 
 - name: Create rhel-7-server-rpms repo file
   copy:
-    src: rhel-7-server-rpms-3.X.repo
+    src: rhel-7-server-rpms.repo
     dest: /etc/yum.repos.d/
   notify: refresh cache
