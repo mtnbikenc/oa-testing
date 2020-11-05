@@ -28,7 +28,7 @@ export AWS_DEFAULT_REGION=us-east-2
 
 #export OPT_REGISTRY=registry.svc.ci.openshift.org/origin/release
 export OPT_REGISTRY=registry.svc.ci.openshift.org/ocp/release
-export OPT_PAYLOAD=4.6                # This points to the latest accepted nightly build
+export OPT_PAYLOAD=4.7                # This points to the latest accepted nightly build
 #export OPT_PAYLOAD=4.x-ci             # This points to the latest accepted CI build
 #export OPT_PAYLOAD=4.x.0-0.nightly-YYYY-MM-DD-HHMMSS
 
@@ -42,7 +42,7 @@ export OPT_RELEASE_IMAGE="${OPT_REGISTRY}":"${OPT_PAYLOAD}"
 # Clone Ansible
 ##################################################
 #export OPT_ANSIBLE_PRNUM=XXXXX
-export OPT_ANSIBLE_TAG=v2.9.12
+export OPT_ANSIBLE_TAG=v2.9.15
 #export OPT_ANSIBLE_TAG=<commit_hash>
 
 ##################################################
