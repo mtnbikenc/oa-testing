@@ -109,9 +109,20 @@ function logging-config {  ## Run logging config playbook
   run-script
 }
 
-function terminate {  ## Terminate cluster instances
+function terminate {  ## Terminate cluster instances & VPC
   # We don't need to log this, running directly
-  ../scripts/terminate.sh
+  terminate-instances
+  terminate-vpc
+}
+
+function terminate-instances {  ## Terminate cluster instances
+  # We don't need to log this, running directly
+  ../scripts/terminate-instances.sh
+}
+
+function terminate-vpc {  ## Terminate cluster VPC
+  # We don't need to log this, running directly
+  ../scripts/terminate-vpc.sh
 }
 
 function sync-oa {  ## Sync working openshift-ansible repo with testing repo
@@ -135,7 +146,15 @@ function redeploy-cert {  ## Run certificate redeploy playbook
   run-script
 }
 
-function redeploy-ca {  ## Run OpenShift CA redeploy playbook
+function redeploy-master-cert {  ## Run master certificate redeploy playbook
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export PLAYBOOK_BASE="openshift-ansible"
+  export PLAYBOOK="playbooks/openshift-master/redeploy-certificates.yml"
+  export SCRIPT="run-playbook.sh"
+  run-script
+}
+
+function redeploy-openshift-ca {  ## Run OpenShift CA redeploy playbook
   export ANSIBLE_INVENTORY="inventory/hosts"
   export PLAYBOOK_BASE="openshift-ansible"
   export PLAYBOOK="playbooks/openshift-master/redeploy-openshift-ca.yml"
@@ -143,6 +162,37 @@ function redeploy-ca {  ## Run OpenShift CA redeploy playbook
   run-script
 }
 
+function redeploy-service-catalog-cert {  ## Run service catalog certificate redeploy playbook
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export PLAYBOOK_BASE="openshift-ansible"
+  export PLAYBOOK="playbooks/openshift-service-catalog/redeploy-certificates.yml"
+  export SCRIPT="run-playbook.sh"
+  run-script
+}
+
+function redeploy-router-cert {  ## Run hosted router certificate redeploy playbook
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export PLAYBOOK_BASE="openshift-ansible"
+  export PLAYBOOK="playbooks/openshift-hosted/redeploy-router-certificates.yml"
+  export SCRIPT="run-playbook.sh"
+  run-script
+}
+
+function redeploy-registry-cert {  ## Run hosted registry certificate redeploy playbook
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export PLAYBOOK_BASE="openshift-ansible"
+  export PLAYBOOK="playbooks/openshift-hosted/redeploy-registry-certificates.yml"
+  export SCRIPT="run-playbook.sh"
+  run-script
+}
+
+function node-restart {  ## Run node restart playbook
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export PLAYBOOK_BASE="openshift-ansible"
+  export PLAYBOOK="playbooks/openshift-node/restart.yml"
+  export SCRIPT="run-playbook.sh"
+  run-script
+}
 
 ### Internal Functions ###
 function run-script {  ## PRIVATE - Runs a script and creates a log file
