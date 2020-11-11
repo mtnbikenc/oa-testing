@@ -50,9 +50,11 @@
 
   - include_tasks: tasks/create_machineset.yml
     loop: "{{ (machineset.stdout | from_json)['items'] }}"
+    loop_control:
+      loop_var: machineset_obj
     when:
-    - item.status.replicas is defined
-    - item.status.replicas != 0
+    - machineset_obj.status.replicas is defined
+    - machineset_obj.status.replicas != 0
 
   - name: Get ssh bastion address
     command: >
