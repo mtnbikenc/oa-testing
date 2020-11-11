@@ -31,6 +31,18 @@
       src: "{{ ops_mirror_path }}"
       dest: /var/lib/yum/
 
+  - name: Find redhat-rhui repos
+    find:
+      paths: /etc/yum.repos.d
+      patterns: "redhat-rhui*"
+    register: redhat_rhui
+
+  - name: Remove redhat-rhui repos
+    file:
+      path: "{{ item['path'] }}"
+      state: absent
+    with_items: "{{ redhat_rhui['files'] }}"
+
   - name: Create rhel-7-server-ose-rpms repo file
     template:
       src: rhel-7-server-ose-4.X-devel-rpms.repo.j2
