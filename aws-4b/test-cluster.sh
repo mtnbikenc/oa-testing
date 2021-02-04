@@ -59,6 +59,10 @@ function drain-coreos {  ## Drain CoreOS worker nodes
   run-script
 }
 
+function remove-coreos {  ## Remove CoreOS worker nodes
+  run-script
+}
+
 function upgrade40 {  ## Run openshift-ansible to upgrade worker nodes
   run-script
 }
