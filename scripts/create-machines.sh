@@ -10,4 +10,6 @@ source "${OPT_CLUSTER_DIR}/ansible/hacking/env-setup"
 PATH=${OPT_CLUSTER_DIR}/bin:$PATH
 command -v oc
 
-time ${LOCAL_PYTHON} "$(command -v ansible-playbook)" -i "${OPT_CLUSTER_DIR}/inventory/hosts" ../playbooks/create-machines.yml -vvv
+export ANSIBLE_STDOUT_CALLBACK=yaml
+
+time ${LOCAL_PYTHON} "$(command -v ansible-playbook)" -i "${OPT_CLUSTER_DIR}/../playbooks/inventory/hosts" ../playbooks/create-machines.yml -vv

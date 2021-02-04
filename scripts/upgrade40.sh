@@ -16,6 +16,7 @@ ${LOCAL_PYTHON} "$(command -v ansible-inventory)" -i "${OPT_CLUSTER_DIR}/invento
 
 pushd "${OPT_CLUSTER_DIR}/openshift-ansible"
 
-time ${LOCAL_PYTHON} "$(command -v ansible-playbook)" -i "${OPT_CLUSTER_DIR}/inventory/hosts" playbooks/upgrade.yml -vvv
+export ANSIBLE_STDOUT_CALLBACK=yaml
+time ${LOCAL_PYTHON} "$(command -v ansible-playbook)" -i "${OPT_CLUSTER_DIR}/inventory/hosts" playbooks/upgrade.yml -vv
 
 popd

@@ -53,6 +53,7 @@ then
     ${OC_BIN} delete node "${RHEL_WORKERS[@]}"
 fi
 
-time ansible-playbook -i localhost, ../playbooks/terminate.yml -vvv -e ansible_python_interpreter=${LOCAL_PYTHON}
+export ANSIBLE_STDOUT_CALLBACK=yaml
+time ansible-playbook -i localhost, ../playbooks/terminate.yml -vv -e "ansible_python_interpreter=${LOCAL_PYTHON}"
 
 rm --force --verbose "${OPT_CLUSTER_DIR}/inventory/hosts"
