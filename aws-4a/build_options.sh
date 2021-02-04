@@ -9,7 +9,7 @@ export LOCAL_PYTHON
 # Secrets
 ##################################################
 # pull-secret.txt can be obtained from https://cloud.redhat.com/openshift/install/pull-secret
-# You will need to add the CI pull secret to pull from registry.svc.ci.openshift.org
+# You will need to add the CI pull secret to pull from registry.ci.openshift.org
 OPT_PULL_SECRET=$(realpath ~/pull-secret.txt)
 export OPT_PULL_SECRET
 OPT_PRIVATE_KEY=$(realpath "${PWD}/../../shared-secrets/aws/openshift-dev.pem")
@@ -26,8 +26,8 @@ export OPT_INSTANCE_TYPE=m4.large
 export AWS_PROFILE="openshift-dev"
 export AWS_DEFAULT_REGION=us-east-2
 
-#export OPT_REGISTRY=registry.svc.ci.openshift.org/origin/release
-export OPT_REGISTRY=registry.svc.ci.openshift.org/ocp/release
+#export OPT_REGISTRY=registry.ci.openshift.org/origin/release
+export OPT_REGISTRY=registry.ci.openshift.org/ocp/release
 export OPT_PAYLOAD=4.7                # This points to the latest accepted nightly build
 #export OPT_PAYLOAD=4.x-ci             # This points to the latest accepted CI build
 #export OPT_PAYLOAD=4.x.0-0.nightly-YYYY-MM-DD-HHMMSS
