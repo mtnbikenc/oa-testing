@@ -109,16 +109,9 @@
 
     - meta: flush_handlers
 
-    - name: Get available RPM version(s)
-      repoquery:
-        name: "{{ openshift_service_type }}"
-        ignore_excluders: true
-        show_duplicates: true
-      register: repoquery_results
-
-    - name: Display available RPM versions
-      debug:
-        var: repoquery_results.module_results.versions.available_versions_full
+    - name: Get latest available openshift version
+      package:
+        list: "{{ openshift_service_type }}"
 
     - name: Grow partition and filesystem
       include_tasks: tasks/growfs.yml
