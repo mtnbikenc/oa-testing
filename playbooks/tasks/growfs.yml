@@ -3,6 +3,7 @@
   command: "growpart /dev/xvda 3"
   register: growpart
   ignore_errors: true
+  changed_when: growpart is succeeded
 
 - name: Physical Volume resize
   command: "pvresize /dev/xvda3"
