@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -o errtrace -o errexit -o nounset -o pipefail
+
+clean_up () {
+  set +o xtrace
+  if [ -v LOG_FILE ]; then
+    # Strip colors from log file
+    sed --in-place --regexp-extended "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" "logs/${LOG_FILE}"
+    trap ERR
+  fi
+}
+trap clean_up INT ERR
 
 function build {  ## Build an OpenShift cluster
   clone-ansible
@@ -63,8 +73,9 @@ function get-kubeconfig {  ## Obtain the kubeconfig from the cluster
   set -euxo pipefail
   source build_options.sh
   REMOTEHOST=$(ansible-inventory -i "${OPT_CLUSTER_DIR}/inventory/hosts" --list | jq -r '.masters.hosts[0]')
+  REMOTEUSER=$(ansible-inventory -i "${OPT_CLUSTER_DIR}/inventory/hosts" --list | jq -r --arg remotehost "$REMOTEHOST" '._meta.hostvars | .[$remotehost] | .ansible_user')
   mkdir --parents "${OPT_CLUSTER_DIR}/assets/auth"
-  ssh "${REMOTEHOST}" "sudo cat /etc/origin/master/admin.kubeconfig" > "${OPT_CLUSTER_DIR}/assets/auth/kubeconfig"
+  ssh "${REMOTEUSER}@${REMOTEHOST}" "sudo cat /etc/origin/master/admin.kubeconfig" > "${OPT_CLUSTER_DIR}/assets/auth/kubeconfig"
 }
 
 function upgrade {  ## Run cluster upgrade playbook
@@ -73,6 +84,32 @@ function upgrade {  ## Run cluster upgrade playbook
   # Pull openshift_release from inventory, grab the second item ("3.11"), change the '.' to a '_',  delete the surrounding quotes
   UPGRADE_VERSION=$(grep -e '^openshift_release:' inventory/group_vars/OSEv3.yml | awk '{ print $2 }' | sed -e 's/\./_/' | tr -d \" )
   export PLAYBOOK="playbooks/byo/openshift-cluster/upgrades/v${UPGRADE_VERSION}/upgrade.yml"
+  export SCRIPT="run-playbook.sh"
+  run-script
+}
+
+function upgrade-nodes {  ## Run nodes upgrade playbook
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export PLAYBOOK_BASE="openshift-ansible"
+  # Pull openshift_release from inventory, grab the second item ("3.11"), change the '.' to a '_',  delete the surrounding quotes
+  UPGRADE_VERSION=$(grep -e '^openshift_release:' inventory/group_vars/OSEv3.yml | awk '{ print $2 }' | sed -e 's/\./_/' | tr -d \" )
+  export PLAYBOOK="playbooks/byo/openshift-cluster/upgrades/v${UPGRADE_VERSION}/upgrade_nodes.yml"
+  export SCRIPT="run-playbook.sh"
+  run-script
+}
+
+function master-config {  ## Run master config playbook
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export PLAYBOOK_BASE="openshift-ansible"
+  export PLAYBOOK="playbooks/openshift-master/config.yml"
+  export SCRIPT="run-playbook.sh"
+  run-script
+}
+
+function openshift-node-group {  ## Run openshift node group playbook
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export PLAYBOOK_BASE="openshift-ansible"
+  export PLAYBOOK="playbooks/openshift-master/openshift_node_group.yml"
   export SCRIPT="run-playbook.sh"
   run-script
 }
@@ -200,8 +237,7 @@ function run-script {  ## PRIVATE - Runs a script and creates a log file
   LOG_FILE=${LOG_DATE}-${FUNCNAME[1]}.log
   mkdir --parents logs
   unbuffer "../scripts/${SCRIPT}" |& tee "logs/${LOG_FILE}"
-  # Strip colors from log file
-  sed --in-place --regexp-extended "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" "logs/${LOG_FILE}"
+  clean_up
 }
 
 function usage {  ## PRIVATE - Print usage information
