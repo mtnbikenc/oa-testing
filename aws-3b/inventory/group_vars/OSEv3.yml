@@ -27,6 +27,11 @@ oreg_auth_user: "{{ ansible_user_id }}"
 oreg_auth_password: "{{ lookup('ini', 'oreg_auth_password section=default file=~/openshift-creds.txt') }}"
 #oreg_auth_credentials_replace: true
 
+# For installing the currently released images
+#oreg_url: registry.redhat.io/openshift3/ose-${component}:${version}
+#oreg_auth_user: "{{ lookup('ini', 'rhn_user section=default file=~/openshift-creds.txt') }}"
+#oreg_auth_password: "{{ lookup('ini', 'rhn_pass section=default file=~/openshift-creds.txt') }}"
+
 openshift_master_cluster_hostname: "{{ groups.lb[0] }}"
 
 rhn_user: "{{ lookup('ini', 'rhn_user section=default file=~/openshift-creds.txt') }}"
