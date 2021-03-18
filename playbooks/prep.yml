@@ -24,7 +24,9 @@
     delegate_to: localhost
     run_once: true
     changed_when: false
-    when: oreg_auth_password is defined
+    when:
+      - oreg_auth_password is defined
+      - ("reg-aws.openshift.com" in oreg_url)
 
   - name: Set prep_version using openshift_release if defined
     set_fact:
