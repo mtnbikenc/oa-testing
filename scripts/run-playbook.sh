@@ -5,6 +5,7 @@ source ansible/hacking/env-setup
 source build_options.sh
 
 export ANSIBLE_STDOUT_CALLBACK=yaml
+export ANSIBLE_LOG_PATH="${OPT_CLUSTER_DIR}/logs/openshift-ansible.log"
 export ANSIBLE_INVENTORY="${OPT_CLUSTER_DIR}/${ANSIBLE_INVENTORY}"
 
 pushd "${OPT_CLUSTER_DIR}/${PLAYBOOK_BASE}"
