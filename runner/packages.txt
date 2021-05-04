@@ -1,0 +1,9 @@
+bind-utils
+expect
+git
+jq
+openssh
+openssh-clients
+python3-pip
+unzip
+zsh

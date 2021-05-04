@@ -8,9 +8,9 @@
   vars:
     aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
-    cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
-    pull_secret_path: "{{ lookup('env', 'OPT_PULL_SECRET') }}"
-    private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') | realpath }}"
+    cluster_dir: "/oa-testing/cluster"
+    pull_secret_path: "/oa-testing/pull-secret.txt"
+    private_key_path: "/oa-testing/openshift-dev.pem"
 
   tasks:
   ## Create install-config.yaml
@@ -39,4 +39,6 @@
     template:
       src: install-config.yaml.j2
       dest: "{{ cluster_dir }}/assets/install-config.yaml"
+      # unsafe_writes required when templating a file from within a container writing to host filesystem
+      unsafe_writes: true
   ## install-config.yaml

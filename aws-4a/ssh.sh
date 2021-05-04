@@ -9,11 +9,11 @@ set -euo pipefail
 
 source build_options.sh
 
-REMOTEHOST=$(ansible-inventory -i "${OPT_CLUSTER_DIR}/inventory/hosts" --list | jq --argjson index "$1" -r '.new_workers.hosts[$index]')
-REMOTEUSER=$(ansible-inventory -i "${OPT_CLUSTER_DIR}/inventory/hosts" --list | jq -r --arg remotehost "$REMOTEHOST" '._meta.hostvars | .[$remotehost] | .ansible_user')
+REMOTEHOST=$(ansible-inventory -i "${OPT_LOCAL_DIR}/inventory/hosts" --list | jq --argjson index "$1" -r '.new_workers.hosts[$index]')
+REMOTEUSER=$(ansible-inventory -i "${OPT_LOCAL_DIR}/inventory/hosts" --list | jq -r --arg remotehost "$REMOTEHOST" '._meta.hostvars | .[$remotehost] | .ansible_user')
 
-export KUBECONFIG=${OPT_CLUSTER_DIR}/assets/auth/kubeconfig
+export KUBECONFIG=${OPT_LOCAL_DIR}/assets/auth/kubeconfig
 BASTION=$(oc get service -n test-ssh-bastion ssh-bastion -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
 
 set -x
-ssh -o IdentityFile="${OPT_PRIVATE_KEY}" -o StrictHostKeyChecking=no -o "ProxyCommand=ssh -o IdentityFile=${OPT_PRIVATE_KEY} -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -W %h:%p core@${BASTION}" "${REMOTEUSER}"@"${REMOTEHOST}"
+ssh -o IdentityFile="${OPT_LOCAL_PRIVATE_KEY}" -o StrictHostKeyChecking=no -o "ProxyCommand=ssh -o IdentityFile=${OPT_LOCAL_PRIVATE_KEY} -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -W %h:%p core@${BASTION}" "${REMOTEUSER}"@"${REMOTEHOST}"

@@ -1,18 +1,7 @@
 #!/usr/bin/env bash
 set -o errtrace -o errexit -o nounset -o pipefail
 
-clean_up () {
-  set +o xtrace
-  if [ -v LOG_FILE ]; then
-    # Strip colors from log file
-    sed --in-place --regexp-extended "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" "logs/${LOG_FILE}"
-    trap ERR
-  fi
-}
-trap clean_up INT ERR
-
 function build {  ## Build an OpenShift cluster
-  clone-ansible
   clone-openshift-ansible
   provision-vpc
   provision
@@ -23,131 +12,148 @@ function build {  ## Build an OpenShift cluster
 }
 
 function provision-vpc {  ## Provision instances for cluster deployment
-  export SCRIPT="provision-vpc.sh"
-  run-script
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
 }
 
 function provision {  ## Provision instances for cluster deployment
+  export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
   export ANSIBLE_INVENTORY="../playbooks/inventory/hosts"
-  export PLAYBOOK_BASE="../playbooks"
-  export PLAYBOOK="provision.yml"
-  export SCRIPT="run-local-playbook.sh"
-  run-script
-}
-
-function clone-ansible {  ## Clone the Ansible repo and checks out supplied tag
-  export SCRIPT="clone-ansible.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="../playbooks"
+  export OPT_PLAYBOOK="${FUNCNAME[0]}.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function clone-openshift-ansible {  ## Clone the OpenShift-Ansible and checks out supplied tag
-  export SCRIPT="clone-openshift-ansible.sh"
-  run-script
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
 }
 
 function prep {  ## Prepare repos on instances
+  export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="../playbooks"
-  export PLAYBOOK="prep.yml"
-  export SCRIPT="run-local-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="../playbooks"
+  export OPT_PLAYBOOK="${FUNCNAME[0]}.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function prereq {  ## Run prerequisites playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/prerequisites.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="prerequisites.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function deploy {  ## Run deploy_cluster playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/deploy_cluster.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="deploy_cluster.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function get-kubeconfig {  ## Obtain the kubeconfig from the cluster
   set -euxo pipefail
   source build_options.sh
-  REMOTEHOST=$(ansible-inventory -i "${OPT_CLUSTER_DIR}/inventory/hosts" --list | jq -r '.masters.hosts[0]')
-  REMOTEUSER=$(ansible-inventory -i "${OPT_CLUSTER_DIR}/inventory/hosts" --list | jq -r --arg remotehost "$REMOTEHOST" '._meta.hostvars | .[$remotehost] | .ansible_user')
-  mkdir --parents "${OPT_CLUSTER_DIR}/assets/auth"
-  ssh "${REMOTEUSER}@${REMOTEHOST}" "sudo cat /etc/origin/master/admin.kubeconfig" > "${OPT_CLUSTER_DIR}/assets/auth/kubeconfig"
+  REMOTEHOST=$(ansible-inventory -i "${OPT_LOCAL_DIR}/inventory/hosts" --list | jq -r '.masters.hosts[0]')
+  REMOTEUSER=$(ansible-inventory -i "${OPT_LOCAL_DIR}/inventory/hosts" --list | jq -r --arg remotehost "$REMOTEHOST" '._meta.hostvars | .[$remotehost] | .ansible_user')
+  mkdir --parents "${OPT_LOCAL_DIR}/assets/auth"
+  ssh "${REMOTEUSER}@${REMOTEHOST}" "sudo cat /etc/origin/master/admin.kubeconfig" > "${OPT_LOCAL_DIR}/assets/auth/kubeconfig"
 }
 
 function upgrade {  ## Run cluster upgrade playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
   # Pull openshift_release from inventory, grab the second item ("3.11"), change the '.' to a '_',  delete the surrounding quotes
   UPGRADE_VERSION=$(grep -e '^openshift_release:' inventory/group_vars/OSEv3.yml | awk '{ print $2 }' | sed -e 's/\./_/' | tr -d \" )
-  export PLAYBOOK="playbooks/byo/openshift-cluster/upgrades/v${UPGRADE_VERSION}/upgrade.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK="byo/openshift-cluster/upgrades/v${UPGRADE_VERSION}/upgrade.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
+}
+
+function upgrade-control-plane {  ## Run control plane upgrade playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  # Pull openshift_release from inventory, grab the second item ("3.11"), change the '.' to a '_',  delete the surrounding quotes
+  UPGRADE_VERSION=$(grep -e '^openshift_release:' inventory/group_vars/OSEv3.yml | awk '{ print $2 }' | sed -e 's/\./_/' | tr -d \" )
+  export OPT_PLAYBOOK="byo/openshift-cluster/upgrades/v${UPGRADE_VERSION}/upgrade_control_plane.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function upgrade-nodes {  ## Run nodes upgrade playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
   # Pull openshift_release from inventory, grab the second item ("3.11"), change the '.' to a '_',  delete the surrounding quotes
   UPGRADE_VERSION=$(grep -e '^openshift_release:' inventory/group_vars/OSEv3.yml | awk '{ print $2 }' | sed -e 's/\./_/' | tr -d \" )
-  export PLAYBOOK="playbooks/byo/openshift-cluster/upgrades/v${UPGRADE_VERSION}/upgrade_nodes.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK="byo/openshift-cluster/upgrades/v${UPGRADE_VERSION}/upgrade_nodes.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function master-config {  ## Run master config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/openshift-master/config.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-master/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function openshift-node-group {  ## Run openshift node group playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/openshift-master/openshift_node_group.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-master/openshift_node_group.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function master-scaleup {  ## Run master scaleup playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/openshift-master/scaleup.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-master/scaleup.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function etcd-scaleup {  ## Run etcd scaleup playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/openshift-etcd/scaleup.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-etcd/scaleup.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function node-scaleup {  ## Run node scaleup playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/openshift-node/scaleup.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-node/scaleup.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function logging-config {  ## Run logging config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/openshift-logging/config.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-logging/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function terminate {  ## Terminate cluster instances & VPC
-  # We don't need to log this, running directly
   terminate-instances
   terminate-vpc
 }
@@ -163,81 +169,95 @@ function terminate-vpc {  ## Terminate cluster VPC
 }
 
 function sync-oa {  ## Sync working openshift-ansible repo with testing repo
-  export SCRIPT="sync-oa.sh"
-  run-script
+  run-local-script
 }
 
 function cert-check {  ## Run certificate expiry easy-mode playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/openshift-checks/certificate_expiry/easy-mode.yaml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-checks/certificate_expiry/easy-mode.yaml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function redeploy-cert {  ## Run certificate redeploy playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/redeploy-certificates.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="redeploy-certificates.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function redeploy-master-cert {  ## Run master certificate redeploy playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/openshift-master/redeploy-certificates.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-master/redeploy-certificates.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function redeploy-openshift-ca {  ## Run OpenShift CA redeploy playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/openshift-master/redeploy-openshift-ca.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-master/redeploy-openshift-ca.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function redeploy-service-catalog-cert {  ## Run service catalog certificate redeploy playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/openshift-service-catalog/redeploy-certificates.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-service-catalog/redeploy-certificates.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function redeploy-router-cert {  ## Run hosted router certificate redeploy playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/openshift-hosted/redeploy-router-certificates.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-hosted/redeploy-router-certificates.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function redeploy-registry-cert {  ## Run hosted registry certificate redeploy playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/openshift-hosted/redeploy-registry-certificates.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-hosted/redeploy-registry-certificates.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function node-restart {  ## Run node restart playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export PLAYBOOK_BASE="openshift-ansible"
-  export PLAYBOOK="playbooks/openshift-node/restart.yml"
-  export SCRIPT="run-playbook.sh"
-  run-script
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-node/restart.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 ### Internal Functions ###
-function run-script {  ## PRIVATE - Runs a script and creates a log file
+function run-local-script {  ## PRIVATE - Runs a local script and creates a log file
   LOG_DATE=$(date "+%FT%H.%M.%S")
   LOG_FILE=${LOG_DATE}-${FUNCNAME[1]}.log
   mkdir --parents logs
-  unbuffer "../scripts/${SCRIPT}" |& tee "logs/${LOG_FILE}"
-  clean_up
+  "../scripts/${FUNCNAME[1]}.sh" |& tee "logs/${LOG_FILE}"
+}
+
+function script-runner {  ## PRIVATE - Runs a script in a container and creates a log file
+  source build_options.sh
+  LOG_DATE=$(date "+%FT%H.%M.%S")
+  LOG_FILE=${LOG_DATE}-${FUNCNAME[1]}.log
+  mkdir --parents logs
+  ../runner/runner.sh "/oa-testing/scripts/${SCRIPT}" |& tee "logs/${LOG_FILE}"
 }
 
 function usage {  ## PRIVATE - Print usage information

@@ -8,7 +8,7 @@
   vars:
     aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
-    cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
+    cluster_dir: "/oa-testing/cluster"
     aws_instances_file: "{{ cluster_dir }}/inventory/aws.json"
     aws_lb_instance_file: "{{ cluster_dir }}/inventory/awslb.json"
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"

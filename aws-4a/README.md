@@ -1,4 +1,4 @@
-# OpenShift Ansible Test Cluster Builder
+# OpenShift v4 Test Cluster Builder
 
 ## Overview
 
@@ -8,26 +8,6 @@
 * Pull secret saved as ~/pull-secret.txt from https://cloud.openshift.com/clusters/install, Step 4
 * OpenShift shared-secrets repo cloned parallel to this repo
 * ???
-
-## Fedora Toolbox support
-You can run these scripts in Fedora toolbox if you like.
-
-To create the base toolbox image with required packages installed, run:
-
-```bash
-$ ../create-toolbox.sh
-```
-
-To create a toolbox container for the custer cluster, run:
-
-```bash
-$ ./update-toolbox.sh
-```
-
-You can then enter the toolbox and run installs as normal.
-You can optionally have all the build artifacts redirected to the container
-by changing the the OPT_CLUSTER_DIR option in build_options.sh to `/tmp`.
-Log files will still be available in the cluster directory.
 
 ## Building and scaling up a cluster
 
@@ -46,5 +26,30 @@ and clean up logs.
 $ ./test-cluster.sh destroy
 ```
 
-## test-cluster.sh Script
-Running `./test-cluster.sh` without any options will print a list of available commands.
+## test-cluster.sh Command Help
+
+Running the test-cluster.sh script without any options will print a list of supported commands.
+
+```bash
+$ ./test-cluster.sh
+Available commands are:
+build                          Build an OpenShift cluster and add worker nodes
+extract-installer              Extract openshift-installer from the release image
+compile-installer              Compile openshift-installer from source
+create-install-assets          Create install assets, i.e. install-config.yaml
+create-cluster                 Run openshift-install to create a cluster
+clone-openshift-ansible        Clone the OpenShift-Ansible and checks out supplied tag
+create-bastion                 Create SSH Bastion Host on the OpenShift cluster
+create-machines                Create worker machines on the OpenShift cluster
+provision40                    Provision worker machines without using machinesets
+prep40                         Prepare repos on worker machines
+scaleup                        Run openshift-ansible to scale up worker nodes
+drain-coreos                   Drain CoreOS worker nodes
+remove-coreos                  Remove CoreOS worker nodes
+upgrade                        Run openshift-ansible to upgrade worker nodes
+unscaleup                      Remove added worker nodes from cluster
+rescaleup                      Run 'create-machines', 'prep40' and 'scaleup'
+destroy                        Destroy OpenShift cluster and clean up artifacts
+sync-oa                        Sync working openshift-ansible repo with testing repo
+e2e-tests                      Run openshift e2e tests
+```

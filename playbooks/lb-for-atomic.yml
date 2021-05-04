@@ -22,7 +22,7 @@
       - systemd-journal
 
   - name: Add openshift-dev key
-    authorized_key:
+    ansible.posix.authorized_key:
       user: cloud-user
       state: present
       key: "{{ lookup('file', '~/.ssh/openshift-dev.pub') }}"

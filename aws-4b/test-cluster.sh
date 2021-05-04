@@ -5,107 +5,148 @@ function build {  ## Build an OpenShift cluster and add worker nodes
   extract-installer
   create-install-assets
   create-cluster
-  clone-ansible
   clone-openshift-ansible
   create-bastion
   create-machines
 #  provision40
   prep40
-  node-scaleup40
+  scaleup
 #  drain-coreos
 }
 
 function extract-installer {  ## Extract openshift-installer from the release image
-  run-script
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
+}
+
+function compile-installer {  ## Compile openshift-installer from source
+  run-local-script
 }
 
 function create-install-assets {  ## Create install assets, i.e. install-config.yaml
-  run-script
+  export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
+  export ANSIBLE_INVENTORY="/oa-testing/playbooks/inventory/hosts"
+  export OPT_PLAYBOOK_BASE="../playbooks"
+  export OPT_PLAYBOOK="${FUNCNAME[0]}.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function create-cluster {  ## Run openshift-install to create a cluster
-  run-script
-}
-
-function clone-ansible {  ## Clone the Ansible repo and checks out supplied tag
-  run-script
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
 }
 
 function clone-openshift-ansible {  ## Clone the OpenShift-Ansible and checks out supplied tag
-  run-script
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
 }
 
 function create-bastion {  ## Create SSH Bastion Host on the OpenShift cluster
-  run-script
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
 }
 
 function create-machines {  ## Create worker machines on the OpenShift cluster
-  run-script
+  export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
+  export ANSIBLE_INVENTORY="/oa-testing/playbooks/inventory/hosts"
+  export OPT_PLAYBOOK_BASE="../playbooks"
+  export OPT_PLAYBOOK="${FUNCNAME[0]}.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
-function provision40 {  ## Prepare repos on worker machines
-  run-script
+function provision40 {  ## Provision worker machines without using machinesets
+  export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
+  export ANSIBLE_INVENTORY="/oa-testing/playbooks/inventory/hosts"
+  export OPT_PLAYBOOK_BASE="../playbooks"
+  export OPT_PLAYBOOK="${FUNCNAME[0]}.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function prep40 {  ## Prepare repos on worker machines
-  run-script
+  export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
+  export ANSIBLE_INVENTORY="/oa-testing/cluster/inventory/hosts"
+  export OPT_PLAYBOOK_BASE="../playbooks"
+  export OPT_PLAYBOOK="${FUNCNAME[0]}.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
-function node-scaleup40 {  ## Run openshift-ansible to scale up worker nodes
-  run-script
+function scaleup {  ## Run openshift-ansible to scale up worker nodes
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="/oa-testing/cluster/inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="${FUNCNAME[0]}.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function drain-coreos {  ## Drain CoreOS worker nodes
-  run-script
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
 }
 
 function remove-coreos {  ## Remove CoreOS worker nodes
-  run-script
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
 }
 
-function upgrade40 {  ## Run openshift-ansible to upgrade worker nodes
-  run-script
+function upgrade {  ## Run openshift-ansible to upgrade worker nodes
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="/oa-testing/cluster/inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="${FUNCNAME[0]}.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function unscaleup {  ## Remove added worker nodes from cluster
-  run-script
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
 }
 
-function rescaleup {  ## Run 'create-machines', 'prep40' and 'node-scaleup40'
+function rescaleup {  ## Run 'create-machines', 'prep40' and 'scaleup'
   create-machines
 #  provision40
   prep40
-  node-scaleup40
+  scaleup
 #  drain-coreos
 }
 
 function destroy {  ## Destroy OpenShift cluster and clean up artifacts
-  # We don't need to log this, running directly
-  ../scripts/destroy.sh
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
 }
 
 function sync-oa {  ## Sync working openshift-ansible repo with testing repo
-  run-script
+  run-local-script
 }
 
 function e2e-tests {  ## Run openshift e2e tests
-  run-script
+  run-local-script
 }
 
 ### Internal Functions ###
-function run-script {  ## PRIVATE - Runs a script and creates a log file
+function run-local-script {  ## PRIVATE - Runs a local script and creates a log file
   LOG_DATE=$(date "+%FT%H.%M.%S")
   LOG_FILE=${LOG_DATE}-${FUNCNAME[1]}.log
   mkdir --parents logs
-  unbuffer "../scripts/${FUNCNAME[1]}.sh" |& tee "logs/${LOG_FILE}"
-  # Strip colors from log file
-  sed --in-place --regexp-extended "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" "logs/${LOG_FILE}"
+  "../scripts/${FUNCNAME[1]}.sh" |& tee "logs/${LOG_FILE}"
+}
+
+function script-runner {  ## PRIVATE - Runs a script in a container and creates a log file
+  source build_options.sh
+  LOG_DATE=$(date "+%FT%H.%M.%S")
+  LOG_FILE=${LOG_DATE}-${FUNCNAME[1]}.log
+  mkdir --parents logs
+  ../runner/runner.sh "/oa-testing/scripts/${SCRIPT}" |& tee "logs/${LOG_FILE}"
 }
 
 function usage {  ## PRIVATE - Print usage information
   echo "Available commands are:"
   grep -oP '(?<=^function )[a-zA-Z0-9_-]+.*$' "$0" | grep -v 'PRIVATE' | awk 'BEGIN {FS=" {  ## "}; {printf"\033[36m%-30s\033[0m %s\n", $1, $2}'
-
 }
 
 # Check if a command is provided

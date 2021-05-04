@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-source ansible/hacking/env-setup
-source build_options.sh
+export ANSIBLE_STDOUT_CALLBACK=community.general.yaml
 
-export ANSIBLE_STDOUT_CALLBACK=yaml
-export ANSIBLE_LOG_PATH="${OPT_CLUSTER_DIR}/logs/openshift-ansible.log"
-export ANSIBLE_INVENTORY="${OPT_CLUSTER_DIR}/${ANSIBLE_INVENTORY}"
-
-pushd "${OPT_CLUSTER_DIR}/${PLAYBOOK_BASE}"
-time ${PYTHON} "$(command -v ansible-playbook)" "${PLAYBOOK}" -vv
-popd
+time ansible-playbook -vv "${OPT_PLAYBOOK_BASE}/${OPT_PLAYBOOK}"

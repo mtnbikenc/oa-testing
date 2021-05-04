@@ -5,7 +5,7 @@
 
   vars:
     aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
-    cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
+    cluster_dir: "/oa-testing/cluster"
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
     platform_version: "{{ lookup('env', 'OPT_PLATFORM_VERSION') | default('7.9', true) }}"
     platform_type_dict:
@@ -20,14 +20,15 @@
         filters:
           name: "RHEL-{{ platform_version }}*Hourly*"
           architecture: "x86_64"
-    kubeconfig_path: "{{ cluster_dir }}/assets/auth/kubeconfig"
-    pull_secret_path: "{{ lookup('env', 'OPT_PULL_SECRET') }}"
-    private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') | realpath }}"
+    kubeconfig_path: "/root/.kube/config"
+    pull_secret_path: "/oa-testing/pull-secret.txt"
+    private_key_path: "/oa-testing/openshift-dev.pem"
+
     new_workers_list: []
 
   tasks:
-  - name: Retreive platform AMI list
-    ec2_ami_info:
+  - name: Retrieve platform AMI list
+    amazon.aws.ec2_ami_info:
       region: "{{ aws_region }}"
       owners: "{{ platform_type_dict[platform_type].owners }}"
       filters: "{{ platform_type_dict[platform_type].filters }}"
@@ -80,3 +81,5 @@
     template:
       src: hosts40.j2
       dest: "{{ cluster_dir }}/inventory/hosts"
+      # unsafe_writes required when templating a file from within a container writing to host filesystem
+      unsafe_writes: true

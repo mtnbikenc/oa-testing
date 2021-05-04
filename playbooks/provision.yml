@@ -8,7 +8,7 @@
   vars:
     aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
-    cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
+    cluster_dir: "/oa-testing/cluster"
     aws_instance_file: "{{ cluster_dir }}/inventory/aws.json"
     aws_lb_instance_file: "{{ cluster_dir }}/inventory/awslb.json"
     aws_instance_type: "{{ lookup('env', 'OPT_INSTANCE_TYPE') | default('t2.medium', true) }}"
@@ -61,7 +61,7 @@
 
   - name: Set aws_region from .aws/config file
     set_fact:
-      aws_region: "{{ lookup('ini', 'region section=profile\ openshift-dev file=~/.aws/config') }}"
+      aws_region: "{{ lookup('ini', 'region section=profile\ openshift-dev file=/root/.aws/config') }}"
     when: aws_region == ""
 
   - import_tasks: tasks/lb_for_atomic.yml
@@ -70,7 +70,7 @@
     - platform_type == 'atomic'
 
   - name: Find the most recently created AMI
-    ec2_ami_info:
+    amazon.aws.ec2_ami_info:
       region: "{{ aws_region }}"
       owners: "{{ platform_type_dict[platform_type].owners }}"
       filters: "{{ platform_type_dict[platform_type].filters }}"
@@ -86,7 +86,7 @@
     when: platform_type == 'atomic'
 
   - name: Create AWS Instances
-    ec2:
+    amazon.aws.ec2:
       region: "{{ aws_region }}"
       key_name: "openshift-dev"
       instance_type: "{{ aws_instance_type }}"
@@ -106,6 +106,8 @@
     copy:
       dest: "{{ aws_instance_file }}"
       content: "{{ aws_instances | to_nice_json }}"
+      # unsafe_writes required when copying a file from within a container writing to host filesystem
+      unsafe_writes: true
 
   - name: Create list of masters
     set_fact:
@@ -136,3 +138,5 @@
     template:
       src: hosts.j2
       dest: "{{ cluster_dir }}/inventory/hosts"
+      # unsafe_writes required when copying a file from within a container writing to host filesystem
+      unsafe_writes: true

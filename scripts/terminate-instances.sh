@@ -2,9 +2,15 @@
 set -euxo pipefail
 
 source build_options.sh
-export ANSIBLE_STDOUT_CALLBACK=yaml
-time ansible-playbook -i localhost, ../playbooks/terminate.yml -vv -e "ansible_python_interpreter=${PYTHON}"
 
-rm -rfv ansible.log
-rm -rfv "${OPT_CLUSTER_DIR}/assets/"
+export ANSIBLE_STDOUT_CALLBACK=community.general.yaml
+export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
+export ANSIBLE_INVENTORY="/oa-testing/playbooks/inventory/hosts"
+
+../runner/runner.sh \
+  ansible-playbook \
+  -vv \
+  "/oa-testing/playbooks/terminate.yml"
+
+rm -rfv "${OPT_LOCAL_DIR}/assets/"
 rm -rfv "logs/"

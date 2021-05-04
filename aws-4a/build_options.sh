@@ -2,24 +2,23 @@
 
 CURRENT_USER=$(id -un)
 export OPT_CLUSTER_ID=${CURRENT_USER}-${PWD##*-}
-LOCAL_PYTHON=$(command -v python3 || command -v python)
-export LOCAL_PYTHON
+export OPT_LOCAL_DIR=${PWD}
 
 ##################################################
 # Secrets
 ##################################################
 # pull-secret.txt can be obtained from https://cloud.redhat.com/openshift/install/pull-secret
 # You will need to add the CI pull secret to pull from registry.ci.openshift.org
-OPT_PULL_SECRET=$(realpath ~/pull-secret.txt)
-export OPT_PULL_SECRET
-OPT_PRIVATE_KEY=$(realpath "${PWD}/../../shared-secrets/aws/openshift-dev.pem")
-export OPT_PRIVATE_KEY
+OPT_LOCAL_PULL_SECRET=$(realpath ~/pull-secret.txt)
+export OPT_LOCAL_PULL_SECRET
+OPT_LOCAL_PRIVATE_KEY=$(realpath "${PWD}/../../shared-secrets/aws/openshift-dev.pem")
+export OPT_LOCAL_PRIVATE_KEY
+OPT_LOCAL_OPS_MIRROR_KEY="${PWD}/../../shared-secrets/mirror/ops-mirror.pem"
+export OPT_LOCAL_OPS_MIRROR_KEY
 
 ##################################################
 # Provision/Terminate
 ##################################################
-export OPT_CLUSTER_DIR=${PWD}
-#export OPT_CLUSTER_DIR=/tmp           # use this for 'toolbox'
 export OPT_PLATFORM_TYPE=rhel         # rhel/centos
 export OPT_PLATFORM_VERSION=7.9
 export OPT_INSTANCE_TYPE=m4.large
@@ -37,13 +36,6 @@ export OPT_PAYLOAD=4.8                # This points to the latest accepted night
 
 export OPT_RELEASE_IMAGE="${OPT_REGISTRY}":"${OPT_PAYLOAD}"
 #export OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE="${OPT_RELEASE_IMAGE}"
-
-##################################################
-# Clone Ansible
-##################################################
-#export OPT_ANSIBLE_PRNUM=XXXXX
-export OPT_ANSIBLE_TAG=v2.9.18
-#export OPT_ANSIBLE_TAG=<commit_hash>
 
 ##################################################
 # Clone OpenShift-Ansible

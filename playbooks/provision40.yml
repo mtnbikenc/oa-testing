@@ -10,13 +10,14 @@
     aws_zone: "{{ aws_region }}a"
     cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
     cluster_metadata: "{{ lookup('file', cluster_dir ~ '/assets/metadata.json') | from_json }}"
-    cluster_dir: "{{ lookup('env', 'OPT_CLUSTER_DIR') }}"
+    cluster_dir: "/oa-testing/cluster"
     aws_instance_file: "{{ cluster_dir }}/inventory/aws.json"
     aws_instance_type: "{{ lookup('env', 'OPT_INSTANCE_TYPE') | default('m4.large', true) }}"
     compute_count: "{{ lookup('env', 'OPT_COMPUTE_COUNT') | default(3, true)}}"
-    kubeconfig_path: "{{ cluster_dir }}/assets/auth/kubeconfig"
-    pull_secret_path: "{{ lookup('env', 'OPT_PULL_SECRET') }}"
-    private_key_path: "{{ lookup('env', 'OPT_PRIVATE_KEY') | realpath }}"
+    kubeconfig_path: "/root/.kube/config"
+    pull_secret_path: "/oa-testing/pull-secret.txt"
+    private_key_path: "/oa-testing/openshift-dev.pem"
+
     new_workers_list: []
     aws_volumes:
       - device_name: /dev/sda1
@@ -56,7 +57,7 @@
     - meta: end_play
 
   - name: Find the most recently created AMI
-    ec2_ami_info:
+    amazon.aws.ec2_ami_info:
       region: "{{ aws_region }}"
       owners: "{{ platform_type_dict[platform_type].owners }}"
       filters: "{{ platform_type_dict[platform_type].filters }}"
@@ -67,7 +68,7 @@
       aws_ami: "{{ ec2_ami_facts_results.images[-1].image_id }}"
 
   - name: Find the ec2 security group
-    ec2_group_info:
+    amazon.aws.ec2_group_info:
       region: "{{ aws_region }}"
       filters:
         "tag:Name": "{{ cluster_infra_id }}-worker-sg"
@@ -78,7 +79,7 @@
       aws_sg: "{{ ec2_group_info_results.security_groups[0].group_id }}"
 
   - name: Find the vpc subnet
-    ec2_vpc_subnet_info:
+    amazon.aws.ec2_vpc_subnet_info:
       region: "{{ aws_region }}"
       filters:
         "tag:Name": "{{ cluster_infra_id }}-private-{{ aws_zone }}"
@@ -89,7 +90,7 @@
       aws_subnet: "{{ ec2_vpc_subnet_info_results.subnets[0].id }}"
 
   - name: Create AWS Instances
-    ec2:
+    amazon.aws.ec2:
       region: "{{ aws_region }}"
       key_name: "openshift-dev"
       instance_type: "{{ aws_instance_type }}"

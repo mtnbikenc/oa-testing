@@ -1,6 +1,6 @@
 ---
 - name: Find the most recently created AMI
-  ec2_ami_info:
+  amazon.aws.ec2_ami_info:
     region: "{{ aws_region }}"
     owners: "{{ platform_type_dict['rhel'].owners }}"
     filters: "{{ platform_type_dict['rhel'].filters }}"
@@ -11,7 +11,7 @@
     aws_ami: "{{ ec2_ami_facts_results.images[-1].image_id }}"
 
 - name: Create AWS Instances
-  ec2:
+  amazon.aws.ec2:
     region: "{{ aws_region }}"
     key_name: "openshift-dev"
     instance_type: "{{ aws_instance_type }}"

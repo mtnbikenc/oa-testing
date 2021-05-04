@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-source build_options.sh
-
-export KUBECONFIG=${OPT_CLUSTER_DIR}/assets/auth/kubeconfig
-
 # Remove CoreOS machine sets
 echo "$(date -u --rfc-3339=seconds) - Deleting CoreOS machinesets"
 mapfile -t COREOS_MACHINE_SETS < <(oc get machinesets --namespace openshift-machine-api | grep worker | grep -v rhel | awk '{print $1}' || true)

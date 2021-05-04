@@ -9,7 +9,7 @@
 
   vars:
     payload_version: "{{ lookup('env', 'OPT_PAYLOAD') }}"
-    ops_mirror_path: "{{ lookup('env', 'OPT_OPS_MIRROR_PATH') | default(playbook_dir ~ '/../../shared-secrets/mirror/ops-mirror.pem', true) }}"
+    ops_mirror_path: "/oa-testing/ops-mirror.pem"
 
   tasks:
   - name: Fail if 'OPT_PAYLOAD' is not defined
