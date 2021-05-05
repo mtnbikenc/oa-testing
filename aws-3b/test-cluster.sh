@@ -11,6 +11,11 @@ function build {  ## Build an OpenShift cluster
   get-kubeconfig
 }
 
+function clone-openshift-ansible {  ## Clone the OpenShift-Ansible and checks out supplied tag
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
+}
+
 function provision-vpc {  ## Provision instances for cluster deployment
   SCRIPT="${FUNCNAME[0]}.sh"
   script-runner
@@ -18,22 +23,17 @@ function provision-vpc {  ## Provision instances for cluster deployment
 
 function provision {  ## Provision instances for cluster deployment
   export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
-  export ANSIBLE_INVENTORY="../playbooks/inventory/hosts"
-  export OPT_PLAYBOOK_BASE="../playbooks"
+  export ANSIBLE_INVENTORY="/oa-testing/playbooks/inventory/hosts"
+  export OPT_PLAYBOOK_BASE="/oa-testing/playbooks"
   export OPT_PLAYBOOK="${FUNCNAME[0]}.yml"
   SCRIPT="run-playbook.sh"
-  script-runner
-}
-
-function clone-openshift-ansible {  ## Clone the OpenShift-Ansible and checks out supplied tag
-  SCRIPT="${FUNCNAME[0]}.sh"
   script-runner
 }
 
 function prep {  ## Prepare repos on instances
   export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
-  export OPT_PLAYBOOK_BASE="../playbooks"
+  export OPT_PLAYBOOK_BASE="/oa-testing/playbooks"
   export OPT_PLAYBOOK="${FUNCNAME[0]}.yml"
   SCRIPT="run-playbook.sh"
   script-runner
@@ -144,6 +144,70 @@ function node-scaleup {  ## Run node scaleup playbook
   script-runner
 }
 
+## Components Playbooks
+function master-components {  ## Run master components config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-master/components.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
+}
+
+function monitoring-config {  ## Run monitoring config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-monitoring/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
+}
+
+function metering-config {  ## Run metering config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-metering/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
+}
+
+function web-console-config {  ## Run web-console config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-web-console/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
+}
+
+function console-config {  ## Run console config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-console/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
+}
+
+function metrics-config {  ## Run metrics config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-metrics/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
+}
+
+function metrics-server-config {  ## Run metrics config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="metrics-server/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
+}
+
 function logging-config {  ## Run logging config playbook
   export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
@@ -153,23 +217,67 @@ function logging-config {  ## Run logging config playbook
   script-runner
 }
 
-function terminate {  ## Terminate cluster instances & VPC
-  terminate-instances
-  terminate-vpc
+function monitor-availability-config {  ## Run monitor-availability config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-monitor-availability/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
-function terminate-instances {  ## Terminate cluster instances
-  # We don't need to log this, running directly
-  ../scripts/terminate-instances.sh
+function service-catalog-config {  ## Run service-catalog config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-service-catalog/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
-function terminate-vpc {  ## Terminate cluster VPC
-  # We don't need to log this, running directly
-  ../scripts/terminate-vpc.sh
+function olm-config {  ## Run olm config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-olm/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
-function sync-oa {  ## Sync working openshift-ansible repo with testing repo
-  run-local-script
+function descheduler-config {  ## Run descheduler config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-descheduler/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
+}
+
+function node-problem-detector-config {  ## Run node-problem-detector config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-node-problem-detector/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
+}
+
+function autoheal-config {  ## Run autoheal config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-autoheal/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
+}
+
+function cluster-autoscaler-config {  ## Run cluster-autoscaler config playbook
+  export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
+  export ANSIBLE_INVENTORY="inventory/hosts"
+  export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
+  export OPT_PLAYBOOK="openshift-cluster-autoscaler/config.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
 }
 
 function cert-check {  ## Run certificate expiry easy-mode playbook
@@ -242,6 +350,29 @@ function node-restart {  ## Run node restart playbook
   export OPT_PLAYBOOK="openshift-node/restart.yml"
   SCRIPT="run-playbook.sh"
   script-runner
+}
+
+function terminate {  ## Terminate cluster instances & VPC
+  terminate-instances
+  terminate-vpc
+}
+
+function terminate-instances {  ## Terminate cluster instances
+  export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
+  export ANSIBLE_INVENTORY="/oa-testing/playbooks/inventory/hosts"
+  export OPT_PLAYBOOK_BASE="/oa-testing/playbooks"
+  export OPT_PLAYBOOK="${FUNCNAME[0]}.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
+}
+
+function terminate-vpc {  ## Terminate cluster VPC
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
+}
+
+function sync-oa {  ## Sync working openshift-ansible repo with testing repo
+  run-local-script
 }
 
 ### Internal Functions ###

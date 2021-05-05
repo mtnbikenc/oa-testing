@@ -55,6 +55,6 @@ export ANSIBLE_INVENTORY="/oa-testing/playbooks/inventory/hosts"
 
 ansible-playbook \
   -vv \
-  /oa-testing/playbooks/terminate.yml
+  /oa-testing/playbooks/terminate-instances.yml
 
 rm --force --verbose "/oa-testing/cluster/inventory/hosts"
