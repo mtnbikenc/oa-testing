@@ -1,4 +1,5 @@
 ansible
 boto
 boto3
+passlib
 pyOpenSSL
