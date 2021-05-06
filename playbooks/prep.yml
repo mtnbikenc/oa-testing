@@ -15,6 +15,7 @@
     latest_version: '3.11'
     build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
     ops_mirror_path: "/oa-testing/ops-mirror.pem"
+    private_key_path: "/oa-testing/openshift-dev.pem"
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
 
   tasks:
@@ -27,6 +28,13 @@
     when:
       - oreg_auth_password is defined
       - ("reg-aws.openshift.com" in oreg_url)
+
+  - name: Ensure proper permissions on private key file
+    file:
+      path: "{{ private_key_path }}"
+      mode: 0600
+    delegate_to: localhost
+    run_once: true
 
   - name: Set prep_version using openshift_release if defined
     set_fact:
