@@ -58,12 +58,8 @@ function deploy {  ## Run deploy_cluster playbook
 }
 
 function get-kubeconfig {  ## Obtain the kubeconfig from the cluster
-  set -euxo pipefail
-  source build_options.sh
-  REMOTEHOST=$(ansible-inventory -i "${OPT_LOCAL_DIR}/inventory/hosts" --list | jq -r '.masters.hosts[0]')
-  REMOTEUSER=$(ansible-inventory -i "${OPT_LOCAL_DIR}/inventory/hosts" --list | jq -r --arg remotehost "$REMOTEHOST" '._meta.hostvars | .[$remotehost] | .ansible_user')
-  mkdir --parents "${OPT_LOCAL_DIR}/assets/auth"
-  ssh "${REMOTEUSER}@${REMOTEHOST}" "sudo cat /etc/origin/master/admin.kubeconfig" > "${OPT_LOCAL_DIR}/assets/auth/kubeconfig"
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
 }
 
 function upgrade {  ## Run cluster upgrade playbook
