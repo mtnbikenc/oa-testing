@@ -5,80 +5,78 @@
 This repo will automate the process of building complex OpenShift clusters for
 reproducing bugs and testing pull requests.
 
-Basic tasks performed:
-* Launch AWS instances
-* Clone and checkout a specific branch/tag/PR of OpenShift-Ansible
-* Prepare the AWS instances with proper repo files
-* Run the OpenShift-Ansible prerequisites.yml playbook
-* Run the OpenShift-Ansible deploy-cluster.yml playbook
-* Stop AWS instances and flag for termination, clean up logs
-
 ## Prerequisites
 
-* ~/.aws/credentials file (Configuring AWS CLI https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html)
-  * A default profile must exist
-* Packages: tee, libselinux-python
-* OpenShift shared secrets repo cloned parallel to this repo
-* Create ~/openshift-creds.txt with the format below
+* Install packages: `buildah podman`
+* Clone the OpenShift shared secrets repo parallel to this repo
+```
+.
+├── oa-testing
+└── shared-secrets
+```
 
+* Create ~/.aws/credentials file
+  * Configuring AWS CLI https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html
+```
+[openshift-dev]
+aws_access_key_id = XXXXX
+aws_secret_access_key = xxxxx
+```
+
+* Create ~/.aws/config and define a default region
+```
+[profile openshift-dev]
+region = us-east-2
+```
+
+* Create ~/openshift-creds.txt with the format below
+  * Copy the token from the 'oc login' line at https://console.reg-aws.openshift.com/console/command-line
+  * Put the token on the `oreg_auth_password` line below
 ```
 [default]
-oreg_auth_password=
-rhn_user=
-rhn_pass=
-rhn_pool=
+oreg_auth_password = xxxxx
+rhn_user = user@email.com
+rhn_pass = xxxxx
+rhn_pool = xxxxx
 ```
 
-## Building A Cluster
+* Create ~/pull-secret.txt
+  * pull-secret.txt can be obtained from https://cloud.redhat.com/openshift/install/pull-secret
+  * Add your CI pull secret to pull from registry.ci.openshift.org
+    (https://console-openshift-console.apps.ci.l2s4.p1.openshiftapps.com/)
+  * Add your quay.io pull secret
 
-* cd aws-3a
-* Update options in build_options.sh as needed
-* Update options in inventory/group_vars/OSEv3.yml
-* ./test-cluster.sh build
+## Building the containerized playbook runner image
 
-## Terminating A Cluster
-
-When you are done with a cluster you can run a command to terminate the AWS
-instances and clean up logs.
+All the tasks to build clusters is run from within a container with all the required dependencies.
+The runner.sh script will mount needed secrets created during Prerequisites above.
+Execute the commands below to build the container image, `oa-runner-base`.
 
 ```bash
-$ ./test-cluster.sh terminate
+$ cd runner
+$ ./build-runner.sh
 ```
 
-## test-cluster.sh Command Help
+## Building clusters
 
-Running the test-cluster.sh script without any options will print a list of supported commands.
+Four pre-built directories are provided for building v3 or v4 OpenShift clusters.
+`aws-3a` and `aws-3b` are used for creating OpenShift v3 clusters in AWS.
+`aws-4a` and `aws-4b` are used for creating OpenShift v4 clusters in AWS.
+Once the `oa-runner-base` image is built, clusters can be built by following the README in these directories.
 
-```bash
-$ ./test-cluster.sh
-Available commands are:
-build                          Build an OpenShift cluster
-provision-vpc                  Provision instances for cluster deployment
-provision                      Provision instances for cluster deployment
-clone-openshift-ansible        Clone the OpenShift-Ansible and checks out supplied tag
-prep                           Prepare repos on instances
-prereq                         Run prerequisites playbook
-deploy                         Run deploy_cluster playbook
-get-kubeconfig                 Obtain the kubeconfig from the cluster
-upgrade                        Run cluster upgrade playbook
-upgrade-control-plane          Run control plane upgrade playbook
-upgrade-nodes                  Run nodes upgrade playbook
-master-config                  Run master config playbook
-openshift-node-group           Run openshift node group playbook
-master-scaleup                 Run master scaleup playbook
-etcd-scaleup                   Run etcd scaleup playbook
-node-scaleup                   Run node scaleup playbook
-logging-config                 Run logging config playbook
-terminate                      Terminate cluster instances & VPC
-terminate-instances            Terminate cluster instances
-terminate-vpc                  Terminate cluster VPC
-sync-oa                        Sync working openshift-ansible repo with testing repo
-cert-check                     Run certificate expiry easy-mode playbook
-redeploy-cert                  Run certificate redeploy playbook
-redeploy-master-cert           Run master certificate redeploy playbook
-redeploy-openshift-ca          Run OpenShift CA redeploy playbook
-redeploy-service-catalog-cert  Run service catalog certificate redeploy playbook
-redeploy-router-cert           Run hosted router certificate redeploy playbook
-redeploy-registry-cert         Run hosted registry certificate redeploy playbook
-node-restart                   Run node restart playbook
+Cluster resources will be created using the combination of the current username and the part of the working
+directory name following the dash (`-`).  For example, `myusername-4a` when using `aws-4a`.
+
+Each directory has a `build_options.sh` file which can be used to configure things like versions to install or
+operating systems to use.
+
+The ./test-cluster.sh `build` command runs an ordered list of commands to build a complete cluster.
+Each of these commands can be run separately or multiple commands can be run at once.
+
+```commandline
+$ ./testcluster.sh build
+$ ./testcluster.sh provision-vpc provision prep
+$ ./testcluster.sh build remove-coreos upgrade e2e-tests
 ```
+
+The output for each command is logged in the `logs/` directory.

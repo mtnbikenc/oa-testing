@@ -2,12 +2,20 @@
 
 ## Overview
 
+Basic tasks performed:
+* Extract the latest openshift-installer
+* Create installer assets
+* Run openshift-install create cluster
+* Clone and checkout a specific branch/tag/PR of OpenShift-Ansible
+* Create an ssh bastion in the cluster for accessing RHEL hosts
+* Create machinesets for RHEL instances
+* Prepare the RHEL hosts with proper repo files
+* Run openshift-ansible playbooks
+* Destroy the cluster
+
 ## Prerequisites
 
-* ~/.aws/credentials file (Configuring AWS CLI https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html)
-* Pull secret saved as ~/pull-secret.txt from https://cloud.openshift.com/clusters/install, Step 4
-* OpenShift shared-secrets repo cloned parallel to this repo
-* ???
+* Ensure all prerequisites in the project README are met.
 
 ## Building and scaling up a cluster
 
@@ -30,7 +38,7 @@ $ ./test-cluster.sh destroy
 
 Running the test-cluster.sh script without any options will print a list of supported commands.
 
-```bash
+```
 $ ./test-cluster.sh
 Available commands are:
 build                          Build an OpenShift cluster and add worker nodes
