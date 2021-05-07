@@ -11,17 +11,17 @@ function build {  ## Build an OpenShift cluster
   get-kubeconfig
 }
 
-function clone-openshift-ansible {  ## Clone the OpenShift-Ansible and checks out supplied tag
+function clone-openshift-ansible {  ## Clone the openshift-ansible repo
   SCRIPT="${FUNCNAME[0]}.sh"
   script-runner
 }
 
-function provision-vpc {  ## Provision instances for cluster deployment
+function provision-vpc {  ## Provision a AWS VPC for cluster deployment
   SCRIPT="${FUNCNAME[0]}.sh"
   script-runner
 }
 
-function provision {  ## Provision instances for cluster deployment
+function provision {  ## Provision AWS instances for cluster deployment
   export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
   export ANSIBLE_INVENTORY="/oa-testing/playbooks/inventory/hosts"
   export OPT_PLAYBOOK_BASE="/oa-testing/playbooks"
@@ -195,7 +195,7 @@ function metrics-config {  ## Run metrics config playbook
   script-runner
 }
 
-function metrics-server-config {  ## Run metrics config playbook
+function metrics-server-config {  ## Run metrics server config playbook
   export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="inventory/hosts"
   export OPT_PLAYBOOK_BASE="openshift-ansible/playbooks"
