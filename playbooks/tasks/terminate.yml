@@ -16,13 +16,13 @@
     aws_instances: "{{ lookup('file', aws_instance_file) | from_json }}"
 
 - name: Stop AWS Instances
-  amazon.aws.ec2:
+  ec2:
     region: "{{ aws_region }}"
     instance_ids: "{{ aws_instances.instance_ids }}"
     state: absent
 
 - name: Rename AWS Instances
-  amazon.aws.ec2_tag:
+  ec2_tag:
     region: "{{ aws_region }}"
     resource: "{{ item }}"
     tags:

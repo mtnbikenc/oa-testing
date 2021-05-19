@@ -39,6 +39,4 @@
     template:
       src: install-config.yaml.j2
       dest: "{{ cluster_dir }}/assets/install-config.yaml"
-      # unsafe_writes required when templating a file from within a container writing to host filesystem
-      unsafe_writes: true
   ## install-config.yaml

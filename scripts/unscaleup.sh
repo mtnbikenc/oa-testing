@@ -48,7 +48,7 @@ then
     oc delete node "${RHEL_WORKERS[@]}"
 fi
 
-export ANSIBLE_STDOUT_CALLBACK=community.general.yaml
+export ANSIBLE_STDOUT_CALLBACK="yaml"
 export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
 export ANSIBLE_LOG_PATH="/oa-testing/cluster/logs/ansible.log"
 export ANSIBLE_INVENTORY="/oa-testing/playbooks/inventory/hosts"
