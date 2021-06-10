@@ -48,6 +48,23 @@ then
     oc delete node "${RHEL_WORKERS[@]}"
 fi
 
+# Wait for nodes to be deleted
+oc wait node \
+    --for=delete \
+    --timeout=10m \
+    --selector node.openshift.io/os_id=rhel,node-role.kubernetes.io/worker \
+    || true
+
+RHEL_MACHINE_SETS_JOINED=$(printf -v var '%s,' "${RHEL_MACHINE_SETS[@]}"; echo "${var%,}")
+
+# Wait for machines to be deleted
+oc wait machine \
+    --for=delete \
+    --timeout=10m \
+    --namespace openshift-machine-api \
+    --selector "machine.openshift.io/cluster-api-machineset in (${RHEL_MACHINE_SETS_JOINED})" \
+    || true
+
 export ANSIBLE_STDOUT_CALLBACK="yaml"
 export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
 export ANSIBLE_LOG_PATH="/oa-testing/cluster/logs/ansible.log"
