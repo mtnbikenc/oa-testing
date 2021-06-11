@@ -45,6 +45,10 @@
     --selector='machine.openshift.io/cluster-api-machineset={{ machineset_name }}'
     --output=json
   register: oc_get_machine
+  until:
+  - oc_get_machine.stdout != ''
+  - (oc_get_machine.stdout | from_json)['items'] is defined
+  - (oc_get_machine.stdout | from_json)['items'] | length > 0
   changed_when: false
 
 - name: Create list of machines
