@@ -10,6 +10,11 @@
   vars:
     payload_version: "{{ lookup('env', 'OPT_PAYLOAD') }}"
     ops_mirror_path: "/oa-testing/ops-mirror.pem"
+    platform_version: "{{ lookup('env', 'OPT_PLATFORM_VERSION') | default('7.9', true) }}"
+    major_platform_version: "{{ platform_version[:1] }}"
+    rhn_user: "{{ lookup('ini', 'rhn_user section=default file=/oa-testing/openshift-creds.txt') }}"
+    rhn_pass: "{{ lookup('ini', 'rhn_pass section=default file=/oa-testing/openshift-creds.txt') }}"
+    rhn_pool: "{{ lookup('ini', 'rhn_pool section=default file=/oa-testing/openshift-creds.txt') }}"
 
   tasks:
   - name: Fail if 'OPT_PAYLOAD' is not defined
@@ -43,15 +48,21 @@
       state: absent
     with_items: "{{ redhat_rhui['files'] }}"
 
-  - name: Create rhel-7-server-ose-rpms repo file
+  - name: Subscribe and enable OCP release repos
+    include_tasks: tasks/rhn_repos.yml
+    when:
+    - lookup('env', 'OPT_PREP_USE_RHN') | default(false, true) | bool
+    - openshift_deployment_type != 'origin'
+
+  - name: Create rhel-X-server-ose-rpms repo file
     template:
-      src: rhel-7-server-ose-4.X-devel-rpms.repo.j2
-      dest: /etc/yum.repos.d/rhel-7-server-ose-rpms.repo
+      src: "rhel-{{ major_platform_version }}-server-ose-4.X-devel-rpms.repo.j2"
+      dest: "/etc/yum.repos.d/rhel-{{ major_platform_version }}-server-ose-rpms.repo"
     notify: refresh cache
 
-  - name: Create rhel-7-server-rpms repo file
+  - name: Create rhel-X-server-rpms repo file
     copy:
-      src: rhel-7-server-rpms.repo
+      src: "rhel-{{ major_platform_version }}-server-rpms.repo"
       dest: /etc/yum.repos.d/
     notify: refresh cache
 

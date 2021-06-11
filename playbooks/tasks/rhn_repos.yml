@@ -24,12 +24,22 @@
   command: subscription-manager subscribe --pool {{ rhn_pool }}
   when: rhn_pool not in openshift_pool_attached.stdout
 
+- name: Enable subscription-manager repo config
+  command: subscription-manager config --rhsm.manage_repos=1
+
 - name: Disable all repositories
   command: subscription-manager repos --disable="*"
 
 - name: Enable RHEL repositories
-  command: subscription-manager repos \
-               --enable="rhel-7-server-rpms" \
-               --enable="rhel-7-server-extras-rpms" \
-               --enable="rhel-7-fast-datapath-rpms" \
-               --enable="rhel-7-server-ose-{{ prep_version }}-rpms"
+  command: subscription-manager repos {{ repos['RHEL' ~ (major_platform_version | default('7'))] }}
+  vars:
+    repos:
+      RHEL7: >
+        --enable="rhel-7-server-rpms"
+        --enable="rhel-7-server-extras-rpms"
+        --enable="rhel-7-fast-datapath-rpms"
+        --enable="rhel-7-server-ose-{{ prep_version }}-rpms"
+      RHEL8: >
+        --enable="rhel-8-for-x86_64-baseos-rpms"
+        --enable="rhel-8-for-x86_64-appstream-rpms"
+        --enable="fast-datapath-for-rhel-8-x86_64-rpms"
