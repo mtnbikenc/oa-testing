@@ -1,0 +1,4 @@
+# Needed for merging PRs into the local repo for testing
+[user]
+	name = OA Testing
+	email = oa-testing@example.com
