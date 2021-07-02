@@ -1,7 +1,7 @@
 ---
 - name: Create machineset_name
   set_fact:
-    machineset_name: "{{ machineset_obj.metadata.name ~ '-' ~ platform_type }}"
+    machineset_name: "{{ machineset_obj.metadata.name ~ '-' ~ platform_type ~ '-' ~ platform_version }}"
 
 - name: Update machineset definition
   set_fact:
