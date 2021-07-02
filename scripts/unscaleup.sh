@@ -42,7 +42,7 @@ then
 fi
 
 # Delete RHEL nodes (nodes not part of machinesets will not be automatically deleted)
-mapfile -t RHEL_WORKERS < <(oc get nodes --output wide | grep worker | grep "Red Hat Enterprise Linux Server" | awk '{print $1}' || true)
+mapfile -t RHEL_WORKERS < <(oc get nodes --output wide | grep worker | grep -v CoreOS | awk '{print $1}' || true)
 if [[ ${#RHEL_WORKERS[@]} != 0 ]]
 then
     oc delete node "${RHEL_WORKERS[@]}"

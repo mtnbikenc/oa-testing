@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 # Uncordon RHEL nodes
-mapfile -t RHEL_WORKERS < <(oc get nodes --output wide | grep worker | grep Maipo | awk '{print $1}' || true)
+mapfile -t RHEL_WORKERS < <(oc get nodes --output wide | grep worker | grep -v CoreOS | awk '{print $1}' || true)
 if [[ ${#RHEL_WORKERS[@]} != 0 ]]
 then
     oc adm uncordon "${RHEL_WORKERS[@]}"
