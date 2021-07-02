@@ -28,7 +28,7 @@ then
 fi
 
 # Drain RHEL nodes
-mapfile -t RHEL_WORKERS < <(oc get nodes -o wide | grep "Red Hat Enterprise Linux Server" | awk '{print $1}' || true)
+mapfile -t RHEL_WORKERS < <(oc get nodes -o wide | grep -v CoreOS | awk '{print $1}' || true)
 if [[ ${#RHEL_WORKERS[@]} != 0 ]]
 then
     oc adm drain "${RHEL_WORKERS[@]}" --force --delete-emptydir-data --ignore-daemonsets --timeout=0s
