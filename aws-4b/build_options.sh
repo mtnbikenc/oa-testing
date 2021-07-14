@@ -22,6 +22,7 @@ export OPT_LOCAL_OPS_MIRROR_KEY
 export OPT_PLATFORM_TYPE=rhel         # rhel/centos
 export OPT_PLATFORM_VERSION=7.9
 export OPT_INSTANCE_TYPE=m4.large
+export OPT_FIPS_ENABLE=false
 export AWS_PROFILE="openshift-dev"
 export AWS_DEFAULT_REGION=us-east-2
 

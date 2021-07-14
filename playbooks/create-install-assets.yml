@@ -8,6 +8,7 @@
   vars:
     aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
+    fips_enable: "{{ lookup('env', 'OPT_FIPS_ENABLE') | default(false, true) }}"
     cluster_dir: "/oa-testing/cluster"
     pull_secret_path: "/oa-testing/pull-secret.txt"
     private_key_path: "/oa-testing/openshift-dev.pem"

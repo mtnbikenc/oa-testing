@@ -8,3 +8,6 @@ platform:
 pullSecret: '{{ pull_secret['content'] | b64decode | from_json | to_json(separators=(',',':')) }}'
 sshKey: |
   {{ keygen_output.stdout }}
+{% if fips_enable is defined and fips_enable.lower() == 'true' %}
+fips: true
+{% endif %}

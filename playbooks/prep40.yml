@@ -10,6 +10,7 @@
   vars:
     payload_version: "{{ lookup('env', 'OPT_PAYLOAD') }}"
     ops_mirror_path: "/oa-testing/ops-mirror.pem"
+    fips_enable: "{{ lookup('env', 'OPT_FIPS_ENABLE') | default(false, true) }}"
     platform_version: "{{ lookup('env', 'OPT_PLATFORM_VERSION') | default('7.9', true) }}"
     major_platform_version: "{{ platform_version[:1] }}"
     rhn_user: "{{ lookup('ini', 'rhn_user section=default file=/oa-testing/openshift-creds.txt') }}"
@@ -65,5 +66,9 @@
       src: "rhel-{{ major_platform_version }}-server-rpms.repo"
       dest: /etc/yum.repos.d/
     notify: refresh cache
+
+  - name: Enable FIPS
+    include_tasks: tasks/enable_fips.yml
+    when: fips_enable | bool
 
   - meta: flush_handlers

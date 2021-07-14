@@ -1,0 +1,38 @@
+---
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/chap-federal_standards_and_regulations#sec-Enabling-FIPS-Mode
+
+- name: Install dracut-fips packages
+  package:
+    name: "{{ fips_packages | join(',') }}"
+  vars:
+    fips_packages:
+    - dracut-fips
+    - dracut-fips-aesni
+  register: dracut_fips
+
+- name: Regenerate the initramfs file
+  command: dracut -v -f
+  when: dracut_fips.changed
+
+- name: Add fips=1 to /etc/default/grub
+  lineinfile:
+    path: /etc/default/grub
+    state: present
+    regexp: '^(GRUB_CMDLINE_LINUX=(?!.* fips)\"[^\"]+)(\".*)'
+    backrefs: yes
+    line: '\1 fips=1\2'
+  register: grub_updated
+
+- name: Rebuild the grub2.cfg file
+  command: grub2-mkconfig -o /etc/grub2.cfg
+  when: grub_updated.changed
+
+- name: Reboot the host and wait for it to come back
+  reboot:
+  #  reboot_timeout: 600  # default, 10 minutes
+  when: grub_updated.changed
+
+- name: Wait for host connection to ensure SSH has started
+  wait_for_connection:
+    timeout: 600
+  when: grub_updated.changed
