@@ -14,7 +14,7 @@ then
 fi
 
 # Drain CentOS nodes
-mapfile -t CENTOS_WORKERS < <(oc get nodes --output wide | grep CentOS | awk '{print $1}' || true)
+mapfile -t CENTOS_WORKERS < <(oc get nodes --output wide | grep worker | grep CentOS | awk '{print $1}' || true)
 if [[ ${#CENTOS_WORKERS[@]} != 0 ]]
 then
     oc adm drain "${CENTOS_WORKERS[@]}" --force --delete-emptydir-data --ignore-daemonsets --timeout=0s
@@ -28,7 +28,7 @@ then
 fi
 
 # Drain RHEL nodes
-mapfile -t RHEL_WORKERS < <(oc get nodes -o wide | grep -v CoreOS | awk '{print $1}' || true)
+mapfile -t RHEL_WORKERS < <(oc get nodes -o wide | grep worker | grep -v CoreOS | awk '{print $1}' || true)
 if [[ ${#RHEL_WORKERS[@]} != 0 ]]
 then
     oc adm drain "${RHEL_WORKERS[@]}" --force --delete-emptydir-data --ignore-daemonsets --timeout=0s
