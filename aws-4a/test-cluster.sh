@@ -102,6 +102,11 @@ function upgrade {  ## Run openshift-ansible to upgrade worker nodes
   script-runner
 }
 
+function drain-rhel {  ## Drain RHEL worker nodes
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
+}
+
 function unscaleup {  ## Remove added worker nodes from cluster
   SCRIPT="${FUNCNAME[0]}.sh"
   script-runner
