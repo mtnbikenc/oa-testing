@@ -2,8 +2,10 @@
 openshift_deployment_type: openshift-enterprise
 
 openshift_release: "3.11"
-#openshift_image_tag: "v3.y.z"
-#openshift_pkg_version: -3.y.z
+#openshift_image_tag: "v3.11.xxx"
+#openshift_pkg_version: "-3.11.xxx"
+
+osm_etcd_image: registry.access.redhat.com/rhel7/etcd:3.2.32
 
 openshift_disable_check:
 #  - package_version
