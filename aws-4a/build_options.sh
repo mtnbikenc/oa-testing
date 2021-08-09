@@ -28,7 +28,7 @@ export AWS_DEFAULT_REGION=us-east-2
 
 #export OPT_REGISTRY=registry.ci.openshift.org/origin/release
 export OPT_REGISTRY=registry.ci.openshift.org/ocp/release
-export OPT_PAYLOAD=4.8                # This points to the latest accepted nightly build
+export OPT_PAYLOAD=4.9                # This points to the latest accepted nightly build
 #export OPT_PAYLOAD=4.x-ci             # This points to the latest accepted CI build
 #export OPT_PAYLOAD=4.x.0-0.nightly-YYYY-MM-DD-HHMMSS
 
