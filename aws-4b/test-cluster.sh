@@ -74,6 +74,15 @@ function prep40 {  ## Prepare repos on worker machines
   script-runner
 }
 
+function adhoc {  ## Run an adhoc playbook
+  export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
+  export ANSIBLE_INVENTORY="/oa-testing/cluster/inventory/hosts"
+  export OPT_PLAYBOOK_BASE="../playbooks"
+  export OPT_PLAYBOOK="${FUNCNAME[0]}.yml"
+  SCRIPT="run-playbook.sh"
+  script-runner
+}
+
 function scaleup {  ## Run openshift-ansible to scale up worker nodes
   export ANSIBLE_CONFIG="/oa-testing/cluster/openshift-ansible/ansible.cfg"
   export ANSIBLE_INVENTORY="/oa-testing/cluster/inventory/hosts"

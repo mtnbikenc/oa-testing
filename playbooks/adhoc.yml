@@ -1,0 +1,11 @@
+---
+- name: Adhoc Playbook
+  hosts: new_workers
+  any_errors_fatal: true
+  gather_facts: false
+
+  vars:
+
+  tasks:
+#  - name: Reboot the host and wait for it to come back
+#    reboot:
