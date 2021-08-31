@@ -38,8 +38,9 @@
         --enable="rhel-7-server-rpms"
         --enable="rhel-7-server-extras-rpms"
         --enable="rhel-7-fast-datapath-rpms"
-        --enable="rhel-7-server-ose-{{ prep_version }}-rpms"
+        --enable="rhel-7-server-ose-{{ release_version }}-rpms"
       RHEL8: >
         --enable="rhel-8-for-x86_64-baseos-rpms"
         --enable="rhel-8-for-x86_64-appstream-rpms"
         --enable="fast-datapath-for-rhel-8-x86_64-rpms"
+        --enable="rhocp-{{ release_version }}-for-rhel-8-x86_64-rpms"

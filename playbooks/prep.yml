@@ -1,12 +1,14 @@
 ---
+- import_playbook: lb-for-atomic.yml
+  when: platform_type == 'atomic'
+
 - name: Prep Playbook
   hosts: all
   any_errors_fatal: true
-  gather_facts: false  # Don't gather at start because hosts may not be online
+  gather_facts: false
 
   handlers:
   - import_tasks: handlers/main.yml
-
   vars:
     openshift_service_type_dict:
       origin: origin
@@ -17,6 +19,8 @@
     ops_mirror_path: "/oa-testing/ops-mirror.pem"
     private_key_path: "/oa-testing/openshift-dev.pem"
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
+    platform_version: "{{ lookup('env', 'OPT_PLATFORM_VERSION') | default('7.9', true) }}"
+    major_platform_version: "{{ platform_version[:1] }}"
 
   tasks:
   # The token expires every 30 days so make sure it still works
@@ -26,8 +30,8 @@
     run_once: true
     changed_when: false
     when:
-      - oreg_auth_password is defined
-      - ("reg-aws.openshift.com" in oreg_url)
+    - oreg_auth_password is defined
+    - ("reg-aws.openshift.com" in oreg_url)
 
   - name: Ensure proper permissions on private key file
     file:
@@ -36,56 +40,40 @@
     delegate_to: localhost
     run_once: true
 
-  - name: Set prep_version using openshift_release if defined
+  - name: Set release_version using openshift_release if defined
     set_fact:
-      prep_version: "{{ openshift_release | regex_replace('^.(\\d+\\.\\d+).*', '\\1') }}"
+      release_version: "{{ openshift_release | regex_replace('^.(\\d+\\.\\d+).*', '\\1') }}"
     when:
-      - openshift_release is defined
+    - openshift_release is defined
 
-  - name: Set prep_version using openshift_pkg_version if defined
+  - name: Set release_version using openshift_pkg_version if defined
     set_fact:
-      prep_version: "{{ openshift_pkg_version | regex_replace('^.(\\d+\\.\\d+).*', '\\1') }}"
+      release_version: "{{ openshift_pkg_version | regex_replace('^.(\\d+\\.\\d+).*', '\\1') }}"
     when:
-      - prep_version is not defined
-      - openshift_pkg_version is defined
+    - release_version is not defined
+    - openshift_pkg_version is defined
 
-  - name: Set prep_version using openshift_image_tag if defined
+  - name: Set release_version using openshift_image_tag if defined
     set_fact:
-      prep_version: "{{ (openshift_image_tag | regex_replace('^.(\\d+\\.\\d+).*', '\\1')) if openshift_image_tag != 'latest' else omit }}"
+      release_version: "{{ (openshift_image_tag | regex_replace('^.(\\d+\\.\\d+).*', '\\1')) if openshift_image_tag != 'latest' else omit }}"
     when:
-      - prep_version is not defined
-      - openshift_image_tag is defined
+    - release_version is not defined
+    - openshift_image_tag is defined
 
-  - name: Set prep_version to latest if no version provided
+  - name: Set release_version to latest if no version provided
     set_fact:
-      prep_version: "{{ latest_version }}"
+      release_version: "{{ latest_version }}"
     when:
-      - prep_version is not defined
+    - release_version is not defined
 
-  - name: Wait for hosts to come online
-    include_tasks: tasks/wait_for_hosts.yml
+  - name: Set major_release_version
+    set_fact:
+      major_release_version: "{{ release_version[:1] }}"
 
-- import_playbook: lb-for-atomic.yml
-  when: platform_type == 'atomic'
+  - name: Wait for host connection to ensure SSH has started
+    wait_for_connection:
+      timeout: 600
 
-- name: Prep Playbook
-  hosts: all
-  any_errors_fatal: true
-  gather_facts: true
-
-  handlers:
-  - import_tasks: handlers/main.yml
-  vars:
-    openshift_service_type_dict:
-      origin: origin
-      openshift-enterprise: atomic-openshift
-    openshift_service_type: "{{ openshift_service_type_dict[openshift_deployment_type] }}"
-    latest_version: '3.11'
-    build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
-    ops_mirror_path: "/oa-testing/ops-mirror.pem"
-    platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
-
-  tasks:
   - name: Detecting Operating System from ostree_booted
     stat:
       path: /run/ostree-booted
@@ -94,7 +82,7 @@
       get_mime: false
     register: ostree_booted
 
-  - name: initialize_facts set fact openshift_is_atomic
+  - name: Set fact openshift_is_atomic
     set_fact:
       openshift_is_atomic: "{{ ostree_booted.stat.exists }}"
 
@@ -103,7 +91,7 @@
     block:
     - name: Install NetworkManager
       include_tasks: tasks/network_manager.yml
-      when: ansible_distribution == "CentOS"
+      when: platform_type == "centos"
 
     - name: Create OCP devel repos
       include_tasks: tasks/devel_repos.yml

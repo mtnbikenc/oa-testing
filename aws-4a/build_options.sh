@@ -43,3 +43,8 @@ export OPT_RELEASE_IMAGE="${OPT_REGISTRY}":"${OPT_PAYLOAD}"
 ##################################################
 #export OPT_OA_PRNUM=XXXXX
 #export OPT_OA_TAG=<branch,commit,tag>
+
+##################################################
+# Prep
+##################################################
+#export OPT_PREP_USE_RHN=True

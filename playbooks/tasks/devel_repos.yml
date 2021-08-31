@@ -17,24 +17,22 @@
     src: "{{ ops_mirror_path }}"
     dest: /var/lib/yum/
 
-- name: Create rhel-7-server-ose-rpms repo file
+- name: Create rhel-X-server-ose-rpms repo file
   template:
-    src: rhel-7-server-ose-3.X-devel-rpms.repo.j2
-    dest: /etc/yum.repos.d/rhel-7-server-ose-rpms.repo
-  vars:
-    target_version: "{{ prep_version }}"
+    src: "rhel-{{ major_platform_version }}-server-ose-{{ major_release_version }}.X-devel-rpms.repo.j2"
+    dest: "/etc/yum.repos.d/rhel-{{ major_platform_version }}-server-ose-rpms.repo"
   notify: refresh cache
-  when: openshift_service_type == 'atomic-openshift'
+  when: openshift_deployment_type | default('openshift-enterprise') == 'openshift-enterprise'
 
 - name: Create origin-repo repo file
   get_url:
     url: https://storage.googleapis.com/origin-ci-test/releases/openshift/origin/master/origin.repo
     dest: /etc/yum.repos.d/origin-repo.repo
   notify: refresh cache
-  when: openshift_service_type == 'origin'
+  when: openshift_deployment_type | default('openshift-enterprise') == 'origin'
 
-- name: Create rhel-7-server-rpms repo file
+- name: Create rhel-X-server-rpms repo file
   copy:
-    src: rhel-7-server-rpms.repo
+    src: "rhel-{{ major_platform_version }}-server-rpms.repo"
     dest: /etc/yum.repos.d/
   notify: refresh cache

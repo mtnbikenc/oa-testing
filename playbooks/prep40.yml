@@ -9,6 +9,8 @@
 
   vars:
     payload_version: "{{ lookup('env', 'OPT_PAYLOAD') }}"
+    release_version: "{{ payload_version | regex_search('^\\d+\\.\\d+') }}"
+    major_release_version: "{{ release_version[:1] }}"
     ops_mirror_path: "/oa-testing/ops-mirror.pem"
     fips_enable: "{{ lookup('env', 'OPT_FIPS_ENABLE') | default(false, true) }}"
     platform_version: "{{ lookup('env', 'OPT_PLATFORM_VERSION') | default('7.9', true) }}"
@@ -24,48 +26,19 @@
     when:
     - payload_version == ''
 
-  - name: Set release_version to payload version
-    set_fact:
-      release_version: "{{ payload_version | regex_search('^\\d+\\.\\d+') }}"
-
   - name: Wait for host connection to ensure SSH has started
     wait_for_connection:
       timeout: 600
 
-  - name: Copy Atomic OpenShift yum repository certificate and key
-    copy:
-      src: "{{ ops_mirror_path }}"
-      dest: /var/lib/yum/
-
-  - name: Find redhat-rhui repos
-    find:
-      paths: /etc/yum.repos.d
-      patterns: "redhat-rhui*"
-    register: redhat_rhui
-
-  - name: Remove redhat-rhui repos
-    file:
-      path: "{{ item['path'] }}"
-      state: absent
-    with_items: "{{ redhat_rhui['files'] }}"
+  - name: Create OCP devel repos
+    include_tasks: tasks/devel_repos.yml
+    when:
+    - not (lookup('env', 'OPT_PREP_USE_RHN') | default(false, true) | bool)
 
   - name: Subscribe and enable OCP release repos
     include_tasks: tasks/rhn_repos.yml
     when:
     - lookup('env', 'OPT_PREP_USE_RHN') | default(false, true) | bool
-    - openshift_deployment_type != 'origin'
-
-  - name: Create rhel-X-server-ose-rpms repo file
-    template:
-      src: "rhel-{{ major_platform_version }}-server-ose-4.X-devel-rpms.repo.j2"
-      dest: "/etc/yum.repos.d/rhel-{{ major_platform_version }}-server-ose-rpms.repo"
-    notify: refresh cache
-
-  - name: Create rhel-X-server-rpms repo file
-    copy:
-      src: "rhel-{{ major_platform_version }}-server-rpms.repo"
-      dest: /etc/yum.repos.d/
-    notify: refresh cache
 
   - name: Enable FIPS
     include_tasks: tasks/enable_fips.yml

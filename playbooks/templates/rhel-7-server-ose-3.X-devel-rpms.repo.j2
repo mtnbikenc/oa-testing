@@ -1,6 +1,6 @@
-[rhel-7-server-ose-{{ target_version }}-{{ build_version }}-devel-rpms]
-name = A repository of dependencies for Atomic OpenShift {{ target_version }}
-baseurl = https://mirror.openshift.com/enterprise/all/{{ target_version }}/{{ build_version }}/x86_64/os/
+[rhel-7-server-ose-{{ release_version }}-{{ build_version }}-devel-rpms]
+name = A repository of dependencies for Atomic OpenShift {{ release_version }}
+baseurl = https://mirror.openshift.com/enterprise/all/{{ release_version }}/{{ build_version }}/x86_64/os/
 failovermethod = priority
 gpgcheck = 0
 gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta https://mirror.openshift.com/libra/keys/RPM-GPG-KEY-redhat-openshifthosted
