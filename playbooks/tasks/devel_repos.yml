@@ -12,11 +12,6 @@
     state: absent
   with_items: "{{ redhat_rhui['files'] }}"
 
-- name: Copy Atomic OpenShift yum repository certificate and key
-  copy:
-    src: "{{ ops_mirror_path }}"
-    dest: /var/lib/yum/
-
 - name: Create rhel-X-server-ose-rpms repo file
   template:
     src: "rhel-{{ major_platform_version }}-server-ose-{{ major_release_version }}.X-devel-rpms.repo.j2"
@@ -32,7 +27,7 @@
   when: openshift_deployment_type | default('openshift-enterprise') == 'origin'
 
 - name: Create rhel-X-server-rpms repo file
-  copy:
-    src: "rhel-{{ major_platform_version }}-server-rpms.repo"
-    dest: /etc/yum.repos.d/
+  template:
+    src: "rhel-{{ major_platform_version }}-server-rpms.repo.j2"
+    dest: "/etc/yum.repos.d/rhel-{{ major_platform_version }}-server-rpms.repo"
   notify: refresh cache

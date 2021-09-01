@@ -13,8 +13,6 @@ OPT_LOCAL_PULL_SECRET=$(realpath ~/pull-secret.txt)
 export OPT_LOCAL_PULL_SECRET
 OPT_LOCAL_PRIVATE_KEY=$(realpath "${PWD}/../../shared-secrets/aws/openshift-dev.pem")
 export OPT_LOCAL_PRIVATE_KEY
-OPT_LOCAL_OPS_MIRROR_KEY="${PWD}/../../shared-secrets/mirror/ops-mirror.pem"
-export OPT_LOCAL_OPS_MIRROR_KEY
 
 ##################################################
 # Provision/Terminate

@@ -12,7 +12,7 @@ buildah run "$newbuild" -- pip3 cache purge
 
 # Download, extract and install the latest oc binary
 TEMP_DIR=$(mktemp)
-wget https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz --directory-prefix="${TEMP_DIR}"
+wget https://mirror2.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz --directory-prefix="${TEMP_DIR}"
 tar -xzf "${TEMP_DIR}/oc.tar.gz" --directory "${TEMP_DIR}"
 buildah copy "$newbuild" "${TEMP_DIR}/*" "/usr/bin"
 rm -rf "${TEMP_DIR}"

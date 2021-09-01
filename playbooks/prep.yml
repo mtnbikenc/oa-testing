@@ -16,7 +16,8 @@
     openshift_service_type: "{{ openshift_service_type_dict[openshift_deployment_type] }}"
     latest_version: '3.11'
     build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
-    ops_mirror_path: "/oa-testing/ops-mirror.pem"
+    mirror_username: "{{ lookup('ini', 'mirror_username section=default file=/oa-testing/openshift-creds.txt') | default('', true) }}"
+    mirror_password: "{{ lookup('ini', 'mirror_password section=default file=/oa-testing/openshift-creds.txt') | default('', true) }}"
     private_key_path: "/oa-testing/openshift-dev.pem"
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
     platform_version: "{{ lookup('env', 'OPT_PLATFORM_VERSION') | default('7.9', true) }}"
@@ -32,6 +33,12 @@
     when:
     - oreg_auth_password is defined
     - ("reg-aws.openshift.com" in oreg_url)
+
+  - name: Fail if mirror credentials are not defined in ~/openshift-creds.txt
+    fail:
+      msg: "mirror_username and mirror_password must be defined in ~/openshift-creds.txt"
+    when:
+    - mirror_username == '' or mirror_password == ''
 
   - name: Ensure proper permissions on private key file
     file:

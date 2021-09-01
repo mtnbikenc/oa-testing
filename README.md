@@ -38,7 +38,13 @@ oreg_auth_password = xxxxx
 rhn_user = user@email.com
 rhn_pass = xxxxx
 rhn_pool = xxxxx
+mirror_username = xxxxx
+mirror_password = xxxxx
 ```
+
+NOTE: mirror.openshift.com is migrating to a new infrastructure that requires
+authentication.  Request an automation username/password from the ART Team for
+mirror_username and mirror_password. See https://issues.redhat.com/browse/ART-3018
 
 * Create ~/pull-secret.txt
   * pull-secret.txt can be obtained from https://cloud.redhat.com/openshift/install/pull-secret
