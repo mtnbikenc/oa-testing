@@ -11,6 +11,7 @@
     payload_version: "{{ lookup('env', 'OPT_PAYLOAD') }}"
     release_version: "{{ payload_version | regex_search('^\\d+\\.\\d+') }}"
     major_release_version: "{{ release_version[:1] }}"
+    use_rhn: "{{ lookup('env', 'OPT_PREP_USE_RHN') | default(false, true) | bool }}"
     mirror_username: "{{ lookup('ini', 'mirror_username section=default file=/oa-testing/openshift-creds.txt') | default('', true) }}"
     mirror_password: "{{ lookup('ini', 'mirror_password section=default file=/oa-testing/openshift-creds.txt') | default('', true) }}"
     fips_enable: "{{ lookup('env', 'OPT_FIPS_ENABLE') | default(false, true) }}"
@@ -40,12 +41,12 @@
   - name: Create OCP devel repos
     include_tasks: tasks/devel_repos.yml
     when:
-    - not (lookup('env', 'OPT_PREP_USE_RHN') | default(false, true) | bool)
+    - not use_rhn
 
   - name: Subscribe and enable OCP release repos
     include_tasks: tasks/rhn_repos.yml
     when:
-    - lookup('env', 'OPT_PREP_USE_RHN') | default(false, true) | bool
+    - use_rhn
 
   - name: Enable FIPS
     include_tasks: tasks/enable_fips.yml

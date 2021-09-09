@@ -16,6 +16,7 @@
     openshift_service_type: "{{ openshift_service_type_dict[openshift_deployment_type] }}"
     latest_version: '3.11'
     build_version: "{{ lookup('env', 'OPT_PREP_BUILD_VERSION') | default('latest', true) }}"
+    use_rhn: "{{ lookup('env', 'OPT_PREP_USE_RHN') | default(false, true) | bool }}"
     mirror_username: "{{ lookup('ini', 'mirror_username section=default file=/oa-testing/openshift-creds.txt') | default('', true) }}"
     mirror_password: "{{ lookup('ini', 'mirror_password section=default file=/oa-testing/openshift-creds.txt') | default('', true) }}"
     private_key_path: "/oa-testing/openshift-dev.pem"
@@ -103,13 +104,13 @@
     - name: Create OCP devel repos
       include_tasks: tasks/devel_repos.yml
       when:
-        - not (lookup('env', 'OPT_PREP_USE_RHN') | default(false, true) | bool)
+        - not use_rhn
         - openshift_deployment_type != 'origin'
 
     - name: Subscribe and enable OCP release repos
       include_tasks: tasks/rhn_repos.yml
       when:
-        - lookup('env', 'OPT_PREP_USE_RHN') | default(false, true) | bool
+        - use_rhn
         - openshift_deployment_type != 'origin'
 
     - meta: flush_handlers
