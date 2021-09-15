@@ -20,7 +20,7 @@
         filters:
           name: "RHEL-{{ platform_version }}*Hourly*"
           architecture: "x86_64"
-    kubeconfig_path: "/root/.kube/config"
+    kubeconfig_path: "/oa-testing/cluster/assets/auth/kubeconfig"
     pull_secret_path: "/oa-testing/pull-secret.txt"
     private_key_path: "/oa-testing/openshift-dev.pem"
 

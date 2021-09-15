@@ -14,7 +14,7 @@
     aws_instance_file: "{{ cluster_dir }}/inventory/aws.json"
     aws_instance_type: "{{ lookup('env', 'OPT_INSTANCE_TYPE') | default('m4.large', true) }}"
     compute_count: "{{ lookup('env', 'OPT_COMPUTE_COUNT') | default(3, true)}}"
-    kubeconfig_path: "/root/.kube/config"
+    kubeconfig_path: "/oa-testing/cluster/assets/auth/kubeconfig"
     pull_secret_path: "/oa-testing/pull-secret.txt"
     private_key_path: "/oa-testing/openshift-dev.pem"
 
