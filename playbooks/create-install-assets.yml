@@ -9,35 +9,28 @@
     aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
     fips_enable: "{{ lookup('env', 'OPT_FIPS_ENABLE') | default(false, true) }}"
+    pull_secret: "{{ lookup('file', '/oa-testing/pull-secret.txt') | from_json | to_json(separators=(',',':')) }}"
     cluster_dir: "/oa-testing/cluster"
-    pull_secret_path: "/oa-testing/pull-secret.txt"
-    private_key_path: "/oa-testing/openshift-dev.pem"
+    private_key_path: "{{ cluster_dir }}/assets/auth/id_ssh_rsa"
+    public_key_path: "{{ cluster_dir }}/assets/auth/id_ssh_rsa.pub"
+    public_key: "{{ lookup('file', '{{ public_key_path }}') }}"
 
   tasks:
-  ## Create install-config.yaml
-  - name: Retrieve pull secret
-    slurp:
-      src: "{{ pull_secret_path }}"
-    register: pull_secret
-    no_log: true
-
-  - name: Ensure proper permissions on private key file
-    file:
-      path: "{{ private_key_path }}"
-      mode: 0600
-
-  - name: Create public key from private key file
-    command: >
-      ssh-keygen -f {{ private_key_path }} -y
-    register: keygen_output
-
   - name: Create Assets directory
     file:
       path: "{{ cluster_dir }}/assets"
       state: directory
 
+  - name: Create a temporary ssh key pair
+    openssh_keypair:
+      path: "{{ private_key_path }}"
+
+  - name: Create/Updata an EC2 key pair
+    ec2_key:
+      name: "{{ cluster_id }}"
+      key_material: "{{ public_key }}"
+
   - name: Create install-config.yaml
     template:
       src: install-config.yaml.j2
       dest: "{{ cluster_dir }}/assets/install-config.yaml"
-  ## install-config.yaml

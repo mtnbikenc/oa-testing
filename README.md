@@ -8,12 +8,6 @@ reproducing bugs and testing pull requests.
 ## Prerequisites
 
 * Install packages: `buildah podman`
-* Clone the OpenShift shared secrets repo parallel to this repo
-```
-.
-├── oa-testing
-└── shared-secrets
-```
 
 * Create ~/.aws/credentials file
   * Configuring AWS CLI https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html

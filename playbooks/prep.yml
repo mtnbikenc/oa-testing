@@ -19,7 +19,6 @@
     use_rhn: "{{ lookup('env', 'OPT_PREP_USE_RHN') | default(false, true) | bool }}"
     mirror_username: "{{ lookup('ini', 'mirror_username section=default file=/oa-testing/openshift-creds.txt') | default('', true) }}"
     mirror_password: "{{ lookup('ini', 'mirror_password section=default file=/oa-testing/openshift-creds.txt') | default('', true) }}"
-    private_key_path: "/oa-testing/openshift-dev.pem"
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
     platform_version: "{{ lookup('env', 'OPT_PLATFORM_VERSION') | default('7.9', true) }}"
     major_platform_version: "{{ platform_version[:1] }}"
@@ -40,13 +39,6 @@
       msg: "mirror_username and mirror_password must be defined in ~/openshift-creds.txt"
     when:
     - mirror_username == '' or mirror_password == ''
-
-  - name: Ensure proper permissions on private key file
-    file:
-      path: "{{ private_key_path }}"
-      mode: 0600
-    delegate_to: localhost
-    run_once: true
 
   - name: Set release_version using openshift_release if defined
     set_fact:
