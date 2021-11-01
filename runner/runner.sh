@@ -7,14 +7,12 @@ mkdir --parents "${OPT_LOCAL_DIR}/assets/auth/"
 # by mounting a local directory to the default Ansible tmp directory
 mkdir --parents "/tmp/oa-testing-runner"
 
-#podman run --rm --interactive --tty \
-podman run --rm \
+podman run --rm --interactive --tty \
   --env OPT_* \
   --env AWS_* \
   --env ANSIBLE_* \
   --volume "${HOME}/openshift-creds.txt:/oa-testing/openshift-creds.txt:z" \
   --volume "${HOME}/.aws:/root/.aws:z" \
-  --volume "${OPT_LOCAL_PRIVATE_KEY}:/oa-testing/openshift-dev.pem:z" \
   --volume "${OPT_LOCAL_PULL_SECRET}:/oa-testing/pull-secret.txt:z" \
   --volume "${OPT_LOCAL_DIR}:/oa-testing/cluster:z" \
   --volume "${OPT_LOCAL_DIR}/../playbooks:/oa-testing/playbooks:z" \

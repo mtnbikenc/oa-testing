@@ -371,6 +371,11 @@ function sync-oa {  ## Sync working openshift-ansible repo with testing repo
   run-local-script
 }
 
+function ssh {  ## ssh to a cluster node
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
+}
+
 ### Internal Functions ###
 function run-local-script {  ## PRIVATE - Runs a local script and creates a log file
   LOG_DATE=$(date "+%FT%H.%M.%S")

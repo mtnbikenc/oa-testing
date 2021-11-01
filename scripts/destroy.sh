@@ -9,6 +9,8 @@ then
     --log-level=debug
 fi
 
+aws ec2 delete-key-pair --key-name "${OPT_CLUSTER_ID}"
+
 rm -rfv "/oa-testing/cluster/assets/"
 rm -rfv "/oa-testing/cluster/bin/"
 rm -rfv "/oa-testing/cluster/inventory/"

@@ -24,7 +24,7 @@
               value:
                 ami:
                   id: "{{ aws_ami }}"
-                keyName: "openshift-dev"
+                keyName: "{{ cluster_id }}"
 
 - name: Import machineset definition
   command: >

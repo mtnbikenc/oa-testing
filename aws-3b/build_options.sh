@@ -9,10 +9,8 @@ export OPT_LOCAL_DIR=${PWD}
 ##################################################
 # pull-secret.txt can be obtained from https://cloud.redhat.com/openshift/install/pull-secret
 # You will need to add the CI pull secret to pull from registry.ci.openshift.org
-OPT_LOCAL_PULL_SECRET=$(realpath ~/pull-secret.txt)
+OPT_LOCAL_PULL_SECRET=$(realpath "${HOME}/pull-secret.txt")
 export OPT_LOCAL_PULL_SECRET
-OPT_LOCAL_PRIVATE_KEY=$(realpath "${PWD}/../../shared-secrets/aws/openshift-dev.pem")
-export OPT_LOCAL_PRIVATE_KEY
 
 ##################################################
 # Provision/Terminate

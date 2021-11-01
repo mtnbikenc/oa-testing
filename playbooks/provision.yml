@@ -9,6 +9,8 @@
     aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
     cluster_dir: "/oa-testing/cluster"
+    private_key_path: "{{ cluster_dir }}/assets/auth/id_ssh_rsa"
+    public_key_path: "{{ cluster_dir }}/assets/auth/id_ssh_rsa.pub"
     aws_instance_file: "{{ cluster_dir }}/inventory/aws.json"
     aws_lb_instance_file: "{{ cluster_dir }}/inventory/awslb.json"
     aws_instance_type: "{{ lookup('env', 'OPT_INSTANCE_TYPE') | default('t2.medium', true) }}"
@@ -64,6 +66,15 @@
       aws_region: "{{ lookup('ini', 'region section=profile\ openshift-dev file=/root/.aws/config') }}"
     when: aws_region == ""
 
+  - name: Create a temporary ssh key pair
+    openssh_keypair:
+      path: "{{ private_key_path }}"
+
+  - name: Create/Updata an EC2 key pair
+    ec2_key:
+      name: "{{ cluster_id }}"
+      key_material: "{{ lookup('file', '{{ public_key_path }}') }}"
+
   - import_tasks: tasks/lb_for_atomic.yml
     when:
     - master_count | int > 1
@@ -88,7 +99,7 @@
   - name: Create AWS Instances
     ec2:
       region: "{{ aws_region }}"
-      key_name: "openshift-dev"
+      key_name: "{{ cluster_id }}"
       instance_type: "{{ aws_instance_type }}"
       count: "{{ cluster_count }}"
       group_id:

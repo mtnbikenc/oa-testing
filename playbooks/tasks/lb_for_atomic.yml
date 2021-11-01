@@ -13,13 +13,13 @@
 - name: Create AWS Instances
   ec2:
     region: "{{ aws_region }}"
-    key_name: "openshift-dev"
+    key_name: "{{ cluster_id }}"
     instance_type: "{{ aws_instance_type }}"
     count: 1
     group_id:
-      - sg-7e73221a  # default
-      - sg-e1760186  # public-http
-    vpc_subnet_id: "subnet-cf57c596"  # devenv-subnet-1
+      - "{{ aws_security_group }}"
+    vpc_subnet_id: "{{ aws_public_subnet }}"
+    assign_public_ip: yes
     image: "{{ aws_ami }}"
     volumes: "{{ aws_volumes }}"
     wait: yes

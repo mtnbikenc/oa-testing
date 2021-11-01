@@ -5,6 +5,7 @@
 
   vars:
     aws_region: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
+    cluster_id: "{{ lookup('env', 'OPT_CLUSTER_ID') }}"
     cluster_dir: "/oa-testing/cluster"
     platform_type: "{{ lookup('env', 'OPT_PLATFORM_TYPE') | default('rhel', true) }}"
     platform_version: "{{ lookup('env', 'OPT_PLATFORM_VERSION') | default('7.9', true) }}"
@@ -22,7 +23,7 @@
           architecture: "x86_64"
     kubeconfig_path: "/oa-testing/cluster/assets/auth/kubeconfig"
     pull_secret_path: "/oa-testing/pull-secret.txt"
-    private_key_path: "/oa-testing/openshift-dev.pem"
+    private_key_path: "{{ cluster_dir }}/assets/auth/id_ssh_rsa"
 
     new_workers_list: []
 

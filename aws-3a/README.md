@@ -32,9 +32,9 @@ Running the test-cluster.sh script without any options will print a list of supp
 $ ./test-cluster.sh
 Available commands are:
 build                          Build an OpenShift cluster
-clone-openshift-ansible        Clone the OpenShift-Ansible and checks out supplied tag
-provision-vpc                  Provision instances for cluster deployment
-provision                      Provision instances for cluster deployment
+clone-openshift-ansible        Clone the openshift-ansible repo
+provision-vpc                  Provision a AWS VPC for cluster deployment
+provision                      Provision AWS instances for cluster deployment
 prep                           Prepare repos on instances
 prereq                         Run prerequisites playbook
 deploy                         Run deploy_cluster playbook
@@ -53,7 +53,7 @@ metering-config                Run metering config playbook
 web-console-config             Run web-console config playbook
 console-config                 Run console config playbook
 metrics-config                 Run metrics config playbook
-metrics-server-config          Run metrics config playbook
+metrics-server-config          Run metrics server config playbook
 logging-config                 Run logging config playbook
 monitor-availability-config    Run monitor-availability config playbook
 service-catalog-config         Run service-catalog config playbook
@@ -74,4 +74,5 @@ terminate                      Terminate cluster instances & VPC
 terminate-instances            Terminate cluster instances
 terminate-vpc                  Terminate cluster VPC
 sync-oa                        Sync working openshift-ansible repo with testing repo
+ssh                            ssh to a cluster node
 ```

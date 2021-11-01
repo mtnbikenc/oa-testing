@@ -51,13 +51,16 @@ create-bastion                 Create SSH Bastion Host on the OpenShift cluster
 create-machines                Create worker machines on the OpenShift cluster
 provision40                    Provision worker machines without using machinesets
 prep40                         Prepare repos on worker machines
+adhoc                          Run an adhoc playbook
 scaleup                        Run openshift-ansible to scale up worker nodes
 drain-coreos                   Drain CoreOS worker nodes
 remove-coreos                  Remove CoreOS worker nodes
 upgrade                        Run openshift-ansible to upgrade worker nodes
+drain-rhel                     Drain RHEL worker nodes
 unscaleup                      Remove added worker nodes from cluster
 rescaleup                      Run 'create-machines', 'prep40' and 'scaleup'
 destroy                        Destroy OpenShift cluster and clean up artifacts
 sync-oa                        Sync working openshift-ansible repo with testing repo
+ssh                            ssh to a cluster node
 e2e-tests                      Run openshift e2e tests
 ```

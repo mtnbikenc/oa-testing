@@ -138,6 +138,11 @@ function sync-oa {  ## Sync working openshift-ansible repo with testing repo
   run-local-script
 }
 
+function ssh {  ## ssh to a cluster node
+  SCRIPT="${FUNCNAME[0]}.sh"
+  script-runner
+}
+
 function e2e-tests {  ## Run openshift e2e tests
   run-local-script
 }

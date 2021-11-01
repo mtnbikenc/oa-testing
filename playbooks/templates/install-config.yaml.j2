@@ -5,9 +5,9 @@ metadata:
 platform:
   aws:
     region: {{ aws_region }}
-pullSecret: '{{ pull_secret['content'] | b64decode | from_json | to_json(separators=(',',':')) }}'
+pullSecret: '{{ pull_secret }}'
 sshKey: |
-  {{ keygen_output.stdout }}
+  {{ public_key }}
 {% if fips_enable is defined and fips_enable.lower() == 'true' %}
 fips: true
 {% endif %}
