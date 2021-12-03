@@ -16,7 +16,7 @@ export OPT_LOCAL_PULL_SECRET
 # Provision/Terminate
 ##################################################
 export OPT_PLATFORM_TYPE=rhel         # rhel/centos
-export OPT_PLATFORM_VERSION=7.9
+export OPT_PLATFORM_VERSION=8.5
 export OPT_INSTANCE_TYPE=m4.large
 export OPT_FIPS_ENABLE=false
 export AWS_PROFILE="openshift-dev"
