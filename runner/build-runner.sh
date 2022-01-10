@@ -5,6 +5,7 @@ newbuild=$(buildah from --pull quay.io/centos/centos:8)
 
 buildah run "$newbuild" -- dnf update -y
 buildah run "$newbuild" -- dnf install -y $(<packages.txt)
+buildah run "$newbuild" -- dnf remove -y python36
 buildah run "$newbuild" -- dnf clean all
 buildah run "$newbuild" -- pip3 install --upgrade pip setuptools wheel
 buildah run "$newbuild" -- pip3 install $(<requirements.txt)
@@ -12,7 +13,7 @@ buildah run "$newbuild" -- pip3 cache purge
 
 # Download, extract and install the latest oc binary
 TEMP_DIR=$(mktemp)
-wget https://mirror2.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz --directory-prefix="${TEMP_DIR}"
+wget https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz --directory-prefix="${TEMP_DIR}"
 tar -xzf "${TEMP_DIR}/oc.tar.gz" --directory "${TEMP_DIR}"
 buildah copy "$newbuild" "${TEMP_DIR}/*" "/usr/bin"
 rm -rf "${TEMP_DIR}"
