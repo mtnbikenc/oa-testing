@@ -147,6 +147,11 @@ function e2e-tests {  ## Run openshift e2e tests
   run-local-script
 }
 
+function bash {  ## PRIVATE - Open a bash shell in the oa-testing container
+  source build_options.sh
+  ../runner/runner.sh "/bin/bash"
+}
+
 ### Internal Functions ###
 function run-local-script {  ## PRIVATE - Runs a local script and creates a log file
   LOG_DATE=$(date "+%FT%H.%M.%S")
