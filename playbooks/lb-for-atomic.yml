@@ -22,7 +22,7 @@
       - systemd-journal
 
   - name: Add temp ssh public key
-    authorized_key:
+    ansible.posix.authorized_key:
       user: cloud-user
       state: present
       key: "{{ lookup('file', '/oa-testing/cluster/assets/auth/id_ssh_rsa.pub') }}"

@@ -65,7 +65,7 @@ oc wait machine \
     --selector "machine.openshift.io/cluster-api-machineset in (${RHEL_MACHINE_SETS_JOINED})" \
     || true
 
-export ANSIBLE_STDOUT_CALLBACK="yaml"
+export ANSIBLE_STDOUT_CALLBACK="community.general.yaml"
 export ANSIBLE_CONFIG="/oa-testing/playbooks/ansible.cfg"
 export ANSIBLE_LOG_PATH="/oa-testing/cluster/logs/ansible.log"
 export ANSIBLE_INVENTORY="/oa-testing/playbooks/inventory/hosts"

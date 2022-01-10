@@ -6,6 +6,7 @@ java-1.8.0-openjdk-headless
 jq
 openssh
 openssh-clients
+python39
 python3-pip
 unzip
 zsh

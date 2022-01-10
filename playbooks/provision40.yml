@@ -57,7 +57,7 @@
     - meta: end_play
 
   - name: Find the most recently created AMI
-    ec2_ami_info:
+    amazon.aws.ec2_ami_info:
       region: "{{ aws_region }}"
       owners: "{{ platform_type_dict[platform_type].owners }}"
       filters: "{{ platform_type_dict[platform_type].filters }}"
@@ -90,7 +90,7 @@
       aws_subnet: "{{ ec2_vpc_subnet_info_results.subnets[0].id }}"
 
   - name: Create AWS Instances
-    ec2:
+    amazon.aws.ec2:
       region: "{{ aws_region }}"
       key_name: "{{ cluster_id }}"
       instance_type: "{{ aws_instance_type }}"
