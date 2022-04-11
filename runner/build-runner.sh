@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-newbuild=$(buildah from --pull quay.io/centos/centos:8)
+newbuild=$(buildah from --pull quay.io/centos/centos:stream8)
 
 buildah run "$newbuild" -- dnf update -y
 buildah run "$newbuild" -- dnf install -y $(<packages.txt)
